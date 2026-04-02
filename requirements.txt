@@ -1,0 +1,10 @@
+streamlit
+langchain
+langchain-community
+langchain-core
+chromadb==0.5.3
+sentence-transformers
+pypdf
+python-dotenv
+tqdm
+langchain-mistralai
