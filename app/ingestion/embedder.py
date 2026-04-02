@@ -1,6 +1,6 @@
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
-from app.config.settings import EMBEDDING_MODEL, CHROMA_DB_DIR
+from config.settings import EMBEDDING_MODEL, CHROMA_DB_DIR
 
 def store_embeddings(chunks):
     embeddings = HuggingFaceEmbeddings(
