@@ -5,6 +5,11 @@ This app allows users to **chat with their documents intelligently**, combining 
 
 ---
 
+## 🚀 Live Demo
+[https://rag-assistant-aellaggynyu5dg3s6xqdeq.streamlit.app/]
+
+---
+
 ## 🚀 Features
 
 - 💬 Chat with your documents (PDF, text, etc.)
