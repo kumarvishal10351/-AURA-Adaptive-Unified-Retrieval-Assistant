@@ -2,6 +2,7 @@ import streamlit as st
 import os
 import re
 import time
+from chains.rag_chain import create_rag_chain
 from ingestion.loader import load_pdf
 from ingestion.splitter import split_documents
 from ingestion.embedder import store_embeddings
