@@ -1,10 +1,13 @@
 streamlit
 langchain
 langchain-community
+langchain-core
 chromadb==0.5.3
-pydantic<2
+sentence-transformers
+pypdf
 python-dotenv
 tqdm
-sentence-transformers
+langchain-mistralai
 pymupdf
 protobuf==3.20.3
+pydantic<2
