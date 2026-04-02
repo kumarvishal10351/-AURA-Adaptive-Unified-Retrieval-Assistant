@@ -10,6 +10,10 @@ from app.llm.mistral_client import get_mistral_llm
 from app.llm.fallback import get_fallback_llm
 from app.chains.rag_chain import create_rag_chain
 from app.utils.confidence import calculate_confidence
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 # ═══════════════════════════════════════════════════════
 # PAGE CONFIG
