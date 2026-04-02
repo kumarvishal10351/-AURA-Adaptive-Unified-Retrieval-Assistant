@@ -8,3 +8,4 @@ pypdf
 python-dotenv
 tqdm
 langchain-mistralai
+pymupdf
