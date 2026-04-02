@@ -2,18 +2,17 @@ import streamlit as st
 import os
 import re
 import time
-from app.ingestion.loader import load_pdf
-from app.ingestion.splitter import split_documents
-from app.ingestion.embedder import store_embeddings
-from app.retrieval.retriever import get_vectorstore
-from app.llm.mistral_client import get_mistral_llm
-from app.llm.fallback import get_fallback_llm
-from app.chains.rag_chain import create_rag_chain
-from app.utils.confidence import calculate_confidence
+from ingestion.loader import load_pdf
+from ingestion.splitter import split_documents
+from ingestion.embedder import store_embeddings
+from retrieval.retriever import get_vectorstore
+from llm.mistral_client import get_mistral_llm
+from llm.fallback import get_fallback_llm
+from utils.confidence import calculate_confidence
 import sys
 import os
 
-sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+
 
 # ═══════════════════════════════════════════════════════
 # PAGE CONFIG
