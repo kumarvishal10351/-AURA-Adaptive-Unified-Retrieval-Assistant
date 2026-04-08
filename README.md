@@ -1,159 +1,167 @@
-# 🤖 RAG Assistant (AI Research Copilot)
+# 🧠 AURA — Adaptive Unified Retrieval Assistant
 
-A **production-grade Retrieval-Augmented Generation (RAG) assistant** built using **Mistral, LangChain, ChromaDB, and Streamlit**.
-This app allows users to **chat with their documents intelligently**, combining LLM reasoning with vector search.
-
----
-
-## 🚀 Features
-
-- 💬 Chat with your documents (PDF, text, etc.)
-- 🧠 Powered by **Mistral LLM**
-- 🔍 Semantic search using **ChromaDB**
-- ⚡ Fast retrieval with embeddings
-- 🎨 Modern Streamlit UI (ChatGPT-style)
-- 🧩 Modular architecture (ingestion, retrieval, LLM, utils)
-- 📊 Confidence scoring for responses
-- 🔄 Fallback handling for robustness
+> **A reliability-first Retrieval-Augmented Generation (RAG) system with intelligent fallback to LLMs based on confidence thresholds.**
 
 ---
 
-## 🧠 How It Works
+## 🚀 TL;DR
 
-1. Documents are loaded and split into chunks
-2. Embeddings are generated and stored in ChromaDB
-3. User query is converted into embeddings
-4. Relevant chunks are retrieved
-5. LLM generates a context-aware response
-
----
-
-## 🛠️ Tech Stack
-
-- **LLM:** Mistral (via API)
-- **Framework:** LangChain
-- **Vector DB:** ChromaDB
-- **Frontend:** Streamlit
-- **Language:** Python
+* 📚 Retrieval-Augmented Generation (RAG)
+* 🧠 **Adaptive fallback to LLM** when retrieval confidence is low
+* 🎯 Designed to **reduce hallucinations** and improve answer reliability
+* ⚙️ Built with modular, production-oriented architecture
 
 ---
 
-## 📂 Project Structure
+## 💡 Problem Statement
 
-```bash
-rag-assistant/
-│
-├── app/
-│   ├── main.py                # Streamlit app entry point
-│   ├── config/
-│   │   └── settings.py
-│   ├── ingestion/
-│   │   ├── loader.py
-│   │   ├── splitter.py
-│   │   └── embedder.py
-│   ├── llm/
-│   │   ├── mistral_client.py
-│   │   └── fallback.py
-│   ├── retrieval/
-│   │   ├── retriever.py
-│   │   └── vector_store.py
-│   ├── utils/
-│   │   ├── helpers.py
-│   │   └── confidence.py
-│
-├── data_docs/                 # Input documents
-├── chroma_db/                # Vector database (ignored in git)
-├── requirements.txt
-└── README.md
+Traditional RAG systems suffer from a critical issue:
+
+* ❌ They **always trust retrieved context**, even when it’s irrelevant
+* ❌ Leads to **hallucinations or incorrect answers**
+
+---
+
+## ✅ Solution — AURA
+
+AURA introduces a **decision-based RAG pipeline**:
+
+1. Retrieve relevant documents
+2. Evaluate **confidence score**
+3. Dynamically decide:
+
+   * ✅ Use RAG (high confidence)
+   * 🔁 Fallback to LLM (low confidence)
+
+👉 This ensures **accurate + trustworthy responses**
+
+---
+
+## 🧱 System Architecture
+
+```
+User Query
+     │
+     ▼
+Embedding Model
+     │
+     ▼
+Vector Database (Chroma / FAISS)
+     │
+     ▼
+Top-K Retrieval
+     │
+     ▼
+Confidence Evaluator
+     │
+     ├── High Confidence → RAG Response (LLM + Context)
+     │
+     └── Low Confidence → Fallback LLM Response
 ```
 
 ---
 
-## ⚙️ Installation
+## ⚙️ How It Works
 
-```bash
-git clone https://github.com/YOUR_USERNAME/rag-assistant.git
-cd rag-assistant
+### Step 1: Query Embedding
 
-# Create virtual environment
-python -m venv venv
-venv\Scripts\activate   # Windows
+* Convert user query into vector representation
 
-# Install dependencies
-pip install -r requirements.txt
+### Step 2: Retrieval
+
+* Fetch top-K relevant chunks from vector DB
+
+### Step 3: Confidence Scoring
+
+* Based on similarity scores
+* Example:
+
+  * Top score > 0.7 → high confidence
+  * Top score < 0.4 → fallback trigger
+
+### Step 4: Decision Engine
+
+```python
+if score > threshold:
+    use_rag()
+else:
+    fallback_to_llm()
 ```
 
----
+### Step 5: Response Generation
 
-## 🔐 Environment Setup
-
-Create a `.env` file in the root directory:
-
-```env
-MISTRAL_API_KEY=your_api_key_here
-```
+* RAG → grounded answer with context
+* Fallback → general LLM reasoning
 
 ---
 
-## ▶️ Run the App
+## ✨ Key Features
 
-```bash
-streamlit run app/main.py
-```
-
----
-
-## 📸 Demo (Optional)
-
-_Add screenshots or GIFs of your UI here_
+* 🧠 **Adaptive Intelligence** (dynamic routing)
+* 📊 **Confidence-based decision making**
+* 📚 **Context-aware answers (RAG)**
+* 🔁 **Fallback mechanism for robustness**
+* ⚡ Modular and extensible pipeline
 
 ---
 
-## 🧪 Example Use Cases
+## 🏗️ Tech Stack
 
-- Research assistant for PDFs
-- AI-powered document Q&A
-- Knowledge base chatbot
-- Personal AI study assistant
-
----
-
-## 🚧 Future Improvements
-
-- 🔊 Voice input/output
-- 📂 Drag-and-drop file upload
-- 🧠 Long-term memory
-- 🌐 Multi-user support
-- 📊 Analytics dashboard
+* Python
+* Sentence Transformers (Embeddings)
+* ChromaDB / FAISS (Vector Store)
+* OpenAI / Mistral (LLM)
 
 ---
 
-## 🤝 Contributing
+## 📊 Why This Matters (Engineering Perspective)
 
-Contributions are welcome!
-Feel free to fork this repo and submit a PR.
+Most implementations:
+
+* Treat RAG as always correct ❌
+
+AURA:
+
+* Treats RAG as **probabilistic system** ✅
+* Introduces **decision layer (critical for production AI)**
+
+👉 This is closer to **real-world AI systems**
 
 ---
 
-## 📜 License
+## 📈 Impact
 
-This project is licensed under the MIT License.
+* Reduces hallucinations
+* Improves answer reliability
+* Handles out-of-domain queries gracefully
+
+---
+
+## 🔮 Future Improvements
+
+* Multi-threshold decision strategy
+* Hybrid retrieval (BM25 + vector)
+* Reinforcement learning for routing
+* Multi-agent reasoning
+
+---
+
+## 🧪 What This Project Demonstrates
+
+* Deep understanding of **RAG limitations**
+* Ability to design **robust AI systems**
+* Knowledge of **vector search + LLM integration**
+* Strong **engineering + system thinking**
 
 ---
 
 ## 👨‍💻 Author
 
-**Vishal Kumar Kashyap**
-Aspiring AI Engineer | Building RAG & AI systems
+**Vishal Kashyap**
+Aspiring AI Engineer / Data Scientist
 
 ---
 
-## ⭐ Support
+## ⭐ If you like this project
 
-If you like this project:
-
-- ⭐ Star this repo
-- 🍴 Fork it
-- 📢 Share it
-
----
+Give it a star and feel free to contribute!
