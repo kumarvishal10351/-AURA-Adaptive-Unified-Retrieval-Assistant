@@ -2,6 +2,11 @@ import streamlit as st
 import os
 import re
 import time
+import html as html_module
+
+# Fix tokenizer deadlock on Streamlit hot-reloads
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
 from chains.rag_chain import create_rag_chain
 from ingestion.loader import load_pdf
 from ingestion.splitter import split_documents
@@ -10,8 +15,6 @@ from retrieval.retriever import get_vectorstore
 from llm.mistral_client import get_mistral_llm
 from llm.fallback import get_fallback_llm
 from utils.confidence import calculate_confidence
-import sys
-import os
 
 
 
@@ -432,6 +435,7 @@ def init_session_state():
         "total_docs":     0,
         "conf_scores":    [],
         "prefill_query":  "",
+        "auto_submit":    False,
         "active_tab":     "chat",
     }
     for k, v in defaults.items():
@@ -579,7 +583,7 @@ def render_chat_message(chat: dict, index: int, total: int):
         '<div style="display:flex;justify-content:flex-end;align-items:flex-end;gap:9px;margin-bottom:7px;">'
         '<div style="max-width:76%;">'
         '<div class="chat-user">'
-        f'<p style="margin:0;font-size:0.86rem;color:#e2e8f0;line-height:1.65;">{chat["question"]}</p>'
+        f'<p style="margin:0;font-size:0.86rem;color:#e2e8f0;line-height:1.65;">{html_module.escape(chat["question"])}</p>'
         '</div></div>'
         '<div style="width:32px;height:32px;border-radius:50%;'
         'background:linear-gradient(135deg,#0d9488,#0c4a6e);'
@@ -615,13 +619,14 @@ def render_chat_message(chat: dict, index: int, total: int):
             for idx, doc in enumerate(chat_docs):
                 page_label = f"Page {doc.get('page', '?')}"
                 snippet    = doc.get("content", "")[:400]
+                safe_snippet = html_module.escape(snippet)
                 st.markdown(
                     '<div class="source-card">'
                     '<div style="display:flex;justify-content:space-between;margin-bottom:6px;">'
                     f'<span style="font-size:0.6rem;font-weight:900;color:#2dd4bf;text-transform:uppercase;letter-spacing:0.08em;">📄 Source {idx + 1}</span>'
                     f'<span style="font-size:0.58rem;color:#475569;font-weight:700;">{page_label}</span>'
                     '</div>'
-                    f'<p style="margin:0;font-size:0.75rem;color:#94a3b8;line-height:1.65;font-family:\'JetBrains Mono\',monospace;">{snippet}…</p>'
+                    f'<p style="margin:0;font-size:0.75rem;color:#94a3b8;line-height:1.65;font-family:\'JetBrains Mono\',monospace;">{safe_snippet}…</p>'
                     '</div>',
                     unsafe_allow_html=True,
                 )
@@ -667,8 +672,8 @@ def render_sidebar():
         st.markdown('<div class="sidebar-section-label">Pipeline Status</div>', unsafe_allow_html=True)
 
         components = [
-            ("🤖", "Mistral 7B",   "Primary LLM",   "#2dd4bf"),
-            ("🗄️",  "FAISS",        "Vector Store",  "#60a5fa"),
+            ("🤖", "Mistral Small", "Primary LLM",   "#2dd4bf"),
+            ("🗄️",  "ChromaDB",     "Vector Store",  "#60a5fa"),
             ("🔢", "HuggingFace",  "Embeddings",    "#fcd34d"),
             ("🔗", "LangChain",    "RAG Pipeline",  "#34d399"),
         ]
@@ -710,7 +715,7 @@ def render_header():
             '<div>'
             '<div class="app-title">RAG Assistant</div>'
             '<div style="font-size:0.68rem;color:#3d5475;font-weight:500;margin-top:3px;">'
-            'Document Intelligence &nbsp;·&nbsp; Mistral 7B + FAISS + LangChain'
+            'Document Intelligence &nbsp;·&nbsp; Mistral Small + ChromaDB + LangChain'
             '</div></div></div>',
             unsafe_allow_html=True,
         )
@@ -742,7 +747,7 @@ def render_metrics():
         st.metric("📊  Avg Confidence", conf_val)
         st.markdown('<div class="strip-emerald"></div>', unsafe_allow_html=True)
     with m4:
-        st.metric("⚡  Model", "Mistral 7B")
+        st.metric("⚡  Model", "Mistral Small")
         st.markdown('<div class="strip-violet"></div>', unsafe_allow_html=True)
 
     st.markdown('<div class="glow-div"></div>', unsafe_allow_html=True)
@@ -754,17 +759,23 @@ def render_metrics():
 def render_left_column():
     # ── Document Upload ────────────────────────────────
     panel_open("📁", "Document Upload", "PDF files · up to 50 MB", "p-icon-teal")
-    uploaded_file = st.file_uploader("", type=["pdf"], label_visibility="collapsed")
+    uploaded_file = st.file_uploader("File Uploader", type=["pdf"], label_visibility="collapsed")
 
     if uploaded_file:
-        if st.session_state.last_file != uploaded_file.name:
+        is_new_file = st.session_state.last_file != uploaded_file.name
+        if is_new_file:
             st.session_state.db_ready  = False
             st.session_state.last_file = uploaded_file.name
+            # Clear stale vectorstore cache so next query uses the new index
+            from retrieval.retriever import get_vectorstore
+            get_vectorstore.clear()
 
         os.makedirs("data/docs", exist_ok=True)
         file_path = os.path.join("data/docs", uploaded_file.name)
-        with open(file_path, "wb") as fh:
-            fh.write(uploaded_file.getbuffer())
+        # Only write to disk when the file actually changes
+        if is_new_file or not os.path.exists(file_path):
+            with open(file_path, "wb") as fh:
+                fh.write(uploaded_file.getbuffer())
 
         size_str = f"{round(uploaded_file.size / 1024, 1)} KB"
         fname    = uploaded_file.name[:32] + ("…" if len(uploaded_file.name) > 32 else "")
@@ -787,7 +798,7 @@ def render_left_column():
                         ("🔍", "Parsing PDF structure…",      5,  20),
                         ("✂️",  "Chunking text segments…",     30, 50),
                         ("🔢", "Generating embeddings…",      60, 85),
-                        ("📦", "Indexing FAISS vector store…", 95, 100),
+                        ("📦", "Indexing ChromaDB vector store…", 95, 100),
                     ]
                     for icon, msg, p_start, p_end in steps:
                         step_ph.markdown(
@@ -847,8 +858,9 @@ def render_left_column():
             "List the most important points.",
         ]
         for q in suggestions:
-            if st.button(f"›  {q}", use_container_width=True, key=f"sq_{hash(q)}"):
+            if st.button(f"›  {q}", use_container_width=True, key=f"sq_{q}", type="secondary"):
                 st.session_state.prefill_query = q
+                st.session_state.auto_submit   = True
                 st.rerun()
     else:
         st.markdown(
@@ -871,8 +883,8 @@ def render_left_column():
     panel_open("🔧", "Model Stack", "AI pipeline components", "p-icon-violet")
     st.markdown(
         '<div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:11px;padding:10px 13px;">'
-        '<div class="model-row"><span style="font-size:0.68rem;color:#475569;">LLM</span><span style="font-size:0.68rem;font-weight:700;color:#2dd4bf;">Mistral 7B Instruct</span></div>'
-        '<div class="model-row"><span style="font-size:0.68rem;color:#475569;">Vector Store</span><span style="font-size:0.68rem;font-weight:700;color:#60a5fa;">FAISS</span></div>'
+        '<div class="model-row"><span style="font-size:0.68rem;color:#475569;">LLM</span><span style="font-size:0.68rem;font-weight:700;color:#2dd4bf;">Mistral Small</span></div>'
+        '<div class="model-row"><span style="font-size:0.68rem;color:#475569;">Vector Store</span><span style="font-size:0.68rem;font-weight:700;color:#60a5fa;">ChromaDB</span></div>'
         '<div class="model-row"><span style="font-size:0.68rem;color:#475569;">Embeddings</span><span style="font-size:0.68rem;font-weight:700;color:#fcd34d;">HuggingFace</span></div>'
         '<div class="model-row"><span style="font-size:0.68rem;color:#475569;">Pipeline</span><span style="font-size:0.68rem;font-weight:700;color:#34d399;">LangChain RAG</span></div>'
         '<div class="model-row"><span style="font-size:0.68rem;color:#475569;">Fallback</span><span style="font-size:0.68rem;font-weight:700;color:#a78bfa;">General LLM</span></div>'
@@ -921,7 +933,7 @@ def render_chat_column():
     q_l, q_r = st.columns([7, 1])
     with q_l:
         query_input = st.text_input(
-            "",
+            "Query Input",
             value=prefill,
             placeholder="Ask anything about your document…" if st.session_state.db_ready else "Process a document first…",
             disabled=not st.session_state.db_ready,
@@ -943,7 +955,7 @@ def render_chat_column():
     st.markdown(
         '<div style="font-size:0.6rem;color:#1e3a5f;text-align:center;margin-top:4px;">'
         'Press <kbd style="background:rgba(255,255,255,0.06);padding:1px 5px;border-radius:4px;font-size:0.58rem;">Enter</kbd>'
-        ' or click Send &nbsp;·&nbsp; Powered by Mistral 7B RAG'
+        ' or click Send &nbsp;·&nbsp; Powered by Mistral Small + ChromaDB RAG'
         '</div>',
         unsafe_allow_html=True,
     )
@@ -961,7 +973,15 @@ def render_chat_column():
         )
 
     # ── Handle query ───────────────────────────────────
-    query_to_run = query_input.strip() if (send_clicked and query_input) else ""
+    # Accept: Send button click, Enter key (query_input changed + not empty),
+    # or auto_submit flag set by suggested query buttons.
+    auto_sub = st.session_state.get("auto_submit", False)
+    if auto_sub:
+        st.session_state.auto_submit = False
+    query_to_run = query_input.strip() if (send_clicked or auto_sub or (query_input and query_input != prefill)) else ""
+    # Ensure we only run if there's actual text
+    if not query_input or not query_input.strip():
+        query_to_run = ""
     if query_to_run:
         if not st.session_state.db_ready:
             st.warning("⚠️ Please upload and process a document first.")
@@ -986,9 +1006,19 @@ def render_chat_column():
                 else:
                     mode = "rag"
 
+            except TimeoutError as exc:
+                thinking_ph.empty()
+                st.error(
+                    f"⏱️ **Request Timeout**: {str(exc)}\n\n"
+                    f"The Mistral API took too long to respond. This could mean:\n"
+                    f"- The API is temporarily overloaded\n"
+                    f"- Your internet connection is slow\n"
+                    f"\nPlease try again in a few moments."
+                )
+                answer = ""
             except Exception as exc:
                 thinking_ph.empty()
-                st.error(f"❌ An error occurred: {exc}")
+                st.error(f"❌ An error occurred: {str(exc)}\n\nPlease check your API key and try again.")
                 answer = ""
 
             thinking_ph.empty()
@@ -1029,7 +1059,7 @@ def render_chat_column():
             '<span style="font-size:0.65rem;padding:4px 12px;border-radius:99px;font-weight:700;background:rgba(29,78,216,0.12);border:1px solid rgba(29,78,216,0.28);color:#60a5fa;">⚡ Fast RAG</span>'
             '<span style="font-size:0.65rem;padding:4px 12px;border-radius:99px;font-weight:700;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.28);color:#fcd34d;">📊 Confidence</span>'
             '<span style="font-size:0.65rem;padding:4px 12px;border-radius:99px;font-weight:700;background:rgba(5,150,105,0.12);border:1px solid rgba(5,150,105,0.28);color:#34d399;">📚 Sources</span>'
-            '<span style="font-size:0.65rem;padding:4px 12px;border-radius:99px;font-weight:700;background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.28);color:#a78bfa;">🧠 Mistral 7B</span>'
+            '<span style="font-size:0.65rem;padding:4px 12px;border-radius:99px;font-weight:700;background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.28);color:#a78bfa;">🧠 Mistral Small</span>'
             '</div></div>',
             unsafe_allow_html=True,
         )
@@ -1049,10 +1079,10 @@ def render_footer():
     st.markdown(
         '<div class="footer-bar">'
         'Powered by '
-        '<span style="color:#0d9488;font-weight:800;">Mistral 7B</span> · '
-        '<span style="color:#1d4ed8;font-weight:800;">FAISS</span> · '
+        '<span style="color:#0d9488;font-weight:800;">Mistral Small</span> · '
+        '<span style="color:#1d4ed8;font-weight:800;">ChromaDB</span> · '
         '<span style="color:#059669;font-weight:800;">LangChain</span>'
-        '&nbsp;|&nbsp; RAG Pipeline · Production Build · v4.0'
+        '&nbsp;|&nbsp; RAG Pipeline · Production Build · v5.0'
         '</div>',
         unsafe_allow_html=True,
     )
@@ -1077,5 +1107,5 @@ def main():
     render_footer()
 
 
-if __name__ == "__main__" or True:
+if __name__ == "__main__":
     main()

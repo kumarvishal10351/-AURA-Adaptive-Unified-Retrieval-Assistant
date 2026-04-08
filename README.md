@@ -4,7 +4,16 @@
 
 ---
 
+<<<<<<< HEAD
 ## 🚀 TL;DR
+=======
+## 🚀 Live Demo
+[https://rag-assistant-aellaggynyu5dg3s6xqdeq.streamlit.app/]
+
+---
+
+## 🚀 Features
+>>>>>>> 952148c646cf5f8044c4a008e99cc271870f239f
 
 * 📚 Retrieval-Augmented Generation (RAG)
 * 🧠 **Adaptive fallback to LLM** when retrieval confidence is low

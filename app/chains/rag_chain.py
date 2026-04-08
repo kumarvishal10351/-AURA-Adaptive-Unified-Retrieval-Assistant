@@ -1,70 +1,73 @@
 from langchain_core.prompts import ChatPromptTemplate
+from config.settings import TOP_K, MAX_CONTEXT_LENGTH
+
 
 def create_rag_chain(llm, vectorstore):
 
-    # -------------------------------
-    # Prompt (STRICT + MEMORY AWARE)
-    # -------------------------------
-    prompt = ChatPromptTemplate.from_template("""
-You are a strict assistant.
+    # ─── Prompt ───────────────────────────────────────────────────────────────
+    prompt = ChatPromptTemplate.from_template(
+        "You are a helpful, accurate assistant.\n\n"
+        "Answer the question using ONLY the provided context below.\n"
+        "If the answer is not present in the context, respond with exactly: NOT_FOUND\n"
+        "Do NOT guess or make up information.\n\n"
+        "Conversation History (for context):\n"
+        "{history}\n\n"
+        "Context from document:\n"
+        "{context}\n\n"
+        "Question: {question}\n\n"
+        "Answer:"
+    )
 
-You MUST answer ONLY using the provided context.
+    # ─── Helpers ──────────────────────────────────────────────────────────────
+    def format_docs(docs) -> str:
+        return "\n\n".join(
+            f"[Chunk {i+1}]\n{doc.page_content}"
+            for i, doc in enumerate(docs)
+        )
 
-Use the conversation history to understand the question better.
+    def build_history(history: list) -> str:
+        """
+        Build a compact history string.
+        Truncate each previous answer to 300 chars to avoid wasting context.
+        """
+        if not history:
+            return "No previous conversation."
+        lines = []
+        for h in history[-3:]:          # last 3 turns only
+            ans_preview = h["answer"][:300].rstrip()
+            if len(h["answer"]) > 300:
+                ans_preview += "…"
+            lines.append(f"Q: {h['question']}\nA: {ans_preview}")
+        return "\n\n".join(lines)
 
-If the answer is NOT clearly present in the context,
-you MUST respond with exactly:
+    # ─── Pipeline ─────────────────────────────────────────────────────────────
+    def rag_pipeline(question: str, history: list):
+        # Retrieve with scores
+        results = vectorstore.similarity_search_with_score(question, k=TOP_K)
 
-NOT_FOUND
+        if not results:
+            return "NOT_FOUND", [], []
 
-Do NOT explain.
-Do NOT guess.
+        docs = [doc for doc, _ in results]
 
-Conversation History:
-{history}
-
-Context:
-{context}
-
-Question:
-{question}
-""")
-
-    # -------------------------------
-    # Format Documents
-    # -------------------------------
-    def format_docs(docs):
-        return "\n\n".join(doc.page_content for doc in docs)
-
-    # -------------------------------
-    # RAG Pipeline
-    # -------------------------------
-    def rag_pipeline(question, history):
-
-        # 🔍 Retrieve documents with scores
-        results = vectorstore.similarity_search_with_score(question, k=5)
-
-        docs = [doc for doc, score in results]
-
-        # 📄 Build context (limit size for safety)
+        # Build context with chunk labels (easier for the LLM to reason over)
         context = format_docs(docs)
-        context = context[:3000]
+        context = context[:MAX_CONTEXT_LENGTH]
 
-        # 🧠 Build conversation history (last 3 turns)
-        history_text = "\n".join(
-            [f"Q: {h['question']}\nA: {h['answer']}" for h in history[-3:]]
-        )
+        history_text = build_history(history)
 
-        # 🤖 LLM call
-        response = llm.invoke(
-            prompt.format(
-                context=context,
-                question=question,
-                history=history_text
+        try:
+            response = llm.invoke(
+                prompt.format(
+                    context=context,
+                    question=question,
+                    history=history_text,
+                )
             )
-        )
+            return response.content, docs, results
+        except TimeoutError as e:
+            raise TimeoutError(f"LLM request timed out after 30 seconds. The API may be overloaded. Error: {str(e)}")
+        except Exception as e:
+            raise Exception(f"Error while invoking LLM: {str(e)}")
 
-        return response.content, docs, results
-
-    # -------------------------------
     return rag_pipeline

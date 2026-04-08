@@ -1,9 +1,13 @@
+import streamlit as st
 from langchain_mistralai import ChatMistralAI
-from config.settings import MISTRAL_API_KEY
+from config.settings import get_api_key
 
+
+@st.cache_resource
 def get_fallback_llm():
+    """Cached fallback LLM client. Higher temperature for general knowledge."""
     return ChatMistralAI(
-        api_key=MISTRAL_API_KEY,
+        api_key=get_api_key(),
         model="mistral-large-latest",
-        temperature=0.7
+        temperature=0.7,
     )
