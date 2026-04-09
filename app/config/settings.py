@@ -23,7 +23,7 @@ def get_api_key() -> str:
 # Use absolute path resolved from this file's location so ChromaDB is always
 # created in the project root, regardless of which directory Streamlit runs from.
 _PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-CHROMA_DB_DIR = os.path.join(_PROJECT_ROOT, "chroma_db")
+FAISS_DB_DIR = os.path.join(_PROJECT_ROOT, "faiss_db")
 
 # ── Embeddings ────────────────────────────────────────────────────────────────
 EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
@@ -33,12 +33,12 @@ CHUNK_SIZE    = 1000
 CHUNK_OVERLAP = 150
 
 # ── Retrieval ─────────────────────────────────────────────────────────────────
-TOP_K = 5
+TOP_K = 12
 # Mistral Small supports 32k tokens; 12 000 chars ≈ 3 000 tokens — much more
 # useful than the previous 3 000-char limit while still leaving room for the
 # prompt and the model's reply.
-MAX_CONTEXT_LENGTH = 12_000
+MAX_CONTEXT_LENGTH = 16_000
 
 # ── Confidence scoring ────────────────────────────────────────────────────────
-# ChromaDB L2 distances typically range 0-2; divisor normalises to 0-100 %.
+# FAISS L2 distances typically range 0-2; divisor normalises to 0-100 %.
 CONFIDENCE_DIVISOR = 2.0

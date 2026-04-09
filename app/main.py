@@ -17,7 +17,6 @@ from llm.fallback import get_fallback_llm
 from utils.confidence import calculate_confidence
 
 
-
 # ═══════════════════════════════════════════════════════
 # PAGE CONFIG
 # ═══════════════════════════════════════════════════════
@@ -28,415 +27,626 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+
 # ═══════════════════════════════════════════════════════
-# GLOBAL CSS — Modern SaaS Dark Theme
+# GLOBAL CSS
 # ═══════════════════════════════════════════════════════
 def inject_css():
     st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
     :root {
-        --bg:#060a14; --surface:#0b1526; --teal:#0d9488; --teal-lt:#2dd4bf;
-        --gold:#f59e0b; --gold-lt:#fcd34d; --violet:#7c3aed; --violet-lt:#a78bfa;
-        --blue:#1d4ed8; --blue-lt:#60a5fa; --emerald:#059669; --emerald-lt:#34d399;
-        --text:#e2e8f0; --muted:#475569; --border:rgba(255,255,255,0.07);
+        --bg: #06080f;
+        --surface: #0d1117;
+        --surface-2: #161b27;
+        --surface-3: #1c2333;
+        --teal: #0d9488;
+        --teal-lt: #2dd4bf;
+        --teal-dim: rgba(13,148,136,0.15);
+        --gold: #f59e0b;
+        --gold-lt: #fcd34d;
+        --violet: #7c3aed;
+        --violet-lt: #a78bfa;
+        --blue: #1d4ed8;
+        --blue-lt: #60a5fa;
+        --emerald: #059669;
+        --emerald-lt: #34d399;
+        --rose: #e11d48;
+        --rose-lt: #fb7185;
+        --text: #e2e8f0;
+        --text-muted: #64748b;
+        --text-dim: #334155;
+        --border: rgba(255,255,255,0.06);
+        --border-hover: rgba(255,255,255,0.12);
+        --user-bubble-bg: linear-gradient(145deg, rgba(13,148,136,0.2) 0%, rgba(12,74,110,0.15) 100%);
+        --user-bubble-border: rgba(45,212,191,0.25);
+        --ai-bubble-bg: rgba(255,255,255,0.028);
+        --ai-bubble-border: rgba(255,255,255,0.07);
+        --radius-sm: 8px;
+        --radius-md: 12px;
+        --radius-lg: 16px;
+        --radius-xl: 20px;
+        --radius-full: 9999px;
     }
 
-    /* Base */
-    html,body,[class*="css"]{font-family:'Inter',sans-serif !important;background:#060a14 !important;color:var(--text) !important;}
-    #MainMenu,footer,header{visibility:hidden}
-    .stDeployButton{display:none}
+    /* ── Reset & Base ── */
+    html, body, [class*="css"] {
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
+        background: var(--bg) !important;
+        color: var(--text) !important;
+    }
+    #MainMenu, footer, header { visibility: hidden; }
+    .stDeployButton { display: none; }
 
-    /* Background grid + orbs */
-    .stApp{
+    /* ── Background ── */
+    .stApp {
         background:
-            linear-gradient(rgba(13,148,136,0.025) 1px,transparent 1px),
-            linear-gradient(90deg,rgba(13,148,136,0.025) 1px,transparent 1px),#060a14;
-        background-size:52px 52px;
-    }
-    .stApp::before{
-        content:'';position:fixed;width:700px;height:700px;border-radius:50%;
-        background:radial-gradient(circle,rgba(13,148,136,0.12) 0%,transparent 70%);
-        top:-220px;left:-180px;filter:blur(110px);pointer-events:none;z-index:0;
-        animation:orb1 28s ease-in-out infinite;
-    }
-    .stApp::after{
-        content:'';position:fixed;width:550px;height:550px;border-radius:50%;
-        background:radial-gradient(circle,rgba(124,58,237,0.08) 0%,transparent 70%);
-        top:40%;right:-160px;filter:blur(110px);pointer-events:none;z-index:0;
-        animation:orb2 22s ease-in-out infinite;
-    }
-    @keyframes orb1{0%,100%{transform:translate(0,0)}33%{transform:translate(80px,-60px)}66%{transform:translate(-45px,80px)}}
-    @keyframes orb2{0%,100%{transform:translate(0,0)}50%{transform:translate(-70px,55px)}}
-
-    /* Scrollbar */
-    ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}
-    ::-webkit-scrollbar-thumb{background:linear-gradient(180deg,rgba(13,148,136,0.5),rgba(124,58,237,0.4));border-radius:99px}
-
-    /* Sidebar */
-    [data-testid="stSidebar"]{
-        background:var(--surface) !important;
-        border-right:1px solid var(--border) !important;
-        padding:0 !important;
-    }
-    [data-testid="stSidebar"] > div:first-child{padding:1rem 0.75rem !important;}
-    [data-testid="stSidebarNavItems"]{display:none;}
-
-    /* Main container */
-    .main .block-container{
-        padding:1.5rem 2rem 3rem !important;
-        max-width:100% !important;
+            radial-gradient(ellipse 80% 50% at 10% -10%, rgba(13,148,136,0.07) 0%, transparent 60%),
+            radial-gradient(ellipse 60% 40% at 90% 80%, rgba(124,58,237,0.05) 0%, transparent 60%),
+            linear-gradient(rgba(13,148,136,0.018) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(13,148,136,0.018) 1px, transparent 1px),
+            var(--bg);
+        background-size: auto, auto, 48px 48px, 48px 48px;
     }
 
-    /* Typography */
-    h1,h2,h3,h4{color:#fff !important;font-weight:800 !important;letter-spacing:-0.02em}
-
-    /* App title gradient */
-    .app-title{
-        background:linear-gradient(135deg,#2dd4bf 0%,#a78bfa 45%,#60a5fa 100%);
-        -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-        font-size:1.85rem !important;font-weight:900 !important;letter-spacing:-0.045em;
-        line-height:1.05;display:inline-block;
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, rgba(13,148,136,0.4), rgba(124,58,237,0.3));
+        border-radius: 99px;
     }
 
-    /* Logo */
-    .logo-box{
-        width:48px;height:48px;border-radius:14px;flex-shrink:0;
-        background:linear-gradient(135deg,#0d9488,#0f766e 50%,#0c4a6e);
-        display:flex;align-items:center;justify-content:center;font-size:1.4rem;
-        box-shadow:0 0 0 1px rgba(45,212,191,0.2),0 0 28px rgba(13,148,136,0.45);
-        animation:logoPulse 3s ease-in-out infinite;margin-right:12px;
+    /* ── Sidebar ── */
+    [data-testid="stSidebar"] {
+        background: var(--surface) !important;
+        border-right: 1px solid var(--border) !important;
     }
-    @keyframes logoPulse{
-        0%,100%{box-shadow:0 0 0 1px rgba(45,212,191,0.2),0 0 28px rgba(13,148,136,0.45)}
-        50%{box-shadow:0 0 0 1px rgba(45,212,191,0.35),0 0 50px rgba(13,148,136,0.65)}
+    [data-testid="stSidebar"] > div:first-child { padding: 1rem 0.8rem !important; }
+
+    /* ── Main container ── */
+    .main .block-container {
+        padding: 1.5rem 2rem 3rem !important;
+        max-width: 100% !important;
     }
 
-    /* Status pill */
-    .status-pill{
-        display:inline-flex;align-items:center;gap:8px;
-        padding:7px 16px;border-radius:99px;
-        background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);
-        font-size:0.7rem;font-weight:800;
-    }
-    .status-dot{width:7px;height:7px;border-radius:50%;animation:blink 2.2s ease-in-out infinite;display:inline-block;}
-    @keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+    /* ── Typography ── */
+    h1, h2, h3, h4 { color: #fff !important; font-weight: 800 !important; letter-spacing: -0.025em; }
 
-    /* Metric cards */
-    [data-testid="stMetric"]{
-        background:var(--surface) !important;border:1px solid var(--border) !important;
-        border-radius:16px !important;padding:1rem 1.2rem 1.4rem !important;
-        transition:all 0.3s ease !important;
-    }
-    [data-testid="stMetric"]:hover{transform:translateY(-3px) !important;box-shadow:0 14px 40px rgba(0,0,0,0.4) !important;}
-    [data-testid="stMetricLabel"]{color:var(--muted) !important;font-size:0.62rem !important;text-transform:uppercase !important;letter-spacing:0.09em !important;font-weight:800 !important;}
-    [data-testid="stMetricValue"]{color:#fff !important;font-size:1.65rem !important;font-weight:900 !important;letter-spacing:-0.04em !important;}
-
-    /* Panel components */
-    .panel-head{
-        background:var(--surface);border:1px solid var(--border);
-        border-radius:14px 14px 0 0;padding:0.85rem 1.1rem;
-        display:flex;align-items:center;gap:9px;
-    }
-    .panel-body{
-        background:var(--surface);border:1px solid var(--border);border-top:none;
-        border-radius:0 0 14px 14px;padding:1rem;margin-bottom:0.9rem;
-    }
-    .p-icon{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:0.85rem;}
-    .p-icon-teal{background:rgba(13,148,136,0.18);box-shadow:0 0 12px rgba(13,148,136,0.15);}
-    .p-icon-gold{background:rgba(245,158,11,0.15);box-shadow:0 0 12px rgba(245,158,11,0.12);}
-    .p-icon-violet{background:rgba(124,58,237,0.15);box-shadow:0 0 12px rgba(124,58,237,0.12);}
-    .p-title{font-size:0.8rem !important;font-weight:800 !important;color:#fff !important;}
-    .p-sub{font-size:0.61rem;color:var(--muted);margin-top:1px;}
-
-    /* File uploader */
-    [data-testid="stFileUploader"]{
-        background:radial-gradient(ellipse at 50% 70%,rgba(13,148,136,0.065) 0%,transparent 70%) !important;
-        border:2px dashed rgba(13,148,136,0.32) !important;border-radius:14px !important;
-        padding:1.4rem !important;transition:all 0.3s ease !important;
-    }
-    [data-testid="stFileUploader"]:hover{border-color:rgba(13,148,136,0.6) !important;box-shadow:0 0 36px rgba(13,148,136,0.12) !important;}
-
-    /* Buttons */
-    .stButton>button{
-        background:linear-gradient(135deg,#0d9488 0%,#0f766e 55%,#0c4a6e 100%) !important;
-        color:white !important;border:1px solid rgba(45,212,191,0.22) !important;
-        border-radius:11px !important;font-weight:800 !important;
-        font-family:'Inter',sans-serif !important;font-size:0.84rem !important;
-        padding:0.6rem 1.3rem !important;
-        box-shadow:0 4px 20px rgba(13,148,136,0.3),inset 0 1px 0 rgba(255,255,255,0.1) !important;
-        transition:all 0.25s cubic-bezier(0.4,0,0.2,1) !important;
-    }
-    .stButton>button:hover{
-        box-shadow:0 8px 35px rgba(13,148,136,0.55),0 0 0 1px rgba(45,212,191,0.4) !important;
-        transform:translateY(-2px) !important;
-    }
-    .stButton>button[kind="secondary"]{
-        background:rgba(255,255,255,0.03) !important;
-        border:1px solid rgba(255,255,255,0.06) !important;
-        color:#475569 !important;box-shadow:none !important;
-    }
-    .stButton>button[kind="secondary"]:hover{
-        background:rgba(225,29,72,0.07) !important;
-        border-color:rgba(225,29,72,0.25) !important;
-        color:#fb7185 !important;transform:none !important;
+    /* ── App title ── */
+    .app-title {
+        background: linear-gradient(135deg, #2dd4bf 0%, #a78bfa 50%, #60a5fa 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 900 !important;
+        letter-spacing: -0.04em;
     }
 
-    /* Text input */
-    .stTextInput>div>div>input{
-        background:rgba(255,255,255,0.035) !important;
-        border:1px solid rgba(255,255,255,0.09) !important;
-        border-radius:12px !important;color:#e2e8f0 !important;
-        font-family:'Inter',sans-serif !important;font-size:0.88rem !important;
-        padding:0.7rem 1rem !important;caret-color:var(--teal-lt) !important;
-        transition:all 0.25s ease !important;
+    /* ── Logo ── */
+    .logo-box {
+        width: 44px; height: 44px; border-radius: 13px;
+        background: linear-gradient(135deg, #0d9488 0%, #0f766e 50%, #0c4a6e 100%);
+        display: flex; align-items: center; justify-content: center; font-size: 1.3rem;
+        box-shadow: 0 0 0 1px rgba(45,212,191,0.2), 0 0 24px rgba(13,148,136,0.4);
+        animation: logoPulse 3s ease-in-out infinite; flex-shrink: 0;
     }
-    .stTextInput>div>div>input:focus{
-        background:rgba(13,148,136,0.055) !important;
-        border-color:rgba(13,148,136,0.48) !important;
-        box-shadow:0 0 0 3px rgba(13,148,136,0.11),0 0 18px rgba(13,148,136,0.07) !important;
-    }
-    .stTextInput>div>div>input::placeholder{color:rgba(148,163,184,0.36) !important;}
-    label[data-testid="stWidgetLabel"]{
-        color:#64748b !important;font-size:0.68rem !important;
-        font-weight:800 !important;letter-spacing:0.07em !important;text-transform:uppercase !important;
+    @keyframes logoPulse {
+        0%, 100% { box-shadow: 0 0 0 1px rgba(45,212,191,0.2), 0 0 24px rgba(13,148,136,0.4); }
+        50%       { box-shadow: 0 0 0 1px rgba(45,212,191,0.35), 0 0 40px rgba(13,148,136,0.6); }
     }
 
-    /* Alerts */
-    .stSuccess{background:linear-gradient(135deg,rgba(5,150,105,0.11),rgba(13,148,136,0.06)) !important;border:1px solid rgba(5,150,105,0.28) !important;border-radius:11px !important;}
-    .stWarning{background:linear-gradient(135deg,rgba(245,158,11,0.08),rgba(252,211,77,0.04)) !important;border:1px solid rgba(245,158,11,0.26) !important;border-radius:11px !important;}
-    .stError{background:rgba(225,29,72,0.08) !important;border:1px solid rgba(225,29,72,0.26) !important;border-radius:11px !important;}
+    /* ── Status pill ── */
+    .status-pill {
+        display: inline-flex; align-items: center; gap: 7px;
+        padding: 6px 14px; border-radius: var(--radius-full);
+        background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+        font-size: 0.68rem; font-weight: 700;
+    }
+    .status-dot {
+        width: 6px; height: 6px; border-radius: 50%;
+        animation: blink 2.5s ease-in-out infinite;
+    }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
 
-    /* Progress bar */
-    .stProgress>div>div>div>div{
-        background:linear-gradient(90deg,#0d9488,#a78bfa,#f59e0b,#34d399) !important;
-        background-size:300% 100% !important;
-        animation:progShimmer 2s linear infinite !important;
-        border-radius:99px !important;
+    /* ── Metrics ── */
+    [data-testid="stMetric"] {
+        background: var(--surface) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: var(--radius-lg) !important;
+        padding: 1rem 1.2rem 1.2rem !important;
+        transition: all 0.25s ease !important;
     }
-    .stProgress>div{border-radius:99px !important;background:rgba(255,255,255,0.05) !important;height:5px !important;}
-    @keyframes progShimmer{0%{background-position:100% 0}100%{background-position:-100% 0}}
-
-    /* Expander */
-    .streamlit-expanderHeader{
-        background:rgba(13,148,136,0.06) !important;
-        border:1px solid rgba(13,148,136,0.2) !important;
-        border-radius:11px !important;color:var(--teal-lt) !important;
-        font-weight:700 !important;font-size:0.8rem !important;transition:all 0.2s ease !important;
+    [data-testid="stMetric"]:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 12px 32px rgba(0,0,0,0.35) !important;
+        border-color: rgba(255,255,255,0.1) !important;
     }
-    .streamlit-expanderHeader:hover{background:rgba(13,148,136,0.11) !important;}
-    .streamlit-expanderContent{
-        background:rgba(255,255,255,0.015) !important;
-        border:1px solid rgba(255,255,255,0.055) !important;
-        border-top:none !important;border-radius:0 0 11px 11px !important;
+    [data-testid="stMetricLabel"] {
+        color: var(--text-muted) !important; font-size: 0.6rem !important;
+        text-transform: uppercase !important; letter-spacing: 0.1em !important; font-weight: 800 !important;
     }
-
-    /* Sidebar nav items */
-    .sidebar-nav-item{
-        display:flex;align-items:center;gap:10px;
-        padding:9px 12px;border-radius:10px;margin-bottom:4px;
-        cursor:pointer;font-size:0.8rem;font-weight:600;color:#475569;
-        border:1px solid transparent;transition:all 0.2s ease;
-    }
-    .sidebar-nav-item:hover{background:rgba(255,255,255,0.04);color:#94a3b8;}
-    .sidebar-nav-item.active{
-        background:rgba(13,148,136,0.12);color:#2dd4bf;
-        border-color:rgba(13,148,136,0.25);
-    }
-    .sidebar-section-label{
-        font-size:0.58rem;font-weight:800;color:#1e3a5f;
-        text-transform:uppercase;letter-spacing:0.1em;
-        padding:8px 10px 4px;margin-bottom:2px;
-    }
-    .sidebar-divider{height:1px;background:rgba(255,255,255,0.05);margin:8px 0;}
-    .sidebar-status-item{
-        display:flex;align-items:center;gap:9px;
-        padding:8px 12px;border-radius:10px;margin-bottom:4px;
-    }
-    .sidebar-status-dot{
-        width:7px;height:7px;border-radius:50%;
-        background:#34d399;box-shadow:0 0 8px #34d399;flex-shrink:0;
+    [data-testid="stMetricValue"] {
+        color: #fff !important; font-size: 1.55rem !important;
+        font-weight: 900 !important; letter-spacing: -0.04em !important;
     }
 
-    /* Chat bubbles */
-    .chat-user{
-        background:linear-gradient(135deg,rgba(13,148,136,0.22),rgba(12,74,110,0.18));
-        border:1px solid rgba(13,148,136,0.28);border-radius:18px 4px 18px 18px;
-        padding:0.85rem 1.05rem;box-shadow:0 4px 20px rgba(13,148,136,0.1);
-        animation:slideRight 0.35s cubic-bezier(0.22,1,0.36,1);
+    /* ── Panel ── */
+    .panel {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        margin-bottom: 0.85rem;
     }
-    .chat-ai{
-        background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.07);
-        border-radius:4px 18px 18px 18px;padding:0.85rem 1.05rem;
-        box-shadow:0 4px 18px rgba(0,0,0,0.2);animation:slideLeft 0.35s cubic-bezier(0.22,1,0.36,1);
+    .panel-header {
+        padding: 0.8rem 1rem;
+        border-bottom: 1px solid var(--border);
+        display: flex; align-items: center; gap: 9px;
+        background: rgba(255,255,255,0.012);
     }
-    .chat-ai.rag{border-color:rgba(5,150,105,0.2);}
-    .chat-ai.fallback{border-color:rgba(245,158,11,0.2);}
-    @keyframes slideRight{from{opacity:0;transform:translateX(18px) scale(0.97)}to{opacity:1;transform:none}}
-    @keyframes slideLeft{from{opacity:0;transform:translateX(-18px) scale(0.97)}to{opacity:1;transform:none}}
+    .panel-body { padding: 1rem; }
+    .p-icon {
+        width: 28px; height: 28px; border-radius: 8px;
+        display: flex; align-items: center; justify-content: center; font-size: 0.8rem;
+    }
+    .p-icon-teal   { background: rgba(13,148,136,0.18); }
+    .p-icon-gold   { background: rgba(245,158,11,0.15); }
+    .p-icon-violet { background: rgba(124,58,237,0.15); }
+    .p-title { font-size: 0.78rem !important; font-weight: 800 !important; color: #fff !important; }
+    .p-sub   { font-size: 0.59rem; color: var(--text-muted); margin-top: 1px; }
 
-    /* Answer box */
-    .answer-box{border:none;background:transparent;padding:0;font-size:0.86rem;color:#e2e8f0;line-height:1.8;}
-    .answer-box h1,.answer-box h2,.answer-box h3,.answer-box h4{color:#2dd4bf !important;font-weight:700 !important;margin:0.7rem 0 0.35rem;}
-    .answer-box h1{font-size:1.1rem !important}.answer-box h2{font-size:1rem !important}
-    .answer-box h3{font-size:0.95rem !important}.answer-box h4{font-size:0.88rem !important}
-    .answer-box strong{color:#fcd34d;font-weight:700}
-    .answer-box em{color:#a78bfa;font-style:italic}
-    .answer-box code{
-        background:rgba(13,148,136,0.12);color:#2dd4bf;
-        font-family:'JetBrains Mono',monospace;font-size:0.78rem;
-        padding:2px 6px;border-radius:5px;border:1px solid rgba(13,148,136,0.2);
+    /* ── File uploader ── */
+    [data-testid="stFileUploader"] {
+        background: radial-gradient(ellipse at 50% 80%, rgba(13,148,136,0.06) 0%, transparent 70%) !important;
+        border: 2px dashed rgba(13,148,136,0.3) !important;
+        border-radius: var(--radius-md) !important;
+        padding: 1.2rem !important;
+        transition: all 0.25s ease !important;
     }
-    .answer-box pre{
-        background:rgba(0,0,0,0.32);border:1px solid rgba(255,255,255,0.07);
-        border-radius:10px;padding:0.85rem 1rem;overflow-x:auto;margin:0.6rem 0;
-    }
-    .answer-box pre code{background:transparent;border:none;padding:0;color:#e2e8f0;font-size:0.77rem;}
-    .answer-box ul,.answer-box ol{margin:0.35rem 0 0.35rem 1rem;padding:0;}
-    .answer-box li{margin-bottom:0.28rem;color:#cbd5e1;}
-    .answer-box li::marker{color:#0d9488;}
-    .answer-box p{margin:0.32rem 0;}
-    .answer-box blockquote{
-        border-left:3px solid rgba(13,148,136,0.52);margin:0.45rem 0;
-        padding:0.35rem 0 0.35rem 0.85rem;color:#94a3b8;font-style:italic;
-        background:rgba(13,148,136,0.04);border-radius:0 8px 8px 0;
+    [data-testid="stFileUploader"]:hover {
+        border-color: rgba(13,148,136,0.55) !important;
+        box-shadow: 0 0 28px rgba(13,148,136,0.1) !important;
     }
 
-    /* Scrollable chat area */
-    .chat-scroll-wrap{
-        max-height:520px;overflow-y:auto;padding-right:4px;
-        scrollbar-width:thin;scrollbar-color:rgba(13,148,136,0.4) transparent;
+    /* ── Buttons ── */
+    .stButton > button {
+        background: linear-gradient(135deg, #0d9488 0%, #0f766e 55%, #0c4a6e 100%) !important;
+        color: white !important;
+        border: 1px solid rgba(45,212,191,0.2) !important;
+        border-radius: var(--radius-md) !important;
+        font-weight: 700 !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
+        font-size: 0.82rem !important;
+        padding: 0.6rem 1.2rem !important;
+        box-shadow: 0 4px 18px rgba(13,148,136,0.28), inset 0 1px 0 rgba(255,255,255,0.08) !important;
+        transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+    .stButton > button:hover {
+        box-shadow: 0 8px 30px rgba(13,148,136,0.5), 0 0 0 1px rgba(45,212,191,0.35) !important;
+        transform: translateY(-2px) !important;
+    }
+    .stButton > button[kind="secondary"] {
+        background: rgba(255,255,255,0.03) !important;
+        border: 1px solid rgba(255,255,255,0.07) !important;
+        color: #475569 !important; box-shadow: none !important;
+    }
+    .stButton > button[kind="secondary"]:hover {
+        background: rgba(225,29,72,0.07) !important;
+        border-color: rgba(225,29,72,0.25) !important;
+        color: #fb7185 !important; transform: none !important;
     }
 
-    /* Confidence bars */
-    .conf-wrap{padding:3px 0 7px}
-    .conf-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
-    .conf-label{font-size:0.6rem;font-weight:800;color:#334155;text-transform:uppercase;letter-spacing:0.08em}
-    .conf-val{font-size:0.7rem;font-weight:900}
-    .conf-track{background:rgba(255,255,255,0.05);border-radius:99px;height:4px;overflow:hidden}
-    .conf-fill{height:100%;border-radius:99px;transition:width 1.2s cubic-bezier(0.4,0,0.2,1)}
-    .conf-high{background:linear-gradient(90deg,#059669,#34d399);box-shadow:0 0 9px rgba(52,211,153,0.6)}
-    .conf-medium{background:linear-gradient(90deg,#d97706,#f59e0b);box-shadow:0 0 9px rgba(245,158,11,0.6)}
-    .conf-low{background:linear-gradient(90deg,#be123c,#fb7185);box-shadow:0 0 9px rgba(225,29,72,0.6)}
-
-    /* Badges */
-    .badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:99px;font-size:0.63rem;font-weight:800;letter-spacing:0.04em;margin-bottom:5px}
-    .badge-rag{background:rgba(5,150,105,0.12);border:1px solid rgba(5,150,105,0.3);color:#34d399}
-    .badge-fallback{background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.3);color:#fbbf24}
-
-    /* Source cards */
-    .source-card{
-        background:rgba(13,148,136,0.04);border:1px solid rgba(255,255,255,0.055);
-        border-left:3px solid rgba(13,148,136,0.62);border-radius:10px;
-        padding:0.85rem 1rem;margin-bottom:0.55rem;transition:all 0.22s ease;
+    /* ── Text input ── */
+    .stTextInput > div > div > input {
+        background: rgba(255,255,255,0.03) !important;
+        border: 1px solid rgba(255,255,255,0.08) !important;
+        border-radius: var(--radius-md) !important;
+        color: var(--text) !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
+        font-size: 0.9rem !important;
+        padding: 0.72rem 1rem !important;
+        caret-color: var(--teal-lt) !important;
+        transition: all 0.22s ease !important;
     }
-    .source-card:hover{background:rgba(13,148,136,0.08);border-left-color:var(--teal-lt);}
-
-    /* Query input wrapper */
-    .query-wrap{
-        background:var(--surface);border:1px solid var(--border);
-        border-radius:16px;padding:0.75rem;
-        box-shadow:0 0 36px rgba(13,148,136,0.04);transition:all 0.3s ease;
+    .stTextInput > div > div > input:focus {
+        background: rgba(13,148,136,0.05) !important;
+        border-color: rgba(13,148,136,0.45) !important;
+        box-shadow: 0 0 0 3px rgba(13,148,136,0.1) !important;
     }
-    .query-wrap:focus-within{
-        border-color:rgba(13,148,136,0.4);
-        box-shadow:0 0 0 3px rgba(13,148,136,0.09),0 0 36px rgba(13,148,136,0.08);
+    .stTextInput > div > div > input::placeholder { color: rgba(148,163,184,0.3) !important; }
+    label[data-testid="stWidgetLabel"] {
+        color: var(--text-dim) !important; font-size: 0.65rem !important;
+        font-weight: 800 !important; letter-spacing: 0.08em !important; text-transform: uppercase !important;
     }
 
-    /* Thinking animation */
-    .thinking-bar{
-        display:flex;align-items:center;gap:10px;padding:11px 15px;border-radius:12px;
-        background:rgba(13,148,136,0.055);border:1px solid rgba(13,148,136,0.2);margin-bottom:9px;
+    /* ── Alerts ── */
+    .stSuccess {
+        background: linear-gradient(135deg, rgba(5,150,105,0.1), rgba(13,148,136,0.05)) !important;
+        border: 1px solid rgba(5,150,105,0.25) !important; border-radius: var(--radius-md) !important;
     }
-    .thinking-dots span{
-        display:inline-block;width:5px;height:5px;border-radius:50%;background:#2dd4bf;
-        margin:0 2px;animation:dotBounce 1.4s ease-in-out infinite;
+    .stWarning {
+        background: linear-gradient(135deg, rgba(245,158,11,0.07), rgba(252,211,77,0.03)) !important;
+        border: 1px solid rgba(245,158,11,0.22) !important; border-radius: var(--radius-md) !important;
     }
-    .thinking-dots span:nth-child(2){animation-delay:0.16s}
-    .thinking-dots span:nth-child(3){animation-delay:0.32s}
-    @keyframes dotBounce{0%,80%,100%{transform:scale(0.5);opacity:0.4}40%{transform:scale(1);opacity:1}}
-
-    /* File card */
-    .file-card{
-        background:rgba(29,78,216,0.07);border:1px solid rgba(29,78,216,0.2);
-        border-radius:11px;padding:9px 12px;display:flex;align-items:center;gap:10px;
-        margin-top:9px;box-shadow:0 0 18px rgba(29,78,216,0.07);
+    .stError {
+        background: rgba(225,29,72,0.07) !important;
+        border: 1px solid rgba(225,29,72,0.22) !important; border-radius: var(--radius-md) !important;
     }
 
-    /* Ready card */
-    .ready-card{
-        display:flex;align-items:center;gap:9px;
-        background:linear-gradient(135deg,rgba(5,150,105,0.13),rgba(13,148,136,0.07));
-        border:1px solid rgba(5,150,105,0.3);border-radius:11px;
-        padding:10px 13px;margin-top:9px;box-shadow:0 0 22px rgba(5,150,105,0.09);
-        animation:fadeUp 0.4s cubic-bezier(0.22,1,0.36,1);
+    /* ── Progress ── */
+    .stProgress > div > div > div > div {
+        background: linear-gradient(90deg, #0d9488, #a78bfa, #34d399) !important;
+        background-size: 200% 100% !important;
+        animation: shimmer 1.8s linear infinite !important;
+        border-radius: 99px !important;
     }
-    .ready-dot{
-        width:8px;height:8px;border-radius:50%;
-        background:#34d399;box-shadow:0 0 10px #34d399,0 0 22px rgba(52,211,153,0.45);
-        flex-shrink:0;animation:blink 2s ease-in-out infinite;
+    .stProgress > div { border-radius: 99px !important; background: rgba(255,255,255,0.05) !important; height: 4px !important; }
+    @keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
+
+    /* ── Expander ── */
+    .streamlit-expanderHeader {
+        background: rgba(13,148,136,0.05) !important;
+        border: 1px solid rgba(13,148,136,0.18) !important;
+        border-radius: var(--radius-md) !important;
+        color: var(--teal-lt) !important; font-weight: 700 !important; font-size: 0.78rem !important;
+        transition: all 0.2s ease !important;
     }
-
-    /* Processing steps */
-    .proc-step{display:flex;align-items:center;gap:7px;font-size:0.7rem;padding:3px 0;color:#475569;}
-    .proc-dot-done{width:6px;height:6px;border-radius:50%;background:#34d399;box-shadow:0 0 7px rgba(52,211,153,0.6);flex-shrink:0;}
-    .proc-dot-active{width:6px;height:6px;border-radius:50%;background:var(--teal-lt);box-shadow:0 0 7px rgba(45,212,191,0.6);flex-shrink:0;animation:blink 1s ease-in-out infinite;}
-
-    /* Suggested query buttons */
-    .how-card{background:rgba(245,158,11,0.04);border:1px solid rgba(245,158,11,0.13);border-radius:13px;padding:13px 14px;}
-    .how-num{width:21px;height:21px;border-radius:50%;background:rgba(245,158,11,0.13);border:1px solid rgba(245,158,11,0.28);display:inline-flex;align-items:center;justify-content:center;font-size:0.58rem;font-weight:900;color:#f59e0b;flex-shrink:0;}
-
-    /* Model stack rows */
-    .model-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
-    .model-row:last-child{border-bottom:none;}
-
-    /* Warn bar */
-    .warn-bar{
-        display:flex;align-items:center;gap:9px;padding:10px 14px;border-radius:11px;
-        background:rgba(245,158,11,0.055);border:1px solid rgba(245,158,11,0.2);margin-bottom:9px;
+    .streamlit-expanderHeader:hover { background: rgba(13,148,136,0.1) !important; }
+    .streamlit-expanderContent {
+        background: rgba(255,255,255,0.012) !important;
+        border: 1px solid rgba(255,255,255,0.05) !important;
+        border-top: none !important; border-radius: 0 0 var(--radius-md) var(--radius-md) !important;
     }
 
-    /* Empty state */
-    .empty-state{
-        text-align:center;padding:3rem 2rem;
-        background:radial-gradient(ellipse at 50% 55%,rgba(13,148,136,0.065) 0%,transparent 65%);
-        border-radius:18px;border:1px solid rgba(255,255,255,0.04);
+    /* ─────────────────────────────────────
+       SIDEBAR NAV
+    ───────────────────────────────────── */
+    .sidebar-nav-item {
+        display: flex; align-items: center; gap: 9px;
+        padding: 8px 11px; border-radius: var(--radius-sm); margin-bottom: 3px;
+        font-size: 0.78rem; font-weight: 600; color: var(--text-muted);
+        border: 1px solid transparent; transition: all 0.18s ease; cursor: pointer;
     }
-    .empty-icon{font-size:3rem;margin-bottom:14px;display:inline-block;animation:pulseScale 2.8s ease-in-out infinite;filter:drop-shadow(0 0 18px rgba(13,148,136,0.3));}
-    @keyframes pulseScale{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+    .sidebar-nav-item:hover { background: rgba(255,255,255,0.03); color: #94a3b8; }
+    .sidebar-nav-item.active {
+        background: rgba(13,148,136,0.1); color: var(--teal-lt);
+        border-color: rgba(13,148,136,0.22);
+    }
+    .sidebar-section { font-size: 0.56rem; font-weight: 900; color: #1e3a5f; text-transform: uppercase; letter-spacing: 0.12em; padding: 8px 10px 4px; }
+    .sidebar-divider { height: 1px; background: rgba(255,255,255,0.05); margin: 7px 0; }
+    .sidebar-status-item { display: flex; align-items: center; gap: 9px; padding: 7px 11px; border-radius: var(--radius-sm); margin-bottom: 3px; }
+    .sidebar-status-dot { width: 6px; height: 6px; border-radius: 50%; background: #34d399; box-shadow: 0 0 7px #34d399; flex-shrink: 0; }
 
-    /* Glow divider */
-    .glow-div{height:1px;margin:1.1rem 0;background:linear-gradient(90deg,transparent 0%,rgba(13,148,136,0.38) 25%,rgba(124,58,237,0.28) 60%,rgba(245,158,11,0.18) 80%,transparent 100%);}
+    /* ─────────────────────────────────────
+       CHAT AREA — Complete Redesign
+    ───────────────────────────────────── */
 
-    /* Footer */
-    .footer-bar{text-align:center;padding:0.65rem 0;font-size:0.68rem;color:#1e3a5f;font-weight:500;}
+    /* Chat container */
+    .chat-container {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-xl);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        min-height: 560px;
+    }
 
-    /* Metric color strips */
-    .strip-teal{height:3px;border-radius:2px;background:linear-gradient(90deg,#0d9488,#2dd4bf);box-shadow:0 0 10px rgba(13,148,136,0.4);margin-top:4px;}
-    .strip-gold{height:3px;border-radius:2px;background:linear-gradient(90deg,#d97706,#f59e0b);box-shadow:0 0 10px rgba(245,158,11,0.38);margin-top:4px;}
-    .strip-emerald{height:3px;border-radius:2px;background:linear-gradient(90deg,#059669,#34d399);box-shadow:0 0 10px rgba(52,211,153,0.38);margin-top:4px;}
-    .strip-violet{height:3px;border-radius:2px;background:linear-gradient(90deg,#7c3aed,#a78bfa);box-shadow:0 0 10px rgba(124,58,237,0.38);margin-top:4px;}
+    /* Chat header bar */
+    .chat-topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.9rem 1.1rem;
+        border-bottom: 1px solid var(--border);
+        background: rgba(255,255,255,0.015);
+        flex-shrink: 0;
+    }
+    .chat-topbar-left { display: flex; align-items: center; gap: 10px; }
+    .chat-topbar-icon {
+        width: 34px; height: 34px; border-radius: 10px;
+        background: linear-gradient(135deg, rgba(13,148,136,0.25), rgba(12,74,110,0.2));
+        border: 1px solid rgba(13,148,136,0.25);
+        display: flex; align-items: center; justify-content: center; font-size: 0.95rem;
+        box-shadow: 0 0 14px rgba(13,148,136,0.15);
+    }
+    .chat-topbar-title { font-size: 0.88rem; font-weight: 800; color: #fff; }
+    .chat-topbar-sub   { font-size: 0.6rem; color: var(--text-muted); margin-top: 1px; }
+    .chat-msg-badge {
+        display: inline-flex; align-items: center; gap: 5px;
+        padding: 3px 10px; border-radius: var(--radius-full);
+        background: rgba(13,148,136,0.1); border: 1px solid rgba(13,148,136,0.22);
+        font-size: 0.6rem; font-weight: 800; color: var(--teal-lt);
+    }
 
-    @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+    /* Scroll wrapper */
+    .chat-messages-wrap {
+        flex: 1;
+        overflow-y: auto;
+        padding: 1.2rem 1.1rem;
+        scroll-behavior: smooth;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(13,148,136,0.3) transparent;
+        max-height: 500px;
+    }
+
+    /* Message block (one full exchange) */
+    .msg-block {
+        margin-bottom: 1.4rem;
+        animation: msgIn 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    @keyframes msgIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+    /* User row */
+    .msg-user-row {
+        display: flex; align-items: flex-end; justify-content: flex-end; gap: 10px;
+        margin-bottom: 8px;
+    }
+    .msg-user-bubble {
+        max-width: 72%;
+        background: linear-gradient(145deg, rgba(13,148,136,0.22), rgba(12,74,110,0.17));
+        border: 1px solid rgba(45,212,191,0.22);
+        border-radius: 18px 4px 18px 18px;
+        padding: 0.75rem 1rem;
+        box-shadow: 0 4px 20px rgba(13,148,136,0.1), inset 0 1px 0 rgba(255,255,255,0.05);
+        position: relative;
+    }
+    .msg-user-text {
+        font-size: 0.87rem; color: #dbeafe; line-height: 1.65; margin: 0;
+    }
+    .msg-user-avatar {
+        width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+        background: linear-gradient(135deg, #0d9488, #0c4a6e);
+        display: flex; align-items: center; justify-content: center; font-size: 0.75rem;
+        box-shadow: 0 0 10px rgba(13,148,136,0.4); border: 1.5px solid rgba(45,212,191,0.2);
+    }
+
+    /* AI row */
+    .msg-ai-row {
+        display: flex; align-items: flex-start; justify-content: flex-start; gap: 10px;
+    }
+    .msg-ai-avatar {
+        width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0; margin-top: 18px;
+        display: flex; align-items: center; justify-content: center; font-size: 0.75rem;
+        border: 1.5px solid rgba(255,255,255,0.1);
+    }
+    .msg-ai-avatar-rag {
+        background: linear-gradient(135deg, #059669, #0d9488);
+        box-shadow: 0 0 10px rgba(5,150,105,0.4);
+        border-color: rgba(52,211,153,0.25);
+    }
+    .msg-ai-avatar-fallback {
+        background: linear-gradient(135deg, #d97706, #f59e0b);
+        box-shadow: 0 0 10px rgba(245,158,11,0.4);
+        border-color: rgba(251,191,36,0.25);
+    }
+    .msg-ai-content { max-width: 84%; display: flex; flex-direction: column; gap: 5px; }
+
+    /* Mode badge */
+    .mode-badge {
+        display: inline-flex; align-items: center; gap: 5px;
+        padding: 3px 10px; border-radius: var(--radius-full);
+        font-size: 0.6rem; font-weight: 800; letter-spacing: 0.04em;
+        width: fit-content; margin-bottom: 2px;
+    }
+    .mode-badge-rag {
+        background: rgba(5,150,105,0.1); border: 1px solid rgba(5,150,105,0.28); color: #34d399;
+    }
+    .mode-badge-fallback {
+        background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.28); color: #fbbf24;
+    }
+
+    /* AI bubble */
+    .msg-ai-bubble {
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: 4px 18px 18px 18px;
+        padding: 0.85rem 1.05rem;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+        transition: border-color 0.2s ease;
+    }
+    .msg-ai-bubble-rag     { border-color: rgba(5,150,105,0.18); }
+    .msg-ai-bubble-fallback { border-color: rgba(245,158,11,0.18); }
+    .msg-ai-bubble:hover   { border-color: rgba(255,255,255,0.1); }
+
+    /* Answer text */
+    .answer-box {
+        font-size: 0.87rem; color: #cbd5e1; line-height: 1.78; padding: 0;
+    }
+    .answer-box h1, .answer-box h2, .answer-box h3, .answer-box h4 {
+        color: #2dd4bf !important; font-weight: 700 !important; margin: 0.65rem 0 0.3rem;
+    }
+    .answer-box h1 { font-size: 1.05rem !important; }
+    .answer-box h2 { font-size: 0.98rem !important; }
+    .answer-box h3 { font-size: 0.92rem !important; }
+    .answer-box h4 { font-size: 0.86rem !important; }
+    .answer-box strong { color: #fcd34d; font-weight: 700; }
+    .answer-box em     { color: #a78bfa; font-style: italic; }
+    .answer-box code {
+        background: rgba(13,148,136,0.1); color: #2dd4bf;
+        font-family: 'JetBrains Mono', monospace; font-size: 0.77rem;
+        padding: 2px 6px; border-radius: 5px; border: 1px solid rgba(13,148,136,0.18);
+    }
+    .answer-box pre {
+        background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.07);
+        border-radius: var(--radius-sm); padding: 0.8rem 1rem; overflow-x: auto; margin: 0.55rem 0;
+    }
+    .answer-box pre code { background: transparent; border: none; padding: 0; color: #e2e8f0; font-size: 0.76rem; }
+    .answer-box ul, .answer-box ol { margin: 0.3rem 0 0.3rem 1.1rem; padding: 0; }
+    .answer-box li { margin-bottom: 0.25rem; color: #94a3b8; }
+    .answer-box li::marker { color: #0d9488; }
+    .answer-box p { margin: 0.28rem 0; }
+    .answer-box blockquote {
+        border-left: 3px solid rgba(13,148,136,0.5); margin: 0.4rem 0;
+        padding: 0.3rem 0 0.3rem 0.8rem; color: #64748b; font-style: italic;
+        background: rgba(13,148,136,0.035); border-radius: 0 6px 6px 0;
+    }
+
+    /* Confidence bar */
+    .conf-wrap { padding: 4px 0 8px; }
+    .conf-row  { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+    .conf-label { font-size: 0.58rem; font-weight: 800; color: #1e3a5f; text-transform: uppercase; letter-spacing: 0.09em; }
+    .conf-val   { font-size: 0.68rem; font-weight: 900; }
+    .conf-track { background: rgba(255,255,255,0.04); border-radius: 99px; height: 3px; overflow: hidden; }
+    .conf-fill  { height: 100%; border-radius: 99px; transition: width 1.1s cubic-bezier(0.4,0,0.2,1); }
+    .conf-high   { background: linear-gradient(90deg,#059669,#34d399); box-shadow: 0 0 8px rgba(52,211,153,0.5); }
+    .conf-medium { background: linear-gradient(90deg,#d97706,#f59e0b); box-shadow: 0 0 8px rgba(245,158,11,0.5); }
+    .conf-low    { background: linear-gradient(90deg,#be123c,#fb7185); box-shadow: 0 0 8px rgba(225,29,72,0.5); }
+
+    /* Source card */
+    .source-card {
+        background: rgba(13,148,136,0.03); border: 1px solid rgba(255,255,255,0.05);
+        border-left: 3px solid rgba(13,148,136,0.55); border-radius: var(--radius-sm);
+        padding: 0.75rem 0.9rem; margin-bottom: 0.5rem; transition: all 0.2s ease;
+    }
+    .source-card:hover {
+        background: rgba(13,148,136,0.07); border-left-color: var(--teal-lt);
+        transform: translateX(2px);
+    }
+    .source-card-header {
+        display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;
+    }
+    .source-label { font-size: 0.58rem; font-weight: 900; color: #2dd4bf; text-transform: uppercase; letter-spacing: 0.08em; }
+    .source-page  { font-size: 0.56rem; color: var(--text-muted); font-weight: 700; background: rgba(255,255,255,0.04); padding: 2px 7px; border-radius: 99px; border: 1px solid rgba(255,255,255,0.07); }
+    .source-text  { font-size: 0.73rem; color: #475569; line-height: 1.62; font-family: 'JetBrains Mono', monospace; margin: 0; }
+
+    /* Message divider */
+    .msg-divider { height: 1px; background: rgba(255,255,255,0.035); margin: 0.5rem 0 1.2rem; }
+
+    /* ─────────────────────────────────────
+       INPUT AREA
+    ───────────────────────────────────── */
+    .input-area {
+        border-top: 1px solid var(--border);
+        padding: 0.9rem 1.1rem;
+        background: rgba(255,255,255,0.01);
+        flex-shrink: 0;
+    }
+    .input-hint {
+        font-size: 0.58rem; color: var(--text-dim); text-align: center; margin-top: 6px;
+        display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .kbd {
+        background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+        padding: 1px 6px; border-radius: 4px; font-size: 0.55rem; font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ── Thinking indicator ── */
+    .thinking-bar {
+        display: flex; align-items: center; gap: 10px;
+        padding: 10px 14px; border-radius: var(--radius-md);
+        background: rgba(13,148,136,0.05); border: 1px solid rgba(13,148,136,0.18);
+        margin-bottom: 8px;
+    }
+    .thinking-dots span {
+        display: inline-block; width: 5px; height: 5px; border-radius: 50%;
+        background: var(--teal-lt); margin: 0 2px;
+        animation: dotBounce 1.4s ease-in-out infinite;
+    }
+    .thinking-dots span:nth-child(2) { animation-delay: 0.14s; }
+    .thinking-dots span:nth-child(3) { animation-delay: 0.28s; }
+    @keyframes dotBounce { 0%, 80%, 100% { transform: scale(0.5); opacity: 0.35; } 40% { transform: scale(1.1); opacity: 1; } }
+
+    /* ── Empty state ── */
+    .empty-state {
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        text-align: center; padding: 3.5rem 2rem;
+        background: radial-gradient(ellipse at 50% 50%, rgba(13,148,136,0.055) 0%, transparent 65%);
+        min-height: 380px;
+    }
+    .empty-icon {
+        font-size: 2.6rem; margin-bottom: 1rem;
+        animation: floatIcon 3s ease-in-out infinite;
+        filter: drop-shadow(0 0 16px rgba(13,148,136,0.28));
+    }
+    @keyframes floatIcon { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+    .empty-title { font-size: 1.05rem; font-weight: 900; color: #fff; margin-bottom: 6px; }
+    .empty-sub   { font-size: 0.78rem; color: #334155; max-width: 340px; line-height: 1.7; margin-bottom: 1.2rem; }
+    .empty-chips { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+    .empty-chip {
+        font-size: 0.62rem; padding: 4px 11px; border-radius: var(--radius-full);
+        font-weight: 700; cursor: default;
+    }
+
+    /* ── Warn bar ── */
+    .warn-bar {
+        display: flex; align-items: center; gap: 9px;
+        padding: 10px 14px; border-radius: var(--radius-md);
+        background: rgba(245,158,11,0.05); border: 1px solid rgba(245,158,11,0.18);
+        margin-bottom: 8px;
+    }
+
+    /* ── File card ── */
+    .file-card {
+        background: rgba(29,78,216,0.07); border: 1px solid rgba(29,78,216,0.18);
+        border-radius: var(--radius-md); padding: 9px 12px;
+        display: flex; align-items: center; gap: 10px; margin-top: 9px;
+    }
+
+    /* ── Ready card ── */
+    .ready-card {
+        display: flex; align-items: center; gap: 9px;
+        background: linear-gradient(135deg, rgba(5,150,105,0.11), rgba(13,148,136,0.06));
+        border: 1px solid rgba(5,150,105,0.25); border-radius: var(--radius-md);
+        padding: 10px 13px; margin-top: 9px;
+        box-shadow: 0 0 20px rgba(5,150,105,0.07);
+        animation: fadeUp 0.4s cubic-bezier(0.22,1,0.36,1);
+    }
+    .ready-dot {
+        width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+        background: #34d399; box-shadow: 0 0 9px #34d399, 0 0 20px rgba(52,211,153,0.4);
+        animation: blink 2s ease-in-out infinite;
+    }
+
+    /* ── Proc steps ── */
+    .proc-step { display: flex; align-items: center; gap: 7px; font-size: 0.7rem; padding: 3px 0; }
+    .dot-done   { width: 6px; height: 6px; border-radius: 50%; background: #34d399; box-shadow: 0 0 6px rgba(52,211,153,0.6); flex-shrink: 0; }
+    .dot-active { width: 6px; height: 6px; border-radius: 50%; background: var(--teal-lt); box-shadow: 0 0 6px rgba(45,212,191,0.6); flex-shrink: 0; animation: blink 1s ease-in-out infinite; }
+
+    /* ── Suggested query buttons ── */
+    .how-card { background: rgba(245,158,11,0.04); border: 1px solid rgba(245,158,11,0.12); border-radius: var(--radius-md); padding: 12px 13px; }
+    .how-num  { width: 20px; height: 20px; border-radius: 50%; background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.25); display: inline-flex; align-items: center; justify-content: center; font-size: 0.56rem; font-weight: 900; color: #f59e0b; flex-shrink: 0; }
+
+    /* ── Model stack ── */
+    .model-row { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .model-row:last-child { border-bottom: none; }
+
+    /* ── Metric strips ── */
+    .strip-teal    { height: 2px; border-radius: 2px; background: linear-gradient(90deg,#0d9488,#2dd4bf); box-shadow: 0 0 8px rgba(13,148,136,0.35); margin-top: 4px; }
+    .strip-gold    { height: 2px; border-radius: 2px; background: linear-gradient(90deg,#d97706,#f59e0b); box-shadow: 0 0 8px rgba(245,158,11,0.32); margin-top: 4px; }
+    .strip-emerald { height: 2px; border-radius: 2px; background: linear-gradient(90deg,#059669,#34d399); box-shadow: 0 0 8px rgba(52,211,153,0.32); margin-top: 4px; }
+    .strip-violet  { height: 2px; border-radius: 2px; background: linear-gradient(90deg,#7c3aed,#a78bfa); box-shadow: 0 0 8px rgba(124,58,237,0.32); margin-top: 4px; }
+
+    /* ── Glow divider ── */
+    .glow-div {
+        height: 1px; margin: 1rem 0;
+        background: linear-gradient(90deg, transparent 0%, rgba(13,148,136,0.32) 25%, rgba(124,58,237,0.22) 65%, transparent 100%);
+    }
+
+    /* ── Footer ── */
+    .footer-bar { text-align: center; padding: 0.6rem 0; font-size: 0.66rem; color: #1e3a5f; font-weight: 500; }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
     </style>
     """, unsafe_allow_html=True)
 
 
 # ═══════════════════════════════════════════════════════
-# SESSION STATE INITIALISATION
+# SESSION STATE
 # ═══════════════════════════════════════════════════════
 def init_session_state():
     defaults = {
-        "db_ready":       False,
-        "last_file":      None,
-        "chat_history":   [],
-        "total_queries":  0,
-        "total_docs":     0,
-        "conf_scores":    [],
-        "prefill_query":  "",
-        "auto_submit":    False,
-        "active_tab":     "chat",
+        "db_ready":      False,
+        "last_file":     None,
+        "chat_history":  [],
+        "total_queries": 0,
+        "total_docs":    0,
+        "conf_scores":   [],
+        "prefill_query": "",
+        "auto_submit":   False,
+        "input_key":     0,
     }
     for k, v in defaults.items():
         if k not in st.session_state:
@@ -444,11 +654,11 @@ def init_session_state():
 
 
 # ═══════════════════════════════════════════════════════
-# UTILITY FUNCTIONS
+# UTILITY
 # ═══════════════════════════════════════════════════════
 def avg_confidence() -> int:
-    scores = st.session_state.conf_scores
-    return int(sum(scores) / len(scores)) if scores else 0
+    s = st.session_state.conf_scores
+    return int(sum(s) / len(s)) if s else 0
 
 
 def conf_bar_html(value: int) -> str:
@@ -460,8 +670,8 @@ def conf_bar_html(value: int) -> str:
         cls, label, color = "conf-low",    "Low",    "#fb7185"
     return (
         '<div class="conf-wrap">'
-        '<div class="conf-meta">'
-        '<span class="conf-label">Confidence Score</span>'
+        '<div class="conf-row">'
+        '<span class="conf-label">Confidence</span>'
         f'<span class="conf-val" style="color:{color};">{label} · {value}%</span>'
         '</div>'
         '<div class="conf-track">'
@@ -471,28 +681,24 @@ def conf_bar_html(value: int) -> str:
 
 
 def render_markdown_to_html(text: str) -> str:
-    """Convert markdown text to safe HTML for use inside answer-box divs."""
-    text = text.replace("&", "&").replace("<", "<").replace(">", ">")
+    text = text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
     def replace_code_block(m):
         lang = m.group(1).strip() if m.group(1) else ""
         code = m.group(2)
         lang_label = (
-            f'<span style="font-size:0.58rem;color:#475569;font-weight:700;">{lang}</span>'
+            f'<span style="font-size:0.57rem;color:#475569;font-weight:700;">{lang}</span>'
             if lang else ""
         )
         return f"<pre>{lang_label}<code>{code}</code></pre>"
 
     text = re.sub(r"```(\w*)\n?(.*?)```", replace_code_block, text, flags=re.DOTALL)
-    text = re.sub(r"`([^`]+)`", r"<code>\1</code>", text)
-
+    text = re.sub(r"`([^`]+)`",    r"<code>\1</code>", text)
     text = re.sub(r"^####\s+(.+)$", r"<h4>\1</h4>", text, flags=re.MULTILINE)
     text = re.sub(r"^###\s+(.+)$",  r"<h3>\1</h3>",  text, flags=re.MULTILINE)
     text = re.sub(r"^##\s+(.+)$",   r"<h2>\1</h2>",   text, flags=re.MULTILINE)
     text = re.sub(r"^#\s+(.+)$",    r"<h1>\1</h1>",    text, flags=re.MULTILINE)
-    text = re.sub(r"^-{3,}$",       "<hr>",                text, flags=re.MULTILINE)
-    text = re.sub(r"^\*{3,}$",      "<hr>",                text, flags=re.MULTILINE)
-
+    text = re.sub(r"^-{3,}$",       "<hr>",            text, flags=re.MULTILINE)
     text = re.sub(r"\*\*\*(.+?)\*\*\*", r"<strong><em>\1</em></strong>", text)
     text = re.sub(r"\*\*(.+?)\*\*",     r"<strong>\1</strong>", text)
     text = re.sub(r"__(.+?)__",          r"<strong>\1</strong>", text)
@@ -528,21 +734,24 @@ def render_markdown_to_html(text: str) -> str:
 
 
 # ═══════════════════════════════════════════════════════
-# REUSABLE UI COMPONENTS
+# REUSABLE COMPONENTS
 # ═══════════════════════════════════════════════════════
 def panel_open(icon: str, title: str, sub: str, icon_cls: str = "p-icon-teal"):
     st.markdown(
-        f'<div class="panel-head">'
+        '<div class="panel">'
+        '<div class="panel-header">'
         f'<div class="p-icon {icon_cls}">{icon}</div>'
-        f'<div><div class="p-title">{title}</div>'
-        f'<div class="p-sub">{sub}</div></div></div>'
-        f'<div class="panel-body">',
+        '<div>'
+        f'<div class="p-title">{title}</div>'
+        f'<div class="p-sub">{sub}</div>'
+        '</div></div>'
+        '<div class="panel-body">',
         unsafe_allow_html=True,
     )
 
 
 def panel_close():
-    st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("</div></div>", unsafe_allow_html=True)
 
 
 def proc_step_html(icon: str, msg: str, color: str, dot_cls: str) -> str:
@@ -554,88 +763,70 @@ def proc_step_html(icon: str, msg: str, color: str, dot_cls: str) -> str:
     )
 
 
-def render_thinking_indicator():
-    return (
-        '<div class="thinking-bar">'
-        '<div class="thinking-dots"><span></span><span></span><span></span></div>'
-        '<span style="font-size:0.8rem;color:#2dd4bf;font-weight:600;">Reasoning through your document…</span>'
-        '</div>'
-    )
-
-
+# ═══════════════════════════════════════════════════════
+# CHAT MESSAGE RENDERER
+# ═══════════════════════════════════════════════════════
 def render_chat_message(chat: dict, index: int, total: int):
-    """Render a single chat exchange (user + AI bubble)."""
-    is_rag     = chat.get("mode") == "rag"
-    bubble_cls = "rag" if is_rag else "fallback"
-    badge_html = (
-        '<span class="badge badge-rag">📄 From Document</span>'
-        if is_rag else
-        '<span class="badge badge-fallback">🌐 General Knowledge</span>'
-    )
-    av_style = (
-        "background:linear-gradient(135deg,#059669,#0d9488);box-shadow:0 0 12px rgba(5,150,105,0.42);"
-        if is_rag else
-        "background:linear-gradient(135deg,#d97706,#f59e0b);box-shadow:0 0 12px rgba(245,158,11,0.42);"
-    )
+    is_rag   = chat.get("mode") == "rag"
+    mode_cls = "rag" if is_rag else "fallback"
+    badge_text = "📄 From Document" if is_rag else "🌐 General Knowledge"
+    ai_av_cls  = "msg-ai-avatar-rag" if is_rag else "msg-ai-avatar-fallback"
+    ai_av_icon = "🤖"
+    bubble_cls = f"msg-ai-bubble-{mode_cls}"
 
-    # User bubble
+    # User message
     st.markdown(
-        '<div style="display:flex;justify-content:flex-end;align-items:flex-end;gap:9px;margin-bottom:7px;">'
-        '<div style="max-width:76%;">'
-        '<div class="chat-user">'
-        f'<p style="margin:0;font-size:0.86rem;color:#e2e8f0;line-height:1.65;">{html_module.escape(chat["question"])}</p>'
-        '</div></div>'
-        '<div style="width:32px;height:32px;border-radius:50%;'
-        'background:linear-gradient(135deg,#0d9488,#0c4a6e);'
-        'display:flex;align-items:center;justify-content:center;font-size:0.78rem;flex-shrink:0;'
-        'box-shadow:0 0 12px rgba(13,148,136,0.42);">👤</div>'
+        '<div class="msg-user-row">'
+        '<div class="msg-user-bubble">'
+        f'<p class="msg-user-text">{html_module.escape(chat["question"])}</p>'
+        '</div>'
+        '<div class="msg-user-avatar">👤</div>'
         '</div>',
         unsafe_allow_html=True,
     )
 
     rendered_answer = render_markdown_to_html(chat["answer"])
 
-    # AI bubble
+    # AI message
     st.markdown(
-        '<div style="display:flex;justify-content:flex-start;align-items:flex-start;gap:9px;margin-bottom:5px;">'
-        f'<div style="width:32px;height:32px;border-radius:50%;{av_style}'
-        'display:flex;align-items:center;justify-content:center;font-size:0.78rem;flex-shrink:0;margin-top:20px;">🤖</div>'
-        '<div style="max-width:84%;">'
-        + badge_html +
-        f'<div class="chat-ai {bubble_cls}">'
+        '<div class="msg-ai-row">'
+        f'<div class="msg-ai-avatar {ai_av_cls}">{ai_av_icon}</div>'
+        '<div class="msg-ai-content">'
+        f'<span class="mode-badge mode-badge-{mode_cls}">{badge_text}</span>'
+        f'<div class="msg-ai-bubble {bubble_cls}">'
         f'<div class="answer-box">{rendered_answer}</div>'
-        '</div></div></div>',
+        '</div>'
+        '</div></div>',
         unsafe_allow_html=True,
     )
 
-    # Confidence bar
+    # Confidence bar (only for RAG)
     if is_rag and chat.get("confidence", 0) > 0:
-        st.markdown(conf_bar_html(chat["confidence"]), unsafe_allow_html=True)
+        st.markdown(
+            f'<div style="padding-left:40px;">{conf_bar_html(chat["confidence"])}</div>',
+            unsafe_allow_html=True,
+        )
 
     # Sources expander
     chat_docs = chat.get("docs", [])
     if is_rag and chat_docs:
-        with st.expander(f"📚  Sources for this answer ({len(chat_docs)} chunks)"):
+        with st.expander(f"📚 View sources  ·  {len(chat_docs)} chunk{'s' if len(chat_docs) != 1 else ''}"):
             for idx, doc in enumerate(chat_docs):
-                page_label = f"Page {doc.get('page', '?')}"
-                snippet    = doc.get("content", "")[:400]
-                safe_snippet = html_module.escape(snippet)
+                page    = doc.get("page", "?")
+                snippet = html_module.escape(doc.get("content", "")[:420])
                 st.markdown(
                     '<div class="source-card">'
-                    '<div style="display:flex;justify-content:space-between;margin-bottom:6px;">'
-                    f'<span style="font-size:0.6rem;font-weight:900;color:#2dd4bf;text-transform:uppercase;letter-spacing:0.08em;">📄 Source {idx + 1}</span>'
-                    f'<span style="font-size:0.58rem;color:#475569;font-weight:700;">{page_label}</span>'
+                    '<div class="source-card-header">'
+                    f'<span class="source-label">Source {idx + 1}</span>'
+                    f'<span class="source-page">Page {page}</span>'
                     '</div>'
-                    f'<p style="margin:0;font-size:0.75rem;color:#94a3b8;line-height:1.65;font-family:\'JetBrains Mono\',monospace;">{safe_snippet}…</p>'
+                    f'<p class="source-text">{snippet}…</p>'
                     '</div>',
                     unsafe_allow_html=True,
                 )
 
     if index < total - 1:
-        st.markdown(
-            '<div style="height:1px;background:rgba(255,255,255,0.04);margin:9px 0;"></div>',
-            unsafe_allow_html=True,
-        )
+        st.markdown('<div class="msg-divider"></div>', unsafe_allow_html=True)
 
 
 # ═══════════════════════════════════════════════════════
@@ -643,55 +834,51 @@ def render_chat_message(chat: dict, index: int, total: int):
 # ═══════════════════════════════════════════════════════
 def render_sidebar():
     with st.sidebar:
-        # Logo
+        # Logo & brand
         st.markdown(
-            '<div style="display:flex;align-items:center;gap:9px;padding:0.5rem 0 1rem;">'
+            '<div style="display:flex;align-items:center;gap:10px;padding:0.4rem 0 1rem;">'
             '<div class="logo-box">🧠</div>'
             '<div>'
-            '<div class="app-title" style="font-size:1.15rem;">RAG Assistant</div>'
-            '<div style="font-size:0.58rem;color:#334155;margin-top:2px;">Document Intelligence</div>'
+            '<div class="app-title" style="font-size:1.1rem;">RAG Assistant</div>'
+            '<div style="font-size:0.57rem;color:#1e3a5f;margin-top:2px;font-weight:500;">Document Intelligence</div>'
             '</div></div>',
             unsafe_allow_html=True,
         )
 
         st.markdown('<div class="sidebar-divider"></div>', unsafe_allow_html=True)
-        st.markdown('<div class="sidebar-section-label">Navigation</div>', unsafe_allow_html=True)
+        st.markdown('<div class="sidebar-section">Navigation</div>', unsafe_allow_html=True)
 
-        # Nav buttons
-        tabs = [("💬", "Chat"), ("📚", "Knowledge Base"), ("⚙️", "Settings")]
-        for icon, label in tabs:
+        for icon, label in [("💬", "Chat"), ("📚", "Knowledge Base"), ("⚙️", "Settings")]:
             active = st.session_state.get("active_tab", "chat") == label.lower().replace(" ", "_")
-            active_cls = "active" if active else ""
             st.markdown(
-                f'<div class="sidebar-nav-item {active_cls}">'
-                f'<span>{icon}</span> {label}</div>',
+                f'<div class="sidebar-nav-item {"active" if active else ""}">'
+                f'<span>{icon}</span>{label}</div>',
                 unsafe_allow_html=True,
             )
 
         st.markdown('<div class="sidebar-divider"></div>', unsafe_allow_html=True)
-        st.markdown('<div class="sidebar-section-label">Pipeline Status</div>', unsafe_allow_html=True)
+        st.markdown('<div class="sidebar-section">Pipeline Status</div>', unsafe_allow_html=True)
 
-        components = [
+        for icon, name, role, color in [
             ("🤖", "Mistral Small", "Primary LLM",   "#2dd4bf"),
             ("🗄️",  "ChromaDB",     "Vector Store",  "#60a5fa"),
             ("🔢", "HuggingFace",  "Embeddings",    "#fcd34d"),
             ("🔗", "LangChain",    "RAG Pipeline",  "#34d399"),
-        ]
-        for icon, name, role, color in components:
+        ]:
             st.markdown(
                 f'<div class="sidebar-status-item">'
                 f'<div class="sidebar-status-dot"></div>'
-                f'<div><div style="font-size:0.72rem;font-weight:700;color:{color};">{icon} {name}</div>'
-                f'<div style="font-size:0.58rem;color:#334155;">{role}</div></div>'
-                f'</div>',
+                f'<div>'
+                f'<div style="font-size:0.7rem;font-weight:700;color:{color};">{icon} {name}</div>'
+                f'<div style="font-size:0.57rem;color:#1e3a5f;">{role}</div>'
+                f'</div></div>',
                 unsafe_allow_html=True,
             )
 
         st.markdown('<div class="sidebar-divider"></div>', unsafe_allow_html=True)
 
-        # Clear chat
         if st.session_state.chat_history:
-            if st.button("🗑️  Clear Chat History", use_container_width=True, type="secondary"):
+            if st.button("🗑️  Clear Chat", use_container_width=True, type="secondary"):
                 st.session_state.chat_history  = []
                 st.session_state.total_queries = 0
                 st.session_state.conf_scores   = []
@@ -709,12 +896,12 @@ def render_header():
     hdr_l, hdr_r = st.columns([3, 1])
     with hdr_l:
         st.markdown(
-            '<div style="display:flex;align-items:center;padding-bottom:1.25rem;'
-            'border-bottom:1px solid rgba(255,255,255,0.06);margin-bottom:1.25rem;">'
+            '<div style="display:flex;align-items:center;gap:12px;padding-bottom:1.2rem;'
+            'border-bottom:1px solid rgba(255,255,255,0.06);margin-bottom:1.2rem;">'
             '<div class="logo-box">🧠</div>'
             '<div>'
-            '<div class="app-title">RAG Assistant</div>'
-            '<div style="font-size:0.68rem;color:#3d5475;font-weight:500;margin-top:3px;">'
+            '<div class="app-title" style="font-size:1.75rem;">RAG Assistant</div>'
+            '<div style="font-size:0.67rem;color:#1e3a5f;margin-top:3px;font-weight:500;">'
             'Document Intelligence &nbsp;·&nbsp; Mistral Small + ChromaDB + LangChain'
             '</div></div></div>',
             unsafe_allow_html=True,
@@ -723,7 +910,7 @@ def render_header():
         st.markdown(
             '<div style="text-align:right;padding-top:8px;">'
             '<div class="status-pill">'
-            f'<span class="status-dot" style="background:{status_color};box-shadow:0 0 8px {status_color},0 0 18px {status_color}40;"></span>'
+            f'<span class="status-dot" style="background:{status_color};box-shadow:0 0 7px {status_color};"></span>'
             f'<span style="color:{status_color};">{status_label}</span>'
             '</div></div>',
             unsafe_allow_html=True,
@@ -731,49 +918,45 @@ def render_header():
 
 
 # ═══════════════════════════════════════════════════════
-# METRICS ROW
+# METRICS
 # ═══════════════════════════════════════════════════════
 def render_metrics():
     m1, m2, m3, m4 = st.columns(4)
     conf_val = f"{avg_confidence()}%" if st.session_state.conf_scores else "—"
-
     with m1:
-        st.metric("📄  Documents", st.session_state.total_docs)
+        st.metric("📄  Documents",     st.session_state.total_docs)
         st.markdown('<div class="strip-teal"></div>', unsafe_allow_html=True)
     with m2:
-        st.metric("💬  Queries", st.session_state.total_queries)
+        st.metric("💬  Queries",        st.session_state.total_queries)
         st.markdown('<div class="strip-gold"></div>', unsafe_allow_html=True)
     with m3:
         st.metric("📊  Avg Confidence", conf_val)
         st.markdown('<div class="strip-emerald"></div>', unsafe_allow_html=True)
     with m4:
-        st.metric("⚡  Model", "Mistral Small")
+        st.metric("⚡  Model",          "Mistral Small")
         st.markdown('<div class="strip-violet"></div>', unsafe_allow_html=True)
-
     st.markdown('<div class="glow-div"></div>', unsafe_allow_html=True)
 
 
 # ═══════════════════════════════════════════════════════
-# LEFT COLUMN — Upload + Suggestions + Model Stack
+# LEFT COLUMN
 # ═══════════════════════════════════════════════════════
 def render_left_column():
-    # ── Document Upload ────────────────────────────────
+    # ── Upload ──────────────────────────────────────────
     panel_open("📁", "Document Upload", "PDF files · up to 50 MB", "p-icon-teal")
-    uploaded_file = st.file_uploader("File Uploader", type=["pdf"], label_visibility="collapsed")
+    uploaded_file = st.file_uploader("Upload", type=["pdf"], label_visibility="collapsed")
 
     if uploaded_file:
-        is_new_file = st.session_state.last_file != uploaded_file.name
-        if is_new_file:
+        is_new = st.session_state.last_file != uploaded_file.name
+        if is_new:
             st.session_state.db_ready  = False
             st.session_state.last_file = uploaded_file.name
-            # Clear stale vectorstore cache so next query uses the new index
             from retrieval.retriever import get_vectorstore
             get_vectorstore.clear()
 
         os.makedirs("data/docs", exist_ok=True)
         file_path = os.path.join("data/docs", uploaded_file.name)
-        # Only write to disk when the file actually changes
-        if is_new_file or not os.path.exists(file_path):
+        if is_new or not os.path.exists(file_path):
             with open(file_path, "wb") as fh:
                 fh.write(uploaded_file.getbuffer())
 
@@ -781,10 +964,10 @@ def render_left_column():
         fname    = uploaded_file.name[:32] + ("…" if len(uploaded_file.name) > 32 else "")
         st.markdown(
             '<div class="file-card">'
-            '<span style="font-size:1.4rem;">📄</span>'
+            '<span style="font-size:1.3rem;">📄</span>'
             '<div>'
-            f'<div style="font-size:0.76rem;font-weight:700;color:#e2e8f0;">{fname}</div>'
-            f'<div style="font-size:0.6rem;color:#475569;margin-top:2px;">{size_str} · PDF</div>'
+            f'<div style="font-size:0.74rem;font-weight:700;color:#e2e8f0;">{fname}</div>'
+            f'<div style="font-size:0.58rem;color:#475569;margin-top:2px;">{size_str} · PDF</div>'
             '</div></div>',
             unsafe_allow_html=True,
         )
@@ -794,44 +977,28 @@ def render_left_column():
                 step_ph = st.empty()
                 bar     = st.progress(0)
                 try:
-                    steps = [
-                        ("🔍", "Parsing PDF structure…",      5,  20),
-                        ("✂️",  "Chunking text segments…",     30, 50),
-                        ("🔢", "Generating embeddings…",      60, 85),
-                        ("📦", "Indexing ChromaDB vector store…", 95, 100),
-                    ]
-                    for icon, msg, p_start, p_end in steps:
-                        step_ph.markdown(
-                            proc_step_html(icon, msg, "#2dd4bf", "proc-dot-active"),
-                            unsafe_allow_html=True,
-                        )
+                    for icon, msg, p_start, p_end in [
+                        ("🔍", "Parsing PDF…",         5,  20),
+                        ("✂️",  "Chunking text…",       30, 50),
+                        ("🔢", "Generating embeddings…",60, 85),
+                        ("📦", "Indexing vector store…",95, 100),
+                    ]:
+                        step_ph.markdown(proc_step_html(icon, msg, "#2dd4bf", "dot-active"), unsafe_allow_html=True)
                         bar.progress(p_start)
-
-                        if icon == "🔍":
-                            docs_raw = load_pdf(file_path)
-                        elif icon == "✂️":
-                            chunks = split_documents(docs_raw)
-                        elif icon == "🔢":
-                            store_embeddings(chunks)
-                        elif icon == "📦":
-                            time.sleep(0.3)
-
+                        if   icon == "🔍": docs_raw = load_pdf(file_path)
+                        elif icon == "✂️":  chunks   = split_documents(docs_raw)
+                        elif icon == "🔢": store_embeddings(chunks)
+                        else:              time.sleep(0.3)
                         bar.progress(p_end)
 
-                    step_ph.markdown(
-                        proc_step_html("✅", "Document ready!", "#34d399", "proc-dot-done"),
-                        unsafe_allow_html=True,
-                    )
+                    step_ph.markdown(proc_step_html("✅", "Document ready!", "#34d399", "dot-done"), unsafe_allow_html=True)
                     time.sleep(0.8)
-                    step_ph.empty()
-                    bar.empty()
+                    step_ph.empty(); bar.empty()
                     st.session_state.db_ready    = True
                     st.session_state.total_docs += 1
                     st.rerun()
-
                 except Exception as exc:
-                    step_ph.empty()
-                    bar.empty()
+                    step_ph.empty(); bar.empty()
                     st.error(f"❌ Processing failed: {exc}")
 
         if st.session_state.db_ready:
@@ -840,24 +1007,23 @@ def render_left_column():
                 '<div class="ready-card">'
                 '<div class="ready-dot"></div>'
                 '<div>'
-                '<div style="font-size:0.76rem;font-weight:800;color:#34d399;">Ready for Queries</div>'
-                f'<div style="font-size:0.6rem;color:#6ee7b7;opacity:0.75;margin-top:2px;">"{fname_disp}" indexed &amp; loaded</div>'
+                '<div style="font-size:0.74rem;font-weight:800;color:#34d399;">Ready for Queries</div>'
+                f'<div style="font-size:0.59rem;color:#6ee7b7;opacity:0.75;margin-top:2px;">"{fname_disp}" indexed &amp; loaded</div>'
                 '</div></div>',
                 unsafe_allow_html=True,
             )
     panel_close()
 
-    # ── Suggested Queries ──────────────────────────────
+    # ── Suggested Queries ───────────────────────────────
     panel_open("⭐", "Suggested Queries", "Quick-start questions", "p-icon-gold")
     if st.session_state.db_ready:
-        suggestions = [
-            "What is the main topic of this document?",
+        for q in [
+            "What is the main topic?",
             "Summarize the key findings.",
             "What methodology was used?",
             "What are the main conclusions?",
             "List the most important points.",
-        ]
-        for q in suggestions:
+        ]:
             if st.button(f"›  {q}", use_container_width=True, key=f"sq_{q}", type="secondary"):
                 st.session_state.prefill_query = q
                 st.session_state.auto_submit   = True
@@ -865,80 +1031,137 @@ def render_left_column():
     else:
         st.markdown(
             '<div class="how-card">'
-            '<div style="font-size:0.6rem;font-weight:900;color:#f59e0b;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">💡 How It Works</div>'
-            '<div style="display:flex;align-items:flex-start;gap:9px;margin-bottom:8px;"><div class="how-num">1</div>'
-            '<div style="font-size:0.75rem;color:#94a3b8;line-height:1.55;">Upload your <strong style="color:#fcd34d;">PDF document</strong></div></div>'
-            '<div style="display:flex;align-items:flex-start;gap:9px;margin-bottom:8px;"><div class="how-num">2</div>'
-            '<div style="font-size:0.75rem;color:#94a3b8;line-height:1.55;">Click <strong style="color:#fcd34d;">Process Document</strong></div></div>'
-            '<div style="display:flex;align-items:flex-start;gap:9px;margin-bottom:8px;"><div class="how-num">3</div>'
-            '<div style="font-size:0.75rem;color:#94a3b8;line-height:1.55;">Ask questions in the <strong style="color:#fcd34d;">chat panel</strong></div></div>'
-            '<div style="display:flex;align-items:flex-start;gap:9px;"><div class="how-num">4</div>'
-            '<div style="font-size:0.75rem;color:#94a3b8;line-height:1.55;">Get <strong style="color:#fcd34d;">cited answers</strong> with confidence scores</div></div>'
-            '</div>',
+            '<div style="font-size:0.58rem;font-weight:900;color:#f59e0b;text-transform:uppercase;letter-spacing:0.09em;margin-bottom:10px;">💡 How It Works</div>'
+            + "".join([
+                f'<div style="display:flex;align-items:flex-start;gap:9px;margin-bottom:8px;">'
+                f'<div class="how-num">{n}</div>'
+                f'<div style="font-size:0.74rem;color:#64748b;line-height:1.55;">{t}</div></div>'
+                for n, t in [
+                    (1, 'Upload your <strong style="color:#fcd34d;">PDF document</strong>'),
+                    (2, 'Click <strong style="color:#fcd34d;">Process Document</strong>'),
+                    (3, 'Ask questions in the <strong style="color:#fcd34d;">chat</strong>'),
+                    (4, 'Get <strong style="color:#fcd34d;">cited answers</strong> with confidence scores'),
+                ]
+            ])
+            + '</div>',
             unsafe_allow_html=True,
         )
     panel_close()
 
-    # ── Model Stack ────────────────────────────────────
+    # ── Model Stack ─────────────────────────────────────
     panel_open("🔧", "Model Stack", "AI pipeline components", "p-icon-violet")
+    rows = [
+        ("LLM",         "Mistral Small", "#2dd4bf"),
+        ("Vector Store","ChromaDB",      "#60a5fa"),
+        ("Embeddings",  "HuggingFace",   "#fcd34d"),
+        ("Pipeline",    "LangChain RAG", "#34d399"),
+        ("Fallback",    "General LLM",   "#a78bfa"),
+    ]
     st.markdown(
-        '<div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:11px;padding:10px 13px;">'
-        '<div class="model-row"><span style="font-size:0.68rem;color:#475569;">LLM</span><span style="font-size:0.68rem;font-weight:700;color:#2dd4bf;">Mistral Small</span></div>'
-        '<div class="model-row"><span style="font-size:0.68rem;color:#475569;">Vector Store</span><span style="font-size:0.68rem;font-weight:700;color:#60a5fa;">ChromaDB</span></div>'
-        '<div class="model-row"><span style="font-size:0.68rem;color:#475569;">Embeddings</span><span style="font-size:0.68rem;font-weight:700;color:#fcd34d;">HuggingFace</span></div>'
-        '<div class="model-row"><span style="font-size:0.68rem;color:#475569;">Pipeline</span><span style="font-size:0.68rem;font-weight:700;color:#34d399;">LangChain RAG</span></div>'
-        '<div class="model-row"><span style="font-size:0.68rem;color:#475569;">Fallback</span><span style="font-size:0.68rem;font-weight:700;color:#a78bfa;">General LLM</span></div>'
-        '</div>',
+        '<div style="background:rgba(255,255,255,0.018);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:9px 12px;">'
+        + "".join([
+            f'<div class="model-row">'
+            f'<span style="font-size:0.67rem;color:#334155;">{k}</span>'
+            f'<span style="font-size:0.67rem;font-weight:700;color:{c};">{v}</span>'
+            f'</div>'
+            for k, v, c in rows
+        ])
+        + '</div>',
         unsafe_allow_html=True,
     )
     panel_close()
 
 
 # ═══════════════════════════════════════════════════════
-# CHAT COLUMN
+# CHAT COLUMN — Redesigned
 # ═══════════════════════════════════════════════════════
 def render_chat_column():
-    msg_count = len(st.session_state.chat_history)
+    msg_count  = len(st.session_state.chat_history)
+    prefill    = st.session_state.get("prefill_query", "")
 
-    # ── Chat header ────────────────────────────────────
-    ch_l, ch_r = st.columns([7, 1])
-    with ch_l:
-        badge_html = ""
-        if msg_count > 0:
-            label = f"{msg_count} message{'s' if msg_count != 1 else ''}"
-            badge_html = (
-                f'<span style="font-size:0.63rem;padding:3px 10px;border-radius:99px;font-weight:800;'
-                f'background:rgba(13,148,136,0.13);border:1px solid rgba(13,148,136,0.28);color:#2dd4bf;margin-left:8px;">'
-                f'{label}</span>'
-            )
+    # ── Chat container top bar ─────────────────────────
+    badge_html = ""
+    if msg_count:
+        badge_html = (
+            f'<span class="chat-msg-badge">'
+            f'{msg_count} message{"s" if msg_count != 1 else ""}'
+            f'</span>'
+        )
+
+    # Top bar row: title + badge + clear button
+    hdr_l, hdr_r = st.columns([8, 1])
+    with hdr_l:
         st.markdown(
-            '<div style="display:flex;align-items:center;margin-bottom:0.9rem;">'
-            '<div class="p-icon p-icon-teal" style="width:30px;height:30px;font-size:0.85rem;margin-right:9px;">💬</div>'
-            '<span style="font-size:0.88rem;font-weight:900;color:#fff;">Conversation</span>'
-            + badge_html + '</div>',
+            '<div class="chat-topbar">'
+            '<div class="chat-topbar-left">'
+            '<div class="chat-topbar-icon">💬</div>'
+            '<div>'
+            '<div class="chat-topbar-title">Conversation</div>'
+            '<div class="chat-topbar-sub">Ask anything about your document</div>'
+            '</div>'
+            '</div>'
+            + badge_html +
+            '</div>',
             unsafe_allow_html=True,
         )
-    with ch_r:
+    with hdr_r:
         if st.session_state.chat_history:
-            if st.button("🗑️", use_container_width=True, key="clear_btn", type="secondary"):
+            if st.button("🗑️", key="clear_btn", use_container_width=True, type="secondary"):
                 st.session_state.chat_history  = []
                 st.session_state.total_queries = 0
                 st.session_state.conf_scores   = []
                 st.session_state.prefill_query = ""
                 st.rerun()
 
+    # ── Messages area ──────────────────────────────────
+    st.markdown('<div class="chat-messages-wrap">', unsafe_allow_html=True)
+
+    if not st.session_state.chat_history:
+        st.markdown(
+            '<div class="empty-state">'
+            '<div class="empty-icon">💬</div>'
+            '<div class="empty-title">Ready to Assist</div>'
+            '<div class="empty-sub">Upload a PDF, process it, then ask any question. '
+            'Answers arrive with source citations and live confidence scores.</div>'
+            '<div class="empty-chips">'
+            '<span class="empty-chip" style="background:rgba(13,148,136,0.1);border:1px solid rgba(13,148,136,0.25);color:#2dd4bf;">🔒 Private</span>'
+            '<span class="empty-chip" style="background:rgba(29,78,216,0.1);border:1px solid rgba(29,78,216,0.25);color:#60a5fa;">⚡ Fast RAG</span>'
+            '<span class="empty-chip" style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25);color:#fcd34d;">📊 Confidence</span>'
+            '<span class="empty-chip" style="background:rgba(5,150,105,0.1);border:1px solid rgba(5,150,105,0.25);color:#34d399;">📚 Sources</span>'
+            '<span class="empty-chip" style="background:rgba(124,58,237,0.1);border:1px solid rgba(124,58,237,0.25);color:#a78bfa;">🧠 Mistral</span>'
+            '</div></div>',
+            unsafe_allow_html=True,
+        )
+    else:
+        total = len(st.session_state.chat_history)
+        for i, chat in enumerate(st.session_state.chat_history):
+            render_chat_message(chat, i, total)
+
+    st.markdown('</div>', unsafe_allow_html=True)  # close chat-messages-wrap
+
+    st.markdown('<div class="glow-div"></div>', unsafe_allow_html=True)
+
+    # ── Warn bar ───────────────────────────────────────
+    if not st.session_state.db_ready:
+        st.markdown(
+            '<div class="warn-bar">'
+            '<span>⚠️</span>'
+            '<span style="font-size:0.78rem;color:#fbbf24;font-weight:500;">'
+            'Upload and process a PDF document to start chatting.'
+            '</span></div>',
+            unsafe_allow_html=True,
+        )
+
     # ── Query input ────────────────────────────────────
-    prefill = st.session_state.get("prefill_query", "")
-    st.markdown('<div class="query-wrap">', unsafe_allow_html=True)
-    q_l, q_r = st.columns([7, 1])
+    q_l, q_r = st.columns([8, 1])
     with q_l:
         query_input = st.text_input(
-            "Query Input",
+            "Query",
             value=prefill,
             placeholder="Ask anything about your document…" if st.session_state.db_ready else "Process a document first…",
             disabled=not st.session_state.db_ready,
             label_visibility="collapsed",
-            key="query_input_field",
+            key=f"query_input_{st.session_state.input_key}",
         )
     with q_r:
         send_clicked = st.button(
@@ -947,62 +1170,55 @@ def render_chat_column():
             disabled=not st.session_state.db_ready,
             key="send_btn",
         )
-    st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown(
+        '<div class="input-hint">'
+        '<span class="kbd">Enter</span> or click <strong style="color:#334155;">Send</strong>'
+        ' &nbsp;·&nbsp; Powered by Mistral Small + ChromaDB RAG'
+        '</div>',
+        unsafe_allow_html=True,
+    )
 
     if prefill:
         st.session_state.prefill_query = ""
 
-    st.markdown(
-        '<div style="font-size:0.6rem;color:#1e3a5f;text-align:center;margin-top:4px;">'
-        'Press <kbd style="background:rgba(255,255,255,0.06);padding:1px 5px;border-radius:4px;font-size:0.58rem;">Enter</kbd>'
-        ' or click Send &nbsp;·&nbsp; Powered by Mistral Small + ChromaDB RAG'
-        '</div>',
-        unsafe_allow_html=True,
-    )
-    st.markdown('<div class="glow-div"></div>', unsafe_allow_html=True)
-
-    # ── Warn bar ───────────────────────────────────────
-    if not st.session_state.db_ready:
-        st.markdown(
-            '<div class="warn-bar">'
-            '<span>⚠️</span>'
-            '<span style="font-size:0.8rem;color:#fbbf24;font-weight:500;">'
-            'Upload and process a PDF document to unlock the chat interface.'
-            '</span></div>',
-            unsafe_allow_html=True,
-        )
-
-    # ── Handle query ───────────────────────────────────
-    # Accept: Send button click, Enter key (query_input changed + not empty),
-    # or auto_submit flag set by suggested query buttons.
+    # ── Handle submit ──────────────────────────────────
     auto_sub = st.session_state.get("auto_submit", False)
     if auto_sub:
         st.session_state.auto_submit = False
-    query_to_run = query_input.strip() if (send_clicked or auto_sub or (query_input and query_input != prefill)) else ""
-    # Ensure we only run if there's actual text
-    if not query_input or not query_input.strip():
-        query_to_run = ""
+
+    query_to_run = ""
+    if (send_clicked or auto_sub) and query_input and query_input.strip():
+        query_to_run = query_input.strip()
+    elif query_input and query_input.strip() and query_input != prefill:
+        query_to_run = query_input.strip()
+
     if query_to_run:
         if not st.session_state.db_ready:
             st.warning("⚠️ Please upload and process a document first.")
         else:
             thinking_ph = st.empty()
-            thinking_ph.markdown(render_thinking_indicator(), unsafe_allow_html=True)
+            thinking_ph.markdown(
+                '<div class="thinking-bar">'
+                '<div class="thinking-dots"><span></span><span></span><span></span></div>'
+                '<span style="font-size:0.8rem;color:#2dd4bf;font-weight:600;">Reasoning through your document…</span>'
+                '</div>',
+                unsafe_allow_html=True,
+            )
 
             answer, docs, mode, confidence = "", [], "fallback", 0
             try:
                 vectorstore = get_vectorstore()
                 llm         = get_mistral_llm()
                 rag_chain   = create_rag_chain(llm, vectorstore)
-                answer, docs, results = rag_chain(query_to_run, st.session_state.chat_history)
+                answer_gen, docs, results = rag_chain(query_to_run, st.session_state.chat_history)
                 confidence  = calculate_confidence(results)
+                answer      = "".join(list(answer_gen))
 
-                if "NOT_FOUND" in answer:
+                if answer.strip().startswith("NOT_FOUND"):
                     fallback_llm = get_fallback_llm()
                     answer       = fallback_llm.invoke(query_to_run).content
-                    docs         = []
-                    confidence   = 0
-                    mode         = "fallback"
+                    docs         = []; confidence = 0; mode = "fallback"
                 else:
                     mode = "rag"
 
@@ -1010,15 +1226,12 @@ def render_chat_column():
                 thinking_ph.empty()
                 st.error(
                     f"⏱️ **Request Timeout**: {str(exc)}\n\n"
-                    f"The Mistral API took too long to respond. This could mean:\n"
-                    f"- The API is temporarily overloaded\n"
-                    f"- Your internet connection is slow\n"
-                    f"\nPlease try again in a few moments."
+                    "The Mistral API took too long. Please try again in a moment."
                 )
                 answer = ""
             except Exception as exc:
                 thinking_ph.empty()
-                st.error(f"❌ An error occurred: {str(exc)}\n\nPlease check your API key and try again.")
+                st.error(f"❌ An error occurred: {str(exc)}\n\nCheck your API key and try again.")
                 answer = ""
 
             thinking_ph.empty()
@@ -1028,47 +1241,21 @@ def render_chat_column():
                 if mode == "rag" and confidence > 0:
                     st.session_state.conf_scores.append(confidence)
 
-                docs_store = [
-                    {
-                        "content": d.page_content,
-                        "page":    d.metadata.get("page", "?") if hasattr(d, "metadata") else "?",
-                    }
-                    for d in docs
-                ]
                 st.session_state.chat_history.append({
                     "question":   query_to_run,
                     "answer":     answer,
                     "mode":       mode,
                     "confidence": confidence,
-                    "docs":       docs_store,
+                    "docs": [
+                        {
+                            "content": d.page_content,
+                            "page":    d.metadata.get("page", "?") if hasattr(d, "metadata") else "?",
+                        }
+                        for d in docs
+                    ],
                 })
+                st.session_state.input_key += 1
                 st.rerun()
-
-    # ── Chat history / empty state ─────────────────────
-    if not st.session_state.chat_history:
-        st.markdown(
-            '<div class="empty-state">'
-            '<div class="empty-icon">💬</div>'
-            '<div style="font-size:1.05rem;font-weight:900;color:#fff;margin-bottom:7px;">Ready to Assist</div>'
-            '<div style="font-size:0.8rem;color:#3d5475;max-width:380px;margin:0 auto;line-height:1.7;">'
-            'Upload a PDF and start asking questions. The AI answers from your document '
-            'with cited sources and real-time confidence scores.'
-            '</div>'
-            '<div style="display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-top:1.2rem;">'
-            '<span style="font-size:0.65rem;padding:4px 12px;border-radius:99px;font-weight:700;background:rgba(13,148,136,0.12);border:1px solid rgba(13,148,136,0.28);color:#2dd4bf;">🔒 Private</span>'
-            '<span style="font-size:0.65rem;padding:4px 12px;border-radius:99px;font-weight:700;background:rgba(29,78,216,0.12);border:1px solid rgba(29,78,216,0.28);color:#60a5fa;">⚡ Fast RAG</span>'
-            '<span style="font-size:0.65rem;padding:4px 12px;border-radius:99px;font-weight:700;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.28);color:#fcd34d;">📊 Confidence</span>'
-            '<span style="font-size:0.65rem;padding:4px 12px;border-radius:99px;font-weight:700;background:rgba(5,150,105,0.12);border:1px solid rgba(5,150,105,0.28);color:#34d399;">📚 Sources</span>'
-            '<span style="font-size:0.65rem;padding:4px 12px;border-radius:99px;font-weight:700;background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.28);color:#a78bfa;">🧠 Mistral Small</span>'
-            '</div></div>',
-            unsafe_allow_html=True,
-        )
-    else:
-        st.markdown('<div class="chat-scroll-wrap">', unsafe_allow_html=True)
-        total = len(st.session_state.chat_history)
-        for i, chat in enumerate(st.session_state.chat_history):
-            render_chat_message(chat, i, total)
-        st.markdown('</div>', unsafe_allow_html=True)
 
 
 # ═══════════════════════════════════════════════════════
@@ -1082,14 +1269,14 @@ def render_footer():
         '<span style="color:#0d9488;font-weight:800;">Mistral Small</span> · '
         '<span style="color:#1d4ed8;font-weight:800;">ChromaDB</span> · '
         '<span style="color:#059669;font-weight:800;">LangChain</span>'
-        '&nbsp;|&nbsp; RAG Pipeline · Production Build · v5.0'
+        '&nbsp;|&nbsp; RAG Pipeline · v5.1'
         '</div>',
         unsafe_allow_html=True,
     )
 
 
 # ═══════════════════════════════════════════════════════
-# MAIN ENTRYPOINT
+# MAIN
 # ═══════════════════════════════════════════════════════
 def main():
     inject_css()

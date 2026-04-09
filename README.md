@@ -4,16 +4,10 @@
 
 ---
 
-<<<<<<< HEAD
 ## 🚀 TL;DR
-=======
-## 🚀 Live Demo
-[https://rag-assistant-aellaggynyu5dg3s6xqdeq.streamlit.app/]
-
----
+A reliability-first RAG pipeline using Mistral Small and FAISS, with intelligent fallback to general LLM reasoning when document context is insufficient.
 
 ## 🚀 Features
->>>>>>> 952148c646cf5f8044c4a008e99cc271870f239f
 
 * 📚 Retrieval-Augmented Generation (RAG)
 * 🧠 **Adaptive fallback to LLM** when retrieval confidence is low
