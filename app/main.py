@@ -37,32 +37,24 @@ def inject_css():
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
     :root {
-        --bg: #06080f;
-        --surface: #0d1117;
-        --surface-2: #161b27;
-        --surface-3: #1c2333;
-        --teal: #0d9488;
-        --teal-lt: #2dd4bf;
-        --teal-dim: rgba(13,148,136,0.15);
-        --gold: #f59e0b;
-        --gold-lt: #fcd34d;
-        --violet: #7c3aed;
-        --violet-lt: #a78bfa;
-        --blue: #1d4ed8;
-        --blue-lt: #60a5fa;
-        --emerald: #059669;
-        --emerald-lt: #34d399;
-        --rose: #e11d48;
-        --rose-lt: #fb7185;
+        --bg: #060b16;
+        --surface: #0d1528;
+        --surface-2: #111b31;
+        --surface-3: #17223c;
+        --primary: #38bdf8;
+        --primary-2: #2563eb;
+        --primary-3: #22d3ee;
+        --primary-dim: rgba(56,189,248,0.14);
+        --success: #34d399;
+        --warning: #f59e0b;
+        --danger: #f43f5e;
         --text: #e2e8f0;
-        --text-muted: #64748b;
-        --text-dim: #334155;
-        --border: rgba(255,255,255,0.06);
-        --border-hover: rgba(255,255,255,0.12);
-        --user-bubble-bg: linear-gradient(145deg, rgba(13,148,136,0.2) 0%, rgba(12,74,110,0.15) 100%);
-        --user-bubble-border: rgba(45,212,191,0.25);
-        --ai-bubble-bg: rgba(255,255,255,0.028);
-        --ai-bubble-border: rgba(255,255,255,0.07);
+        --text-muted: #94a3b8;
+        --text-dim: #64748b;
+        --border: rgba(148,163,184,0.16);
+        --border-hover: rgba(148,163,184,0.28);
+        --shadow-sm: 0 10px 22px rgba(0,0,0,0.35);
+        --shadow-md: 0 16px 34px rgba(0,0,0,0.45);
         --radius-sm: 8px;
         --radius-md: 12px;
         --radius-lg: 16px;
@@ -73,50 +65,85 @@ def inject_css():
     /* ── Reset & Base ── */
     html, body, [class*="css"] {
         font-family: 'Plus Jakarta Sans', sans-serif !important;
-        background: var(--bg) !important;
         color: var(--text) !important;
     }
-    #MainMenu, footer, header { visibility: hidden; }
+    body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    #MainMenu, footer { visibility: hidden; }
+    header {
+        background: transparent !important;
+        border-bottom: none !important;
+    }
+    [data-testid="stHeader"] {
+        background: transparent !important;
+    }
+    /* Hide Streamlit toolbar items like "Deploy" without removing sidebar toggle */
+    [data-testid="stToolbar"] { display: none !important; }
+    [data-testid="stStatusWidget"] { display: none !important; }
+    [data-testid="stDecoration"] { display: none !important; }
+
+    [data-testid="collapsedControl"],
+    [data-testid="stSidebarCollapsedControl"] {
+        position: fixed !important;
+        top: 0.9rem !important;
+        left: 0.85rem !important;
+        z-index: 1000 !important;
+        background: rgba(10,18,35,0.85) !important;
+        border: 1px solid rgba(148,163,184,0.16) !important;
+        border-radius: 12px !important;
+        backdrop-filter: blur(10px);
+        color: white !important;
+    }
+    [data-testid="collapsedControl"] svg,
+    [data-testid="stSidebarCollapsedControl"] svg {
+        fill: white !important;
+        color: white !important;
+    }
+
+    [data-testid="stSidebarCollapseButton"] {
+        color: white !important;
+    }
+    [data-testid="stSidebarCollapseButton"] svg {
+        fill: white !important;
+        color: white !important;
+    }
     .stDeployButton { display: none; }
 
-    /* ── Background ── */
+    html, body { background: var(--bg) !important; }
     .stApp {
         background:
-            radial-gradient(ellipse 80% 50% at 10% -10%, rgba(13,148,136,0.07) 0%, transparent 60%),
-            radial-gradient(ellipse 60% 40% at 90% 80%, rgba(124,58,237,0.05) 0%, transparent 60%),
-            linear-gradient(rgba(13,148,136,0.018) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(13,148,136,0.018) 1px, transparent 1px),
-            var(--bg);
-        background-size: auto, auto, 48px 48px, 48px 48px;
+            radial-gradient(900px 500px at 10% -10%, rgba(37,99,235,0.24) 0%, transparent 60%),
+            radial-gradient(900px 520px at 95% 8%, rgba(56,189,248,0.16) 0%, transparent 62%),
+            linear-gradient(180deg, #070d1b 0%, #060b16 100%) !important;
     }
 
     /* ── Scrollbar ── */
     ::-webkit-scrollbar { width: 4px; height: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb {
-        background: linear-gradient(180deg, rgba(13,148,136,0.4), rgba(124,58,237,0.3));
+        background: linear-gradient(180deg, rgba(109,40,217,0.45), rgba(37,99,235,0.35));
         border-radius: 99px;
     }
 
     /* ── Sidebar ── */
     [data-testid="stSidebar"] {
-        background: var(--surface) !important;
+        background: linear-gradient(180deg, #0a1223 0%, #080e1e 100%) !important;
         border-right: 1px solid var(--border) !important;
+        min-width: 320px !important;
     }
-    [data-testid="stSidebar"] > div:first-child { padding: 1rem 0.8rem !important; }
+    [data-testid="stSidebar"] > div:first-child { padding: 1.25rem 1.15rem !important; }
 
     /* ── Main container ── */
     .main .block-container {
-        padding: 1.5rem 2rem 3rem !important;
-        max-width: 100% !important;
+        padding: 1.35rem 1.75rem 2.5rem !important;
+        max-width: 1260px !important;
     }
 
     /* ── Typography ── */
-    h1, h2, h3, h4 { color: #fff !important; font-weight: 800 !important; letter-spacing: -0.025em; }
+    h1, h2, h3, h4 { color: var(--text) !important; font-weight: 800 !important; letter-spacing: -0.025em; }
 
     /* ── App title ── */
     .app-title {
-        background: linear-gradient(135deg, #2dd4bf 0%, #a78bfa 50%, #60a5fa 100%);
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-2) 55%, var(--primary-3) 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -127,21 +154,17 @@ def inject_css():
     /* ── Logo ── */
     .logo-box {
         width: 44px; height: 44px; border-radius: 13px;
-        background: linear-gradient(135deg, #0d9488 0%, #0f766e 50%, #0c4a6e 100%);
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-2) 60%, var(--primary-3) 100%);
         display: flex; align-items: center; justify-content: center; font-size: 1.3rem;
-        box-shadow: 0 0 0 1px rgba(45,212,191,0.2), 0 0 24px rgba(13,148,136,0.4);
-        animation: logoPulse 3s ease-in-out infinite; flex-shrink: 0;
-    }
-    @keyframes logoPulse {
-        0%, 100% { box-shadow: 0 0 0 1px rgba(45,212,191,0.2), 0 0 24px rgba(13,148,136,0.4); }
-        50%       { box-shadow: 0 0 0 1px rgba(45,212,191,0.35), 0 0 40px rgba(13,148,136,0.6); }
+        box-shadow: 0 10px 30px rgba(109,40,217,0.18);
+        flex-shrink: 0;
     }
 
     /* ── Status pill ── */
     .status-pill {
         display: inline-flex; align-items: center; gap: 7px;
         padding: 6px 14px; border-radius: var(--radius-full);
-        background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+        background: rgba(109,40,217,0.06); border: 1px solid rgba(109,40,217,0.16);
         font-size: 0.68rem; font-weight: 700;
     }
     .status-dot {
@@ -157,18 +180,19 @@ def inject_css():
         border-radius: var(--radius-lg) !important;
         padding: 1rem 1.2rem 1.2rem !important;
         transition: all 0.25s ease !important;
+        box-shadow: var(--shadow-sm) !important;
     }
     [data-testid="stMetric"]:hover {
         transform: translateY(-2px) !important;
-        box-shadow: 0 12px 32px rgba(0,0,0,0.35) !important;
-        border-color: rgba(255,255,255,0.1) !important;
+        box-shadow: 0 12px 32px rgba(15,23,42,0.08) !important;
+        border-color: var(--border-hover) !important;
     }
     [data-testid="stMetricLabel"] {
         color: var(--text-muted) !important; font-size: 0.6rem !important;
         text-transform: uppercase !important; letter-spacing: 0.1em !important; font-weight: 800 !important;
     }
     [data-testid="stMetricValue"] {
-        color: #fff !important; font-size: 1.55rem !important;
+        color: var(--text) !important; font-size: 1.55rem !important;
         font-weight: 900 !important; letter-spacing: -0.04em !important;
     }
 
@@ -179,250 +203,319 @@ def inject_css():
         border-radius: var(--radius-lg);
         overflow: hidden;
         margin-bottom: 0.85rem;
+        box-shadow: var(--shadow-sm);
     }
     .panel-header {
         padding: 0.8rem 1rem;
         border-bottom: 1px solid var(--border);
         display: flex; align-items: center; gap: 9px;
-        background: rgba(255,255,255,0.012);
+        background: rgba(148,163,184,0.05);
     }
     .panel-body { padding: 1rem; }
     .p-icon {
         width: 28px; height: 28px; border-radius: 8px;
         display: flex; align-items: center; justify-content: center; font-size: 0.8rem;
     }
-    .p-icon-teal   { background: rgba(13,148,136,0.18); }
-    .p-icon-gold   { background: rgba(245,158,11,0.15); }
-    .p-icon-violet { background: rgba(124,58,237,0.15); }
-    .p-title { font-size: 0.78rem !important; font-weight: 800 !important; color: #fff !important; }
+    .p-icon-teal   { background: rgba(37,99,235,0.10); }
+    .p-icon-gold   { background: rgba(217,119,6,0.10); }
+    .p-icon-violet { background: rgba(109,40,217,0.10); }
+    .p-title { font-size: 0.78rem !important; font-weight: 800 !important; color: var(--text) !important; }
     .p-sub   { font-size: 0.59rem; color: var(--text-muted); margin-top: 1px; }
 
     /* ── File uploader ── */
     [data-testid="stFileUploader"] {
-        background: radial-gradient(ellipse at 50% 80%, rgba(13,148,136,0.06) 0%, transparent 70%) !important;
-        border: 2px dashed rgba(13,148,136,0.3) !important;
+        background: radial-gradient(ellipse at 50% 80%, rgba(56,189,248,0.07) 0%, transparent 72%) !important;
+        border: 2px dashed rgba(56,189,248,0.30) !important;
         border-radius: var(--radius-md) !important;
         padding: 1.2rem !important;
         transition: all 0.25s ease !important;
     }
     [data-testid="stFileUploader"]:hover {
-        border-color: rgba(13,148,136,0.55) !important;
-        box-shadow: 0 0 28px rgba(13,148,136,0.1) !important;
+        border-color: rgba(109,40,217,0.40) !important;
+        box-shadow: 0 0 28px rgba(109,40,217,0.08) !important;
     }
+    [data-testid="stFileUploader"] small {
+        color: var(--text-muted) !important;
+        font-weight: 600 !important;
+    }
+    [data-testid="stFileUploader"] button {
+        background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 65%, #1d4ed8 100%) !important;
+        color: #fff !important;
+        border: 1px solid rgba(109,40,217,0.22) !important;
+        border-radius: var(--radius-md) !important;
+        font-weight: 800 !important;
+        padding: 0.55rem 1rem !important;
+        box-shadow: 0 12px 26px rgba(109,40,217,0.18) !important;
+    }
+    /* Streamlit adds an "upload another" icon button after upload; hide it (looks like a random + button) */
+    [data-testid="stFileUploader"] button[aria-label="Upload another file"] { display: none !important; }
+    [data-testid="stFileUploader"] button[title="Upload another file"] { display: none !important; }
 
     /* ── Buttons ── */
     .stButton > button {
-        background: linear-gradient(135deg, #0d9488 0%, #0f766e 55%, #0c4a6e 100%) !important;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-2) 60%, var(--primary-3) 100%) !important;
         color: white !important;
-        border: 1px solid rgba(45,212,191,0.2) !important;
+        border: 1px solid rgba(109,40,217,0.20) !important;
         border-radius: var(--radius-md) !important;
         font-weight: 700 !important;
         font-family: 'Plus Jakarta Sans', sans-serif !important;
         font-size: 0.82rem !important;
         padding: 0.6rem 1.2rem !important;
-        box-shadow: 0 4px 18px rgba(13,148,136,0.28), inset 0 1px 0 rgba(255,255,255,0.08) !important;
+        box-shadow: 0 10px 26px rgba(109,40,217,0.16), inset 0 1px 0 rgba(255,255,255,0.18) !important;
         transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
     .stButton > button:hover {
-        box-shadow: 0 8px 30px rgba(13,148,136,0.5), 0 0 0 1px rgba(45,212,191,0.35) !important;
+        box-shadow: 0 14px 34px rgba(109,40,217,0.22), 0 0 0 1px rgba(109,40,217,0.20) !important;
         transform: translateY(-2px) !important;
     }
     .stButton > button[kind="secondary"] {
-        background: rgba(255,255,255,0.03) !important;
-        border: 1px solid rgba(255,255,255,0.07) !important;
-        color: #475569 !important; box-shadow: none !important;
+        background: rgba(148,163,184,0.08) !important;
+        border: 1px solid rgba(148,163,184,0.18) !important;
+        color: var(--text) !important; box-shadow: none !important;
     }
     .stButton > button[kind="secondary"]:hover {
-        background: rgba(225,29,72,0.07) !important;
-        border-color: rgba(225,29,72,0.25) !important;
-        color: #fb7185 !important; transform: none !important;
+        background: rgba(109,40,217,0.06) !important;
+        border-color: rgba(109,40,217,0.18) !important;
+        color: var(--primary) !important; transform: none !important;
     }
 
     /* ── Text input ── */
     .stTextInput > div > div > input {
-        background: rgba(255,255,255,0.03) !important;
-        border: 1px solid rgba(255,255,255,0.08) !important;
+        background: rgba(15,23,42,0.75) !important;
+        border: 1px solid rgba(148,163,184,0.24) !important;
         border-radius: var(--radius-md) !important;
         color: var(--text) !important;
         font-family: 'Plus Jakarta Sans', sans-serif !important;
         font-size: 0.9rem !important;
         padding: 0.72rem 1rem !important;
-        caret-color: var(--teal-lt) !important;
+        caret-color: var(--primary) !important;
         transition: all 0.22s ease !important;
+        box-shadow: none !important;
     }
     .stTextInput > div > div > input:focus {
-        background: rgba(13,148,136,0.05) !important;
-        border-color: rgba(13,148,136,0.45) !important;
-        box-shadow: 0 0 0 3px rgba(13,148,136,0.1) !important;
+        background: rgba(15,23,42,0.92) !important;
+        border-color: rgba(56,189,248,0.45) !important;
+        box-shadow: 0 0 0 3px rgba(56,189,248,0.15) !important;
     }
-    .stTextInput > div > div > input::placeholder { color: rgba(148,163,184,0.3) !important; }
+    .stTextInput > div > div > input::placeholder { color: rgba(100,116,139,0.55) !important; }
     label[data-testid="stWidgetLabel"] {
-        color: var(--text-dim) !important; font-size: 0.65rem !important;
+        color: var(--text-muted) !important; font-size: 0.65rem !important;
         font-weight: 800 !important; letter-spacing: 0.08em !important; text-transform: uppercase !important;
     }
 
     /* ── Alerts ── */
     .stSuccess {
-        background: linear-gradient(135deg, rgba(5,150,105,0.1), rgba(13,148,136,0.05)) !important;
-        border: 1px solid rgba(5,150,105,0.25) !important; border-radius: var(--radius-md) !important;
+        background: rgba(22,163,74,0.08) !important;
+        border: 1px solid rgba(22,163,74,0.18) !important; border-radius: var(--radius-md) !important;
     }
     .stWarning {
-        background: linear-gradient(135deg, rgba(245,158,11,0.07), rgba(252,211,77,0.03)) !important;
-        border: 1px solid rgba(245,158,11,0.22) !important; border-radius: var(--radius-md) !important;
+        background: rgba(217,119,6,0.08) !important;
+        border: 1px solid rgba(217,119,6,0.18) !important; border-radius: var(--radius-md) !important;
     }
     .stError {
-        background: rgba(225,29,72,0.07) !important;
-        border: 1px solid rgba(225,29,72,0.22) !important; border-radius: var(--radius-md) !important;
+        background: rgba(220,38,38,0.08) !important;
+        border: 1px solid rgba(220,38,38,0.16) !important; border-radius: var(--radius-md) !important;
     }
 
     /* ── Progress ── */
     .stProgress > div > div > div > div {
-        background: linear-gradient(90deg, #0d9488, #a78bfa, #34d399) !important;
+        background: linear-gradient(90deg, var(--primary), var(--primary-2), var(--primary-3)) !important;
         background-size: 200% 100% !important;
         animation: shimmer 1.8s linear infinite !important;
         border-radius: 99px !important;
     }
-    .stProgress > div { border-radius: 99px !important; background: rgba(255,255,255,0.05) !important; height: 4px !important; }
+    .stProgress > div { border-radius: 99px !important; background: rgba(15,23,42,0.06) !important; height: 4px !important; }
     @keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
 
     /* ── Expander ── */
     .streamlit-expanderHeader {
-        background: rgba(13,148,136,0.05) !important;
-        border: 1px solid rgba(13,148,136,0.18) !important;
+        background: rgba(109,40,217,0.05) !important;
+        border: 1px solid rgba(109,40,217,0.14) !important;
         border-radius: var(--radius-md) !important;
-        color: var(--teal-lt) !important; font-weight: 700 !important; font-size: 0.78rem !important;
+        color: var(--primary) !important; font-weight: 700 !important; font-size: 0.78rem !important;
         transition: all 0.2s ease !important;
     }
-    .streamlit-expanderHeader:hover { background: rgba(13,148,136,0.1) !important; }
+    .streamlit-expanderHeader:hover { background: rgba(109,40,217,0.08) !important; }
     .streamlit-expanderContent {
-        background: rgba(255,255,255,0.012) !important;
-        border: 1px solid rgba(255,255,255,0.05) !important;
+        background: rgba(15,23,42,0.45) !important;
+        border: 1px solid rgba(148,163,184,0.15) !important;
         border-top: none !important; border-radius: 0 0 var(--radius-md) var(--radius-md) !important;
     }
 
-    /* ─────────────────────────────────────
-       SIDEBAR NAV
-    ───────────────────────────────────── */
-    .sidebar-nav-item {
-        display: flex; align-items: center; gap: 9px;
-        padding: 8px 11px; border-radius: var(--radius-sm); margin-bottom: 3px;
-        font-size: 0.78rem; font-weight: 600; color: var(--text-muted);
-        border: 1px solid transparent; transition: all 0.18s ease; cursor: pointer;
+    /* ── Sidebar helpers ── */
+    .sidebar-section {
+        font-size: 0.65rem; font-weight: 900; color: var(--primary);
+        text-transform: uppercase; letter-spacing: 0.12em;
+        padding: 14px 4px 10px; margin-top: 6px;
     }
-    .sidebar-nav-item:hover { background: rgba(255,255,255,0.03); color: #94a3b8; }
-    .sidebar-nav-item.active {
-        background: rgba(13,148,136,0.1); color: var(--teal-lt);
-        border-color: rgba(13,148,136,0.22);
+    .sidebar-divider {
+        height: 1px;
+        background: linear-gradient(90deg, transparent 0%, rgba(56,189,248,0.18) 50%, transparent 100%);
+        margin: 14px 0;
     }
-    .sidebar-section { font-size: 0.56rem; font-weight: 900; color: #1e3a5f; text-transform: uppercase; letter-spacing: 0.12em; padding: 8px 10px 4px; }
-    .sidebar-divider { height: 1px; background: rgba(255,255,255,0.05); margin: 7px 0; }
-    .sidebar-status-item { display: flex; align-items: center; gap: 9px; padding: 7px 11px; border-radius: var(--radius-sm); margin-bottom: 3px; }
-    .sidebar-status-dot { width: 6px; height: 6px; border-radius: 50%; background: #34d399; box-shadow: 0 0 7px #34d399; flex-shrink: 0; }
-
-    /* ─────────────────────────────────────
-       CHAT AREA — Complete Redesign
-    ───────────────────────────────────── */
-
-    /* Chat container */
-    .chat-container {
-        background: var(--surface);
-        border: 1px solid var(--border);
+    .sidebar-status-item {
+        display: flex; align-items: center; gap: 13px;
+        padding: 14px 16px; border-radius: var(--radius-lg);
+        border: 1px solid rgba(148,163,184,0.14);
+        background: rgba(15,23,42,0.50);
+        margin-top: 10px;
+        transition: all 0.2s ease;
+    }
+    .sidebar-status-item:hover {
+        background: rgba(15,23,42,0.65);
+        border-color: rgba(148,163,184,0.22);
+    }
+    .sidebar-status-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .sidebar-status-dot-on  { background: var(--success); box-shadow: 0 0 0 4px rgba(22,163,74,0.16), 0 0 12px rgba(22,163,74,0.25); }
+    .sidebar-status-dot-off { background: var(--warning); box-shadow: 0 0 0 4px rgba(217,119,6,0.16), 0 0 12px rgba(217,119,6,0.20); }
+    .sidebar-card {
+        background: rgba(13, 21, 40, 0.55);
+        border: 1px solid rgba(148,163,184,0.14);
         border-radius: var(--radius-xl);
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-        min-height: 560px;
+        padding: 1.15rem 1.1rem;
+        box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+    }
+    .sidebar-mini { font-size: 0.72rem; color: var(--text-muted); line-height: 1.65; }
+    .sidebar-kpi {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 10px;
+        margin-top: 14px;
+    }
+    .sidebar-kpi-item {
+        background: rgba(148,163,184,0.06);
+        border: 1px solid rgba(148,163,184,0.12);
+        border-radius: 14px;
+        padding: 12px 12px;
+        text-align: center;
+        transition: all 0.2s ease;
+    }
+    .sidebar-kpi-item:hover {
+        background: rgba(148,163,184,0.10);
+        border-color: rgba(56,189,248,0.20);
+        transform: translateY(-1px);
+    }
+    .sidebar-kpi-label { font-size: 0.58rem; color: #64748b; font-weight: 900; letter-spacing: 0.10em; text-transform: uppercase; }
+    .sidebar-kpi-val { font-size: 0.95rem; color: #e2e8f0; font-weight: 900; letter-spacing: -0.02em; margin-top: 3px; }
+
+    /* Expander tweaks (sidebar) */
+    .streamlit-expanderHeader { padding: 0.6rem 0.85rem !important; }
+    .streamlit-expanderContent { padding: 0.75rem 0.85rem !important; }
+
+    /* Sidebar suggested query buttons */
+    .sidebar-query-btn {
+        display: flex; align-items: center; gap: 10px;
+        padding: 10px 14px; border-radius: var(--radius-md);
+        background: rgba(15,23,42,0.40); border: 1px solid rgba(148,163,184,0.12);
+        font-size: 0.78rem; color: var(--text); cursor: pointer;
+        transition: all 0.2s ease; width: 100%; text-align: left;
+        margin-bottom: 6px;
+    }
+    .sidebar-query-btn:hover {
+        background: rgba(56,189,248,0.08); border-color: rgba(56,189,248,0.22);
+        color: var(--primary); transform: translateX(3px);
     }
 
-    /* Chat header bar */
-    .chat-topbar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0.9rem 1.1rem;
-        border-bottom: 1px solid var(--border);
-        background: rgba(255,255,255,0.015);
+    /* Sidebar file info */
+    .sidebar-file-info {
+        display: flex; align-items: center; gap: 12px;
+        padding: 12px 14px; border-radius: var(--radius-md);
+        background: rgba(37,99,235,0.06);
+        border: 1px solid rgba(37,99,235,0.14);
+        margin: 10px 0;
+    }
+    .sidebar-file-icon {
+        width: 36px; height: 36px; border-radius: 10px;
+        background: linear-gradient(135deg, rgba(37,99,235,0.18), rgba(14,165,233,0.14));
+        display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
         flex-shrink: 0;
+    }
+
+    /* ─────────────────────────────────────
+       CHAT AREA
+    ───────────────────────────────────── */
+
+    .chat-topbar {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 0.9rem 1.1rem; border-bottom: 1px solid var(--border);
+        background: rgba(15,23,42,0.55); flex-shrink: 0;
     }
     .chat-topbar-left { display: flex; align-items: center; gap: 10px; }
     .chat-topbar-icon {
         width: 34px; height: 34px; border-radius: 10px;
-        background: linear-gradient(135deg, rgba(13,148,136,0.25), rgba(12,74,110,0.2));
-        border: 1px solid rgba(13,148,136,0.25);
+        background: linear-gradient(135deg, rgba(109,40,217,0.14), rgba(37,99,235,0.10));
+        border: 1px solid rgba(109,40,217,0.18);
         display: flex; align-items: center; justify-content: center; font-size: 0.95rem;
-        box-shadow: 0 0 14px rgba(13,148,136,0.15);
+        box-shadow: 0 10px 20px rgba(109,40,217,0.10);
     }
-    .chat-topbar-title { font-size: 0.88rem; font-weight: 800; color: #fff; }
+    .chat-topbar-title { font-size: 0.9rem; font-weight: 900; color: var(--text); }
     .chat-topbar-sub   { font-size: 0.6rem; color: var(--text-muted); margin-top: 1px; }
     .chat-msg-badge {
         display: inline-flex; align-items: center; gap: 5px;
         padding: 3px 10px; border-radius: var(--radius-full);
-        background: rgba(13,148,136,0.1); border: 1px solid rgba(13,148,136,0.22);
-        font-size: 0.6rem; font-weight: 800; color: var(--teal-lt);
+        background: rgba(109,40,217,0.06); border: 1px solid rgba(109,40,217,0.14);
+        font-size: 0.6rem; font-weight: 800; color: var(--primary);
     }
 
     /* Scroll wrapper */
     .chat-messages-wrap {
-        flex: 1;
-        overflow-y: auto;
-        padding: 1.2rem 1.1rem;
-        scroll-behavior: smooth;
-        scrollbar-width: thin;
-        scrollbar-color: rgba(13,148,136,0.3) transparent;
-        max-height: 500px;
+        flex: 1; overflow-y: auto; padding: 1.2rem 1.1rem;
+        scroll-behavior: smooth; scrollbar-width: thin;
+        scrollbar-color: rgba(109,40,217,0.25) transparent;
+        max-height: 560px;
+    }
+    .chat-surface {
+        background: rgba(13,21,40,0.38);
+        border: 1px solid rgba(148,163,184,0.10);
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 22px 60px rgba(0,0,0,0.24);
     }
 
-    /* Message block (one full exchange) */
-    .msg-block {
-        margin-bottom: 1.4rem;
-        animation: msgIn 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
-    }
+    /* Message animations */
+    .msg-block { margin-bottom: 1.4rem; animation: msgIn 0.32s cubic-bezier(0.22,1,0.36,1) both; }
     @keyframes msgIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 
     /* User row */
-    .msg-user-row {
-        display: flex; align-items: flex-end; justify-content: flex-end; gap: 10px;
-        margin-bottom: 8px;
-    }
+    .msg-user-row { display: flex; align-items: flex-end; justify-content: flex-end; gap: 10px; margin-bottom: 8px; }
     .msg-user-bubble {
         max-width: 72%;
-        background: linear-gradient(145deg, rgba(13,148,136,0.22), rgba(12,74,110,0.17));
-        border: 1px solid rgba(45,212,191,0.22);
-        border-radius: 18px 4px 18px 18px;
+        background: linear-gradient(145deg, rgba(37,99,235,0.24), rgba(14,165,233,0.18));
+        border: 1px solid rgba(56,189,248,0.24); border-radius: 18px 4px 18px 18px;
         padding: 0.75rem 1rem;
-        box-shadow: 0 4px 20px rgba(13,148,136,0.1), inset 0 1px 0 rgba(255,255,255,0.05);
-        position: relative;
+        box-shadow: 0 10px 20px rgba(15,23,42,0.06), inset 0 1px 0 rgba(255,255,255,0.20);
     }
-    .msg-user-text {
-        font-size: 0.87rem; color: #dbeafe; line-height: 1.65; margin: 0;
-    }
+    .msg-user-text { font-size: 0.87rem; color: #e0f2fe; line-height: 1.65; margin: 0; }
     .msg-user-avatar {
         width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
-        background: linear-gradient(135deg, #0d9488, #0c4a6e);
+        background: linear-gradient(135deg, var(--primary), var(--primary-2));
         display: flex; align-items: center; justify-content: center; font-size: 0.75rem;
-        box-shadow: 0 0 10px rgba(13,148,136,0.4); border: 1.5px solid rgba(45,212,191,0.2);
+        box-shadow: 0 10px 18px rgba(109,40,217,0.16); border: 1.5px solid rgba(109,40,217,0.18);
     }
 
     /* AI row */
-    .msg-ai-row {
-        display: flex; align-items: flex-start; justify-content: flex-start; gap: 10px;
-    }
+    .msg-ai-row { display: flex; align-items: flex-start; justify-content: flex-start; gap: 10px; }
     .msg-ai-avatar {
         width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0; margin-top: 18px;
         display: flex; align-items: center; justify-content: center; font-size: 0.75rem;
-        border: 1.5px solid rgba(255,255,255,0.1);
+        border: 1.5px solid rgba(15,23,42,0.08);
     }
     .msg-ai-avatar-rag {
-        background: linear-gradient(135deg, #059669, #0d9488);
-        box-shadow: 0 0 10px rgba(5,150,105,0.4);
-        border-color: rgba(52,211,153,0.25);
+        background: linear-gradient(135deg, rgba(22,163,74,0.92), rgba(14,165,233,0.85));
+        box-shadow: 0 10px 18px rgba(22,163,74,0.14); border-color: rgba(22,163,74,0.18);
     }
     .msg-ai-avatar-fallback {
-        background: linear-gradient(135deg, #d97706, #f59e0b);
-        box-shadow: 0 0 10px rgba(245,158,11,0.4);
-        border-color: rgba(251,191,36,0.25);
+        background: linear-gradient(135deg, rgba(217,119,6,0.92), rgba(245,158,11,0.88));
+        box-shadow: 0 10px 18px rgba(217,119,6,0.14); border-color: rgba(217,119,6,0.18);
     }
     .msg-ai-content { max-width: 84%; display: flex; flex-direction: column; gap: 5px; }
+    .msg-ai-meta {
+        margin-left: 40px;
+        max-width: 860px;
+    }
+    @media (max-width: 900px) {
+        .msg-ai-meta { margin-left: 0; max-width: 100%; }
+    }
 
     /* Mode badge */
     .mode-badge {
@@ -431,202 +524,255 @@ def inject_css():
         font-size: 0.6rem; font-weight: 800; letter-spacing: 0.04em;
         width: fit-content; margin-bottom: 2px;
     }
-    .mode-badge-rag {
-        background: rgba(5,150,105,0.1); border: 1px solid rgba(5,150,105,0.28); color: #34d399;
-    }
-    .mode-badge-fallback {
-        background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.28); color: #fbbf24;
-    }
+    .mode-badge-rag { background: rgba(22,163,74,0.08); border: 1px solid rgba(22,163,74,0.18); color: var(--success); }
+    .mode-badge-fallback { background: rgba(217,119,6,0.08); border: 1px solid rgba(217,119,6,0.18); color: var(--warning); }
 
     /* AI bubble */
     .msg-ai-bubble {
-        background: var(--surface-2);
-        border: 1px solid var(--border);
-        border-radius: 4px 18px 18px 18px;
-        padding: 0.85rem 1.05rem;
-        box-shadow: 0 4px 18px rgba(0,0,0,0.18);
-        transition: border-color 0.2s ease;
+        background: rgba(15,23,42,0.78); border: 1px solid var(--border);
+        border-radius: 4px 18px 18px 18px; padding: 0.85rem 1.05rem;
+        box-shadow: var(--shadow-sm); transition: border-color 0.2s ease;
     }
-    .msg-ai-bubble-rag     { border-color: rgba(5,150,105,0.18); }
-    .msg-ai-bubble-fallback { border-color: rgba(245,158,11,0.18); }
-    .msg-ai-bubble:hover   { border-color: rgba(255,255,255,0.1); }
+    .msg-ai-bubble-rag     { border-color: rgba(22,163,74,0.12); }
+    .msg-ai-bubble-fallback { border-color: rgba(217,119,6,0.12); }
+    .msg-ai-bubble:hover   { border-color: var(--border-hover); }
 
     /* Answer text */
-    .answer-box {
-        font-size: 0.87rem; color: #cbd5e1; line-height: 1.78; padding: 0;
-    }
+    .answer-box { font-size: 0.88rem; color: #dbeafe; line-height: 1.82; padding: 0; word-wrap: break-word; overflow-wrap: anywhere; }
+    .answer-box p { margin: 0.55rem 0; }
+    .answer-box p:first-child { margin-top: 0; }
+    .answer-box p:last-child { margin-bottom: 0; }
     .answer-box h1, .answer-box h2, .answer-box h3, .answer-box h4 {
-        color: #2dd4bf !important; font-weight: 700 !important; margin: 0.65rem 0 0.3rem;
+        color: #7dd3fc !important; font-weight: 700 !important; margin: 0.65rem 0 0.3rem;
     }
     .answer-box h1 { font-size: 1.05rem !important; }
     .answer-box h2 { font-size: 0.98rem !important; }
     .answer-box h3 { font-size: 0.92rem !important; }
     .answer-box h4 { font-size: 0.86rem !important; }
-    .answer-box strong { color: #fcd34d; font-weight: 700; }
-    .answer-box em     { color: #a78bfa; font-style: italic; }
+    .answer-box strong { color: #ffffff; font-weight: 800; }
+    .answer-box em     { color: #bae6fd; font-style: italic; }
     .answer-box code {
-        background: rgba(13,148,136,0.1); color: #2dd4bf;
+        background: rgba(14,165,233,0.16); color: #bae6fd;
         font-family: 'JetBrains Mono', monospace; font-size: 0.77rem;
-        padding: 2px 6px; border-radius: 5px; border: 1px solid rgba(13,148,136,0.18);
+        padding: 2px 6px; border-radius: 6px; border: 1px solid rgba(125,211,252,0.18);
     }
     .answer-box pre {
-        background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.07);
+        background: rgba(2,6,23,0.65); border: 1px solid rgba(148,163,184,0.22);
         border-radius: var(--radius-sm); padding: 0.8rem 1rem; overflow-x: auto; margin: 0.55rem 0;
     }
+    .answer-box hr { border: 0; height: 1px; background: rgba(148,163,184,0.14); margin: 0.9rem 0; }
+    .answer-box a { color: #7dd3fc; text-decoration: none; border-bottom: 1px solid rgba(125,211,252,0.25); }
+    .answer-box a:hover { border-bottom-color: rgba(125,211,252,0.55); }
     .answer-box pre code { background: transparent; border: none; padding: 0; color: #e2e8f0; font-size: 0.76rem; }
     .answer-box ul, .answer-box ol { margin: 0.3rem 0 0.3rem 1.1rem; padding: 0; }
-    .answer-box li { margin-bottom: 0.25rem; color: #94a3b8; }
-    .answer-box li::marker { color: #0d9488; }
+    .answer-box li { margin-bottom: 0.25rem; color: #bfdbfe; }
+    .answer-box li::marker { color: #38bdf8; }
     .answer-box p { margin: 0.28rem 0; }
     .answer-box blockquote {
-        border-left: 3px solid rgba(13,148,136,0.5); margin: 0.4rem 0;
-        padding: 0.3rem 0 0.3rem 0.8rem; color: #64748b; font-style: italic;
-        background: rgba(13,148,136,0.035); border-radius: 0 6px 6px 0;
+        border-left: 3px solid rgba(56,189,248,0.45); margin: 0.4rem 0;
+        padding: 0.3rem 0 0.3rem 0.8rem; color: #bae6fd; font-style: italic;
+        background: rgba(56,189,248,0.08); border-radius: 0 6px 6px 0;
+    }
+    /* cite-chip removed — chunk references are stripped from answers */
+    .code-lang {
+        display: inline-block;
+        font-size: 0.62rem;
+        color: #94a3b8;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 0.4rem;
     }
 
     /* Confidence bar */
     .conf-wrap { padding: 4px 0 8px; }
     .conf-row  { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-    .conf-label { font-size: 0.58rem; font-weight: 800; color: #1e3a5f; text-transform: uppercase; letter-spacing: 0.09em; }
+    .conf-label { font-size: 0.58rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.09em; }
     .conf-val   { font-size: 0.68rem; font-weight: 900; }
-    .conf-track { background: rgba(255,255,255,0.04); border-radius: 99px; height: 3px; overflow: hidden; }
+    .conf-track { background: rgba(15,23,42,0.06); border-radius: 99px; height: 3px; overflow: hidden; }
     .conf-fill  { height: 100%; border-radius: 99px; transition: width 1.1s cubic-bezier(0.4,0,0.2,1); }
-    .conf-high   { background: linear-gradient(90deg,#059669,#34d399); box-shadow: 0 0 8px rgba(52,211,153,0.5); }
-    .conf-medium { background: linear-gradient(90deg,#d97706,#f59e0b); box-shadow: 0 0 8px rgba(245,158,11,0.5); }
-    .conf-low    { background: linear-gradient(90deg,#be123c,#fb7185); box-shadow: 0 0 8px rgba(225,29,72,0.5); }
+    .conf-high   { background: linear-gradient(90deg,#16a34a,#22c55e); }
+    .conf-medium { background: linear-gradient(90deg,#d97706,#f59e0b); }
+    .conf-low    { background: linear-gradient(90deg,#dc2626,#fb7185); }
 
     /* Source card */
     .source-card {
-        background: rgba(13,148,136,0.03); border: 1px solid rgba(255,255,255,0.05);
-        border-left: 3px solid rgba(13,148,136,0.55); border-radius: var(--radius-sm);
+        background: rgba(109,40,217,0.03); border: 1px solid rgba(15,23,42,0.08);
+        border-left: 3px solid rgba(109,40,217,0.35); border-radius: var(--radius-sm);
         padding: 0.75rem 0.9rem; margin-bottom: 0.5rem; transition: all 0.2s ease;
     }
-    .source-card:hover {
-        background: rgba(13,148,136,0.07); border-left-color: var(--teal-lt);
-        transform: translateX(2px);
-    }
-    .source-card-header {
-        display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;
-    }
-    .source-label { font-size: 0.58rem; font-weight: 900; color: #2dd4bf; text-transform: uppercase; letter-spacing: 0.08em; }
-    .source-page  { font-size: 0.56rem; color: var(--text-muted); font-weight: 700; background: rgba(255,255,255,0.04); padding: 2px 7px; border-radius: 99px; border: 1px solid rgba(255,255,255,0.07); }
-    .source-text  { font-size: 0.73rem; color: #475569; line-height: 1.62; font-family: 'JetBrains Mono', monospace; margin: 0; }
+    .source-card:hover { background: rgba(109,40,217,0.06); border-left-color: var(--primary); transform: translateX(2px); }
+    .source-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+    .source-label { font-size: 0.58rem; font-weight: 900; color: var(--primary); text-transform: uppercase; letter-spacing: 0.08em; }
+    .source-page  { font-size: 0.56rem; color: var(--text-muted); font-weight: 700; background: rgba(15,23,42,0.03); padding: 2px 7px; border-radius: 99px; border: 1px solid rgba(15,23,42,0.08); }
+    .source-text  { font-size: 0.73rem; color: #cbd5e1; line-height: 1.62; font-family: 'JetBrains Mono', monospace; margin: 0; }
 
     /* Message divider */
-    .msg-divider { height: 1px; background: rgba(255,255,255,0.035); margin: 0.5rem 0 1.2rem; }
+    .msg-divider { height: 1px; background: rgba(15,23,42,0.07); margin: 0.5rem 0 1.2rem; }
 
-    /* ─────────────────────────────────────
-       INPUT AREA
-    ───────────────────────────────────── */
-    .input-area {
-        border-top: 1px solid var(--border);
-        padding: 0.9rem 1.1rem;
-        background: rgba(255,255,255,0.01);
-        flex-shrink: 0;
-    }
+    /* Input area */
     .input-hint {
         font-size: 0.58rem; color: var(--text-dim); text-align: center; margin-top: 6px;
         display: flex; align-items: center; justify-content: center; gap: 6px;
     }
+    .composer-shell {
+        position: sticky;
+        bottom: 0.75rem;
+        z-index: 20;
+        background: linear-gradient(180deg, rgba(6,11,22,0.0), rgba(6,11,22,0.88) 32%, rgba(6,11,22,0.96) 100%);
+        padding-top: 1rem;
+    }
+    .composer-card {
+        background: rgba(13,21,40,0.90);
+        border: 1px solid rgba(148,163,184,0.14);
+        border-radius: 22px;
+        padding: 0.8rem;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.32);
+        backdrop-filter: blur(12px);
+    }
     .kbd {
-        background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+        background: rgba(15,23,42,0.04); border: 1px solid rgba(15,23,42,0.10);
         padding: 1px 6px; border-radius: 4px; font-size: 0.55rem; font-family: 'JetBrains Mono', monospace;
     }
 
-    /* ── Thinking indicator ── */
+    /* Thinking indicator */
     .thinking-bar {
         display: flex; align-items: center; gap: 10px;
         padding: 10px 14px; border-radius: var(--radius-md);
-        background: rgba(13,148,136,0.05); border: 1px solid rgba(13,148,136,0.18);
-        margin-bottom: 8px;
+        background: rgba(109,40,217,0.05); border: 1px solid rgba(109,40,217,0.14); margin-bottom: 8px;
     }
     .thinking-dots span {
         display: inline-block; width: 5px; height: 5px; border-radius: 50%;
-        background: var(--teal-lt); margin: 0 2px;
+        background: var(--primary); margin: 0 2px;
         animation: dotBounce 1.4s ease-in-out infinite;
     }
     .thinking-dots span:nth-child(2) { animation-delay: 0.14s; }
     .thinking-dots span:nth-child(3) { animation-delay: 0.28s; }
     @keyframes dotBounce { 0%, 80%, 100% { transform: scale(0.5); opacity: 0.35; } 40% { transform: scale(1.1); opacity: 1; } }
 
-    /* ── Empty state ── */
+    /* Empty state */
     .empty-state {
         display: flex; flex-direction: column; align-items: center; justify-content: center;
-        text-align: center; padding: 3.5rem 2rem;
-        background: radial-gradient(ellipse at 50% 50%, rgba(13,148,136,0.055) 0%, transparent 65%);
-        min-height: 380px;
+        text-align: center; padding: 4.25rem 2rem;
+        background:
+            linear-gradient(180deg, rgba(15,23,42,0.72), rgba(15,23,42,0.52)),
+            radial-gradient(circle at top, rgba(56,189,248,0.12), transparent 55%);
+        border: 1px solid rgba(148,163,184,0.14);
+        border-radius: 24px;
+        box-shadow: 0 24px 60px rgba(0,0,0,0.28);
+        min-height: 460px;
     }
-    .empty-icon {
-        font-size: 2.6rem; margin-bottom: 1rem;
-        animation: floatIcon 3s ease-in-out infinite;
-        filter: drop-shadow(0 0 16px rgba(13,148,136,0.28));
+    .empty-eyebrow {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 6px 12px; border-radius: 999px;
+        background: rgba(56,189,248,0.08);
+        border: 1px solid rgba(56,189,248,0.18);
+        color: #7dd3fc; font-size: 0.68rem; font-weight: 800; letter-spacing: 0.08em;
+        text-transform: uppercase; margin-bottom: 1rem;
     }
-    @keyframes floatIcon { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
-    .empty-title { font-size: 1.05rem; font-weight: 900; color: #fff; margin-bottom: 6px; }
-    .empty-sub   { font-size: 0.78rem; color: #334155; max-width: 340px; line-height: 1.7; margin-bottom: 1.2rem; }
-    .empty-chips { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
-    .empty-chip {
-        font-size: 0.62rem; padding: 4px 11px; border-radius: var(--radius-full);
-        font-weight: 700; cursor: default;
+    .empty-icon { font-size: 2.8rem; margin-bottom: 1rem; filter: drop-shadow(0 14px 28px rgba(56,189,248,0.16)); }
+    .empty-title { font-size: 2.1rem; font-weight: 900; color: #f8fafc; margin-bottom: 10px; letter-spacing: -0.04em; }
+    .empty-sub   { font-size: 0.95rem; color: #94a3b8; max-width: 620px; line-height: 1.8; margin-bottom: 1.6rem; }
+    .empty-grid {
+        width: 100%;
+        max-width: 760px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-top: 0.4rem;
+    }
+    .empty-card {
+        text-align: left;
+        background: rgba(2,6,23,0.28);
+        border: 1px solid rgba(148,163,184,0.14);
+        border-radius: 18px;
+        padding: 14px 15px;
+    }
+    .empty-card-label {
+        font-size: 0.62rem;
+        color: #7dd3fc;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+    }
+    .empty-card-text {
+        font-size: 0.8rem;
+        color: #dbeafe;
+        line-height: 1.6;
+    }
+    .starter-prompt-wrap {
+        max-width: 760px;
+        width: 100%;
+        margin-top: 1rem;
+    }
+    .starter-prompt-title {
+        font-size: 0.72rem;
+        color: #94a3b8;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 0.75rem;
+    }
+    .starter-prompt-note {
+        font-size: 0.76rem;
+        color: #64748b;
+        margin-top: 0.8rem;
+    }
+    @media (max-width: 900px) {
+        .empty-grid { grid-template-columns: 1fr; }
+        .empty-title { font-size: 1.6rem; }
+        .empty-sub { font-size: 0.88rem; }
     }
 
-    /* ── Warn bar ── */
+    /* Warn bar */
     .warn-bar {
         display: flex; align-items: center; gap: 9px;
         padding: 10px 14px; border-radius: var(--radius-md);
-        background: rgba(245,158,11,0.05); border: 1px solid rgba(245,158,11,0.18);
-        margin-bottom: 8px;
+        background: rgba(217,119,6,0.06); border: 1px solid rgba(217,119,6,0.14); margin-bottom: 8px;
     }
 
-    /* ── File card ── */
+    /* File card */
     .file-card {
-        background: rgba(29,78,216,0.07); border: 1px solid rgba(29,78,216,0.18);
+        background: rgba(37,99,235,0.06); border: 1px solid rgba(37,99,235,0.12);
         border-radius: var(--radius-md); padding: 9px 12px;
         display: flex; align-items: center; gap: 10px; margin-top: 9px;
     }
 
-    /* ── Ready card ── */
+    /* Ready card */
     .ready-card {
         display: flex; align-items: center; gap: 9px;
-        background: linear-gradient(135deg, rgba(5,150,105,0.11), rgba(13,148,136,0.06));
-        border: 1px solid rgba(5,150,105,0.25); border-radius: var(--radius-md);
+        background: rgba(22,163,74,0.06);
+        border: 1px solid rgba(22,163,74,0.14); border-radius: var(--radius-md);
         padding: 10px 13px; margin-top: 9px;
-        box-shadow: 0 0 20px rgba(5,150,105,0.07);
+        box-shadow: 0 12px 24px rgba(22,163,74,0.07);
         animation: fadeUp 0.4s cubic-bezier(0.22,1,0.36,1);
     }
-    .ready-dot {
-        width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
-        background: #34d399; box-shadow: 0 0 9px #34d399, 0 0 20px rgba(52,211,153,0.4);
-        animation: blink 2s ease-in-out infinite;
-    }
+    .ready-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; background: var(--success); box-shadow: 0 0 0 3px rgba(22,163,74,0.14); }
 
-    /* ── Proc steps ── */
+    /* Proc steps */
     .proc-step { display: flex; align-items: center; gap: 7px; font-size: 0.7rem; padding: 3px 0; }
-    .dot-done   { width: 6px; height: 6px; border-radius: 50%; background: #34d399; box-shadow: 0 0 6px rgba(52,211,153,0.6); flex-shrink: 0; }
-    .dot-active { width: 6px; height: 6px; border-radius: 50%; background: var(--teal-lt); box-shadow: 0 0 6px rgba(45,212,191,0.6); flex-shrink: 0; animation: blink 1s ease-in-out infinite; }
+    .dot-done   { width: 6px; height: 6px; border-radius: 50%; background: var(--success); flex-shrink: 0; }
+    .dot-active { width: 6px; height: 6px; border-radius: 50%; background: var(--primary); flex-shrink: 0; animation: blink 1s ease-in-out infinite; }
 
-    /* ── Suggested query buttons ── */
+    /* Suggested query how-card */
     .how-card { background: rgba(245,158,11,0.04); border: 1px solid rgba(245,158,11,0.12); border-radius: var(--radius-md); padding: 12px 13px; }
     .how-num  { width: 20px; height: 20px; border-radius: 50%; background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.25); display: inline-flex; align-items: center; justify-content: center; font-size: 0.56rem; font-weight: 900; color: #f59e0b; flex-shrink: 0; }
 
-    /* ── Model stack ── */
-    .model-row { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
-    .model-row:last-child { border-bottom: none; }
+    /* Metric strips */
+    .strip-teal    { height: 2px; border-radius: 2px; background: linear-gradient(90deg,var(--primary),var(--primary-2)); margin-top: 4px; opacity: 0.75; }
+    .strip-gold    { height: 2px; border-radius: 2px; background: linear-gradient(90deg,#d97706,#f59e0b); margin-top: 4px; opacity: 0.65; }
+    .strip-emerald { height: 2px; border-radius: 2px; background: linear-gradient(90deg,#16a34a,#22c55e); margin-top: 4px; opacity: 0.65; }
+    .strip-violet  { height: 2px; border-radius: 2px; background: linear-gradient(90deg,var(--primary),#a78bfa); margin-top: 4px; opacity: 0.65; }
 
-    /* ── Metric strips ── */
-    .strip-teal    { height: 2px; border-radius: 2px; background: linear-gradient(90deg,#0d9488,#2dd4bf); box-shadow: 0 0 8px rgba(13,148,136,0.35); margin-top: 4px; }
-    .strip-gold    { height: 2px; border-radius: 2px; background: linear-gradient(90deg,#d97706,#f59e0b); box-shadow: 0 0 8px rgba(245,158,11,0.32); margin-top: 4px; }
-    .strip-emerald { height: 2px; border-radius: 2px; background: linear-gradient(90deg,#059669,#34d399); box-shadow: 0 0 8px rgba(52,211,153,0.32); margin-top: 4px; }
-    .strip-violet  { height: 2px; border-radius: 2px; background: linear-gradient(90deg,#7c3aed,#a78bfa); box-shadow: 0 0 8px rgba(124,58,237,0.32); margin-top: 4px; }
-
-    /* ── Glow divider ── */
+    /* Glow divider */
     .glow-div {
         height: 1px; margin: 1rem 0;
-        background: linear-gradient(90deg, transparent 0%, rgba(13,148,136,0.32) 25%, rgba(124,58,237,0.22) 65%, transparent 100%);
+        background: linear-gradient(90deg, transparent 0%, rgba(109,40,217,0.30) 25%, rgba(37,99,235,0.18) 65%, transparent 100%);
     }
 
-    /* ── Footer ── */
-    .footer-bar { text-align: center; padding: 0.6rem 0; font-size: 0.66rem; color: #1e3a5f; font-weight: 500; }
+    /* Footer */
+    .footer-bar { text-align: center; padding: 0.6rem 0; font-size: 0.66rem; color: var(--text-muted); font-weight: 600; }
 
     @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
     </style>
@@ -661,6 +807,20 @@ def avg_confidence() -> int:
     return int(sum(s) / len(s)) if s else 0
 
 
+def strip_chunk_references(text: str) -> str:
+    """Remove [Chunk X], [Chunks X, Y], and stray 'and [Chunk X]' from answer text."""
+    # Remove patterns like [Chunk 1], [Chunk 2], [Chunks 1, 3], [Chunks 1, 2, 3]
+    text = re.sub(r"\[Chunks?\s*[\d,\s]+\]", "", text)
+    # Remove leftover 'and' before the removed chunk refs (e.g., "and [Chunk 3]" → "")
+    text = re.sub(r"\s+and\s+(?=\s|\.|\,|$)", " ", text)
+    # Clean up any double spaces left behind
+    text = re.sub(r"  +", " ", text)
+    # Clean up spaces before punctuation
+    text = re.sub(r"\s+([.,;:])", r"\1", text)
+    return text.strip()
+
+
+
 def conf_bar_html(value: int) -> str:
     if value >= 80:
         cls, label, color = "conf-high",   "High",   "#34d399"
@@ -687,7 +847,7 @@ def render_markdown_to_html(text: str) -> str:
         lang = m.group(1).strip() if m.group(1) else ""
         code = m.group(2)
         lang_label = (
-            f'<span style="font-size:0.57rem;color:#475569;font-weight:700;">{lang}</span>'
+            f'<span class="code-lang">{lang}</span>'
             if lang else ""
         )
         return f"<pre>{lang_label}<code>{code}</code></pre>"
@@ -719,6 +879,8 @@ def render_markdown_to_html(text: str) -> str:
         items = [re.sub(r"^\d+\.\s+", "", i.strip()) for i in m.group(0).strip().split("\n") if i.strip()]
         return "<ol>" + "".join(f"<li>{i}</li>" for i in items) + "</ol>"
     text = re.sub(r"(^\d+\. .+(\n|$))+", replace_ol, text, flags=re.MULTILINE)
+
+    # Chunk references are stripped before rendering — no cite-chip needed.
 
     block_tags = ("<h1", "<h2", "<h3", "<h4", "<ul", "<ol", "<pre", "<hr", "<blockquote")
     parts = []
@@ -767,11 +929,17 @@ def proc_step_html(icon: str, msg: str, color: str, dot_cls: str) -> str:
 # CHAT MESSAGE RENDERER
 # ═══════════════════════════════════════════════════════
 def render_chat_message(chat: dict, index: int, total: int):
-    is_rag   = chat.get("mode") == "rag"
-    mode_cls = "rag" if is_rag else "fallback"
-    badge_text = "📄 From Document" if is_rag else "🌐 General Knowledge"
+    mode       = chat.get("mode")
+    is_rag     = mode == "rag"
+    is_not_doc = mode == "not_found"
+    mode_cls   = "rag" if is_rag else "fallback"
+    if is_rag:
+        badge_text = "📄 From Document"
+    elif is_not_doc:
+        badge_text = "ℹ️ Not in document"
+    else:
+        badge_text = "🌐 General Knowledge"
     ai_av_cls  = "msg-ai-avatar-rag" if is_rag else "msg-ai-avatar-fallback"
-    ai_av_icon = "🤖"
     bubble_cls = f"msg-ai-bubble-{mode_cls}"
 
     # User message
@@ -785,12 +953,14 @@ def render_chat_message(chat: dict, index: int, total: int):
         unsafe_allow_html=True,
     )
 
-    rendered_answer = render_markdown_to_html(chat["answer"])
+    # Strip chunk references like [Chunk 1], [Chunks 1, 3] from the answer
+    clean_answer = strip_chunk_references(chat["answer"])
+    rendered_answer = render_markdown_to_html(clean_answer)
 
     # AI message
     st.markdown(
         '<div class="msg-ai-row">'
-        f'<div class="msg-ai-avatar {ai_av_cls}">{ai_av_icon}</div>'
+        f'<div class="msg-ai-avatar {ai_av_cls}">🤖</div>'
         '<div class="msg-ai-content">'
         f'<span class="mode-badge mode-badge-{mode_cls}">{badge_text}</span>'
         f'<div class="msg-ai-bubble {bubble_cls}">'
@@ -800,19 +970,19 @@ def render_chat_message(chat: dict, index: int, total: int):
         unsafe_allow_html=True,
     )
 
-    # Confidence bar (only for RAG)
+    # Confidence bar (RAG only)
     if is_rag and chat.get("confidence", 0) > 0:
-        st.markdown(
-            f'<div style="padding-left:40px;">{conf_bar_html(chat["confidence"])}</div>',
-            unsafe_allow_html=True,
-        )
+        st.markdown('<div class="msg-ai-meta">', unsafe_allow_html=True)
+        st.markdown(conf_bar_html(chat["confidence"]), unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
 
     # Sources expander
     chat_docs = chat.get("docs", [])
     if is_rag and chat_docs:
-        with st.expander(f"📚 View sources  ·  {len(chat_docs)} chunk{'s' if len(chat_docs) != 1 else ''}"):
+        st.markdown('<div class="msg-ai-meta">', unsafe_allow_html=True)
+        with st.expander(f"📚 View sources  ·  {len(chat_docs)} source{'s' if len(chat_docs) != 1 else ''}"):
             for idx, doc in enumerate(chat_docs):
-                page    = doc.get("page", "?")
+                page = doc.get("page", "?")
                 snippet = html_module.escape(doc.get("content", "")[:420])
                 st.markdown(
                     '<div class="source-card">'
@@ -824,6 +994,7 @@ def render_chat_message(chat: dict, index: int, total: int):
                     '</div>',
                     unsafe_allow_html=True,
                 )
+        st.markdown('</div>', unsafe_allow_html=True)
 
     if index < total - 1:
         st.markdown('<div class="msg-divider"></div>', unsafe_allow_html=True)
@@ -834,51 +1005,188 @@ def render_chat_message(chat: dict, index: int, total: int):
 # ═══════════════════════════════════════════════════════
 def render_sidebar():
     with st.sidebar:
-        # Logo & brand
+        # ── Branding header ──
         st.markdown(
-            '<div style="display:flex;align-items:center;gap:10px;padding:0.4rem 0 1rem;">'
+            '<div style="display:flex;align-items:center;gap:13px;padding:0.5rem 0 1.25rem;">'
             '<div class="logo-box">🧠</div>'
             '<div>'
-            '<div class="app-title" style="font-size:1.1rem;">RAG Assistant</div>'
-            '<div style="font-size:0.57rem;color:#1e3a5f;margin-top:2px;font-weight:500;">Document Intelligence</div>'
+            '<div class="app-title" style="font-size:1.2rem;">RAG Assistant</div>'
+            '<div style="font-size:0.72rem;color:#94a3b8;margin-top:3px;font-weight:600;">'
+            'Document Intelligence Platform</div>'
             '</div></div>',
             unsafe_allow_html=True,
         )
 
-        st.markdown('<div class="sidebar-divider"></div>', unsafe_allow_html=True)
-        st.markdown('<div class="sidebar-section">Navigation</div>', unsafe_allow_html=True)
+        # ── Document Upload Section ──
+        st.markdown('<div class="sidebar-card">', unsafe_allow_html=True)
+        st.markdown(
+            '<div class="sidebar-section" style="padding:0 0 10px 0;">'
+            '📁 &nbsp;Document Upload</div>',
+            unsafe_allow_html=True,
+        )
+        uploaded_file = st.file_uploader(
+            "Upload PDF", type=["pdf"], label_visibility="collapsed"
+        )
 
-        for icon, label in [("💬", "Chat"), ("📚", "Knowledge Base"), ("⚙️", "Settings")]:
-            active = st.session_state.get("active_tab", "chat") == label.lower().replace(" ", "_")
+        if uploaded_file:
+            is_new = st.session_state.last_file != uploaded_file.name
+            if is_new:
+                st.session_state.db_ready = False
+                st.session_state.last_file = uploaded_file.name
+                get_vectorstore.clear()
+
+            os.makedirs("data/docs", exist_ok=True)
+            file_path = os.path.join("data/docs", uploaded_file.name)
+            if is_new or not os.path.exists(file_path):
+                with open(file_path, "wb") as fh:
+                    fh.write(uploaded_file.getbuffer())
+
+            size_str = f"{round(uploaded_file.size / 1024, 1)} KB"
+            fname = uploaded_file.name[:28] + ("…" if len(uploaded_file.name) > 28 else "")
             st.markdown(
-                f'<div class="sidebar-nav-item {"active" if active else ""}">'
-                f'<span>{icon}</span>{label}</div>',
+                '<div class="sidebar-file-info">'
+                '<div class="sidebar-file-icon">📄</div>'
+                '<div>'
+                f'<div style="font-size:0.78rem;font-weight:800;color:#e2e8f0;">{fname}</div>'
+                f'<div style="font-size:0.65rem;color:#94a3b8;margin-top:3px;">{size_str} · PDF</div>'
+                '</div></div>',
                 unsafe_allow_html=True,
             )
 
-        st.markdown('<div class="sidebar-divider"></div>', unsafe_allow_html=True)
-        st.markdown('<div class="sidebar-section">Pipeline Status</div>', unsafe_allow_html=True)
+            if not st.session_state.db_ready:
+                if st.button(
+                    "⚡  Process Document",
+                    use_container_width=True,
+                    key="proc_btn_sidebar",
+                ):
+                    step_ph = st.empty()
+                    bar = st.progress(0)
+                    try:
+                        for icon, msg, p_start, p_end in [
+                            ("🔍", "Parsing PDF…", 5, 20),
+                            ("✂️", "Chunking text…", 30, 50),
+                            ("🔢", "Generating embeddings…", 60, 85),
+                            ("📦", "Indexing FAISS…", 95, 100),
+                        ]:
+                            step_ph.markdown(
+                                proc_step_html(icon, msg, "#38bdf8", "dot-active"),
+                                unsafe_allow_html=True,
+                            )
+                            bar.progress(p_start)
+                            if icon == "🔍":
+                                docs_raw = load_pdf(file_path)
+                            elif icon == "✂️":
+                                chunks = split_documents(docs_raw)
+                            elif icon == "🔢":
+                                store_embeddings(chunks)
+                            else:
+                                time.sleep(0.3)
+                            bar.progress(p_end)
 
-        for icon, name, role, color in [
-            ("🤖", "Mistral Small", "Primary LLM",   "#2dd4bf"),
-            ("🗄️",  "ChromaDB",     "Vector Store",  "#60a5fa"),
-            ("🔢", "HuggingFace",  "Embeddings",    "#fcd34d"),
-            ("🔗", "LangChain",    "RAG Pipeline",  "#34d399"),
-        ]:
+                        step_ph.markdown(
+                            proc_step_html("✅", "Document ready!", "#34d399", "dot-done"),
+                            unsafe_allow_html=True,
+                        )
+                        time.sleep(0.8)
+                        step_ph.empty()
+                        bar.empty()
+                        st.session_state.db_ready = True
+                        st.session_state.total_docs += 1
+                        st.rerun()
+                    except Exception as exc:
+                        step_ph.empty()
+                        bar.empty()
+                        st.error(f"❌ Processing failed: {exc}")
+
+        st.markdown('</div>', unsafe_allow_html=True)  # close upload card
+
+        # ── Status Section ──
+        st.markdown('<div style="margin-top:14px;"></div>', unsafe_allow_html=True)
+        st.markdown('<div class="sidebar-card">', unsafe_allow_html=True)
+        st.markdown(
+            '<div class="sidebar-section" style="padding:0 0 6px 0;">'
+            '📊 &nbsp;Status</div>',
+            unsafe_allow_html=True,
+        )
+
+        db_ready = st.session_state.get("db_ready", False)
+        dot_cls = (
+            "sidebar-status-dot sidebar-status-dot-on"
+            if db_ready
+            else "sidebar-status-dot sidebar-status-dot-off"
+        )
+        title = "Document ready" if db_ready else "No document indexed"
+        subtitle = "Chat is now enabled." if db_ready else "Upload and process a PDF."
+        st.markdown(
+            f'<div class="sidebar-status-item">'
+            f'<div class="{dot_cls}"></div>'
+            f'<div>'
+            f'<div style="font-size:0.82rem;font-weight:800;color:#e2e8f0;">{title}</div>'
+            f'<div style="font-size:0.68rem;color:#94a3b8;margin-top:3px;">{subtitle}</div>'
+            f'</div></div>',
+            unsafe_allow_html=True,
+        )
+
+        st.markdown(
+            '<div class="sidebar-kpi">'
+            '<div class="sidebar-kpi-item">'
+            '<div class="sidebar-kpi-label">Documents</div>'
+            f'<div class="sidebar-kpi-val">{st.session_state.total_docs}</div></div>'
+            '<div class="sidebar-kpi-item">'
+            '<div class="sidebar-kpi-label">Queries</div>'
+            f'<div class="sidebar-kpi-val">{st.session_state.total_queries}</div></div>'
+            '<div class="sidebar-kpi-item">'
+            '<div class="sidebar-kpi-label">Avg Conf</div>'
+            f'<div class="sidebar-kpi-val">{avg_confidence()}%</div></div>'
+            '</div>',
+            unsafe_allow_html=True,
+        )
+        st.markdown('</div>', unsafe_allow_html=True)  # close status card
+
+        # ── Suggested Queries Section ──
+        st.markdown('<div style="margin-top:14px;"></div>', unsafe_allow_html=True)
+        st.markdown('<div class="sidebar-card">', unsafe_allow_html=True)
+        st.markdown(
+            '<div class="sidebar-section" style="padding:0 0 10px 0;">'
+            '⭐ &nbsp;Quick Queries</div>',
+            unsafe_allow_html=True,
+        )
+
+        if db_ready:
+            for q in [
+                "What is the main topic?",
+                "Summarize the key findings.",
+                "What methodology was used?",
+                "What are the main conclusions?",
+                "List the most important points.",
+            ]:
+                if st.button(
+                    f"›  {q}",
+                    use_container_width=True,
+                    key=f"sq_sidebar_{q}",
+                    type="secondary",
+                ):
+                    st.session_state.prefill_query = q
+                    st.session_state.auto_submit = True
+                    st.rerun()
+        else:
             st.markdown(
-                f'<div class="sidebar-status-item">'
-                f'<div class="sidebar-status-dot"></div>'
-                f'<div>'
-                f'<div style="font-size:0.7rem;font-weight:700;color:{color};">{icon} {name}</div>'
-                f'<div style="font-size:0.57rem;color:#1e3a5f;">{role}</div>'
-                f'</div></div>',
+                '<div style="font-size:0.76rem;color:#64748b;padding:6px 0 4px;'
+                'line-height:1.65;">'
+                'Upload and process a PDF to see suggested queries here.'
+                '</div>',
                 unsafe_allow_html=True,
             )
+        st.markdown('</div>', unsafe_allow_html=True)  # close queries card
 
-        st.markdown('<div class="sidebar-divider"></div>', unsafe_allow_html=True)
-
+        # ── Actions Section ──
         if st.session_state.chat_history:
-            if st.button("🗑️  Clear Chat", use_container_width=True, type="secondary"):
+            st.markdown('<div style="margin-top:14px;"></div>', unsafe_allow_html=True)
+            if st.button(
+                "🗑️  Clear Chat",
+                use_container_width=True,
+                type="secondary",
+            ):
                 st.session_state.chat_history  = []
                 st.session_state.total_queries = 0
                 st.session_state.conf_scores   = []
@@ -890,19 +1198,19 @@ def render_sidebar():
 # HEADER
 # ═══════════════════════════════════════════════════════
 def render_header():
-    status_color = "#34d399" if st.session_state.db_ready else "#2dd4bf"
-    status_label = "Document Ready" if st.session_state.db_ready else "System Online"
+    status_color = "#16a34a" if st.session_state.db_ready else "#6d28d9"
+    status_label = "Document ready" if st.session_state.db_ready else "System online"
 
     hdr_l, hdr_r = st.columns([3, 1])
     with hdr_l:
         st.markdown(
             '<div style="display:flex;align-items:center;gap:12px;padding-bottom:1.2rem;'
-            'border-bottom:1px solid rgba(255,255,255,0.06);margin-bottom:1.2rem;">'
+            'border-bottom:1px solid rgba(15,23,42,0.08);margin-bottom:1.2rem;">'
             '<div class="logo-box">🧠</div>'
             '<div>'
             '<div class="app-title" style="font-size:1.75rem;">RAG Assistant</div>'
-            '<div style="font-size:0.67rem;color:#1e3a5f;margin-top:3px;font-weight:500;">'
-            'Document Intelligence &nbsp;·&nbsp; Mistral Small + ChromaDB + LangChain'
+            '<div style="font-size:0.72rem;color:#64748b;margin-top:3px;font-weight:600;">'
+            'Document Intelligence &nbsp;·&nbsp; Mistral Small + FAISS + LangChain'
             '</div></div></div>',
             unsafe_allow_html=True,
         )
@@ -978,10 +1286,10 @@ def render_left_column():
                 bar     = st.progress(0)
                 try:
                     for icon, msg, p_start, p_end in [
-                        ("🔍", "Parsing PDF…",         5,  20),
-                        ("✂️",  "Chunking text…",       30, 50),
-                        ("🔢", "Generating embeddings…",60, 85),
-                        ("📦", "Indexing vector store…",95, 100),
+                        ("🔍", "Parsing PDF…",          5,  20),
+                        ("✂️",  "Chunking text…",        30, 50),
+                        ("🔢", "Generating embeddings…", 60, 85),
+                        ("📦", "Indexing FAISS…",        95, 100),
                     ]:
                         step_ph.markdown(proc_step_html(icon, msg, "#2dd4bf", "dot-active"), unsafe_allow_html=True)
                         bar.progress(p_start)
@@ -1048,38 +1356,17 @@ def render_left_column():
         )
     panel_close()
 
-    # ── Model Stack ─────────────────────────────────────
-    panel_open("🔧", "Model Stack", "AI pipeline components", "p-icon-violet")
-    rows = [
-        ("LLM",         "Mistral Small", "#2dd4bf"),
-        ("Vector Store","ChromaDB",      "#60a5fa"),
-        ("Embeddings",  "HuggingFace",   "#fcd34d"),
-        ("Pipeline",    "LangChain RAG", "#34d399"),
-        ("Fallback",    "General LLM",   "#a78bfa"),
-    ]
-    st.markdown(
-        '<div style="background:rgba(255,255,255,0.018);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:9px 12px;">'
-        + "".join([
-            f'<div class="model-row">'
-            f'<span style="font-size:0.67rem;color:#334155;">{k}</span>'
-            f'<span style="font-size:0.67rem;font-weight:700;color:{c};">{v}</span>'
-            f'</div>'
-            for k, v, c in rows
-        ])
-        + '</div>',
-        unsafe_allow_html=True,
-    )
-    panel_close()
+    # (Removed: Model Stack panel) — reduces visual noise without changing workflow.
 
 
 # ═══════════════════════════════════════════════════════
-# CHAT COLUMN — Redesigned
+# CHAT COLUMN
 # ═══════════════════════════════════════════════════════
 def render_chat_column():
-    msg_count  = len(st.session_state.chat_history)
-    prefill    = st.session_state.get("prefill_query", "")
+    msg_count = len(st.session_state.chat_history)
+    prefill   = st.session_state.get("prefill_query", "")
 
-    # ── Chat container top bar ─────────────────────────
+    # ── Top bar ────────────────────────────────────────
     badge_html = ""
     if msg_count:
         badge_html = (
@@ -1088,30 +1375,20 @@ def render_chat_column():
             f'</span>'
         )
 
-    # Top bar row: title + badge + clear button
-    hdr_l, hdr_r = st.columns([8, 1])
-    with hdr_l:
-        st.markdown(
-            '<div class="chat-topbar">'
-            '<div class="chat-topbar-left">'
-            '<div class="chat-topbar-icon">💬</div>'
-            '<div>'
-            '<div class="chat-topbar-title">Conversation</div>'
-            '<div class="chat-topbar-sub">Ask anything about your document</div>'
-            '</div>'
-            '</div>'
-            + badge_html +
-            '</div>',
-            unsafe_allow_html=True,
-        )
-    with hdr_r:
-        if st.session_state.chat_history:
-            if st.button("🗑️", key="clear_btn", use_container_width=True, type="secondary"):
-                st.session_state.chat_history  = []
-                st.session_state.total_queries = 0
-                st.session_state.conf_scores   = []
-                st.session_state.prefill_query = ""
-                st.rerun()
+    st.markdown('<div class="chat-surface">', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="chat-topbar">'
+        '<div class="chat-topbar-left">'
+        '<div class="chat-topbar-icon">💬</div>'
+        '<div>'
+        '<div class="chat-topbar-title">Conversation</div>'
+        '<div class="chat-topbar-sub">Ask anything about your document</div>'
+        '</div>'
+        '</div>'
+        + badge_html +
+        '</div>',
+        unsafe_allow_html=True,
+    )
 
     # ── Messages area ──────────────────────────────────
     st.markdown('<div class="chat-messages-wrap">', unsafe_allow_html=True)
@@ -1119,29 +1396,60 @@ def render_chat_column():
     if not st.session_state.chat_history:
         st.markdown(
             '<div class="empty-state">'
+            '<div class="empty-eyebrow">AI Document Workspace</div>'
             '<div class="empty-icon">💬</div>'
-            '<div class="empty-title">Ready to Assist</div>'
-            '<div class="empty-sub">Upload a PDF, process it, then ask any question. '
-            'Answers arrive with source citations and live confidence scores.</div>'
-            '<div class="empty-chips">'
-            '<span class="empty-chip" style="background:rgba(13,148,136,0.1);border:1px solid rgba(13,148,136,0.25);color:#2dd4bf;">🔒 Private</span>'
-            '<span class="empty-chip" style="background:rgba(29,78,216,0.1);border:1px solid rgba(29,78,216,0.25);color:#60a5fa;">⚡ Fast RAG</span>'
-            '<span class="empty-chip" style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25);color:#fcd34d;">📊 Confidence</span>'
-            '<span class="empty-chip" style="background:rgba(5,150,105,0.1);border:1px solid rgba(5,150,105,0.25);color:#34d399;">📚 Sources</span>'
-            '<span class="empty-chip" style="background:rgba(124,58,237,0.1);border:1px solid rgba(124,58,237,0.25);color:#a78bfa;">🧠 Mistral</span>'
-            '</div></div>',
+            '<div class="empty-title">Ask better questions. Get grounded answers.</div>'
+            '<div class="empty-sub">Upload a PDF from the sidebar, process it, and chat with your document in a focused workspace. '
+            'Responses stay citation-aware, confidence-scored, and easy to verify.</div>'
+            '<div class="empty-grid">'
+            '<div class="empty-card">'
+            '<div class="empty-card-label">Summaries</div>'
+            '<div class="empty-card-text">Generate quick executive summaries and extract the main findings.</div>'
+            '</div>'
+            '<div class="empty-card">'
+            '<div class="empty-card-label">Evidence</div>'
+            '<div class="empty-card-text">See source-backed answers with confidence signals for each response.</div>'
+            '</div>'
+            '<div class="empty-card">'
+            '<div class="empty-card-label">Fallback</div>'
+            '<div class="empty-card-text">If the document lacks context, switch to the external model only when needed.</div>'
+            '</div>'
+            '</div>'
+            '</div>',
             unsafe_allow_html=True,
         )
+        st.markdown('<div class="starter-prompt-wrap"><div class="starter-prompt-title">Try these prompts</div></div>', unsafe_allow_html=True)
+        p1, p2, p3 = st.columns(3)
+        with p1:
+            if st.button("Summarize this document", use_container_width=True, key="starter_1", type="secondary"):
+                st.session_state.prefill_query = "Summarize this document."
+                if st.session_state.db_ready:
+                    st.session_state.auto_submit = True
+                st.rerun()
+        with p2:
+            if st.button("What are the key findings?", use_container_width=True, key="starter_2", type="secondary"):
+                st.session_state.prefill_query = "What are the key findings?"
+                if st.session_state.db_ready:
+                    st.session_state.auto_submit = True
+                st.rerun()
+        with p3:
+            if st.button("Explain the methodology", use_container_width=True, key="starter_3", type="secondary"):
+                st.session_state.prefill_query = "Explain the methodology used in the document."
+                if st.session_state.db_ready:
+                    st.session_state.auto_submit = True
+                st.rerun()
+        if not st.session_state.db_ready:
+            st.markdown('<div class="starter-prompt-note">These prompts will auto-run after you upload and process a document.</div>', unsafe_allow_html=True)
     else:
         total = len(st.session_state.chat_history)
         for i, chat in enumerate(st.session_state.chat_history):
             render_chat_message(chat, i, total)
 
-    st.markdown('</div>', unsafe_allow_html=True)  # close chat-messages-wrap
-
+    st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
     st.markdown('<div class="glow-div"></div>', unsafe_allow_html=True)
 
-    # ── Warn bar ───────────────────────────────────────
+    # ── Warn / fallback helper ─────────────────────────
     if not st.session_state.db_ready:
         st.markdown(
             '<div class="warn-bar">'
@@ -1151,8 +1459,37 @@ def render_chat_column():
             '</span></div>',
             unsafe_allow_html=True,
         )
+    elif st.session_state.chat_history:
+        last = st.session_state.chat_history[-1]
+        if last.get("mode") == "not_found" and last.get("allow_fallback"):
+            col_info, col_btn = st.columns([3, 1])
+            with col_info:
+                st.markdown(
+                    '<div class="warn-bar" style="margin-bottom:0;">'
+                    '<span>ℹ️</span>'
+                    '<span style="font-size:0.78rem;color:#e5e7eb;font-weight:500;">'
+                    'This answer is based only on your uploaded document and the required context was not found.'
+                    '</span></div>',
+                    unsafe_allow_html=True,
+                )
+            with col_btn:
+                if st.button("🌐 Use web model", use_container_width=True, key="fallback_trigger_btn"):
+                    with st.spinner("Fetching answer from web model…"):
+                        try:
+                            fallback_llm = get_fallback_llm()
+                            fb_answer    = fallback_llm.invoke(last["question"]).content
+                            last["answer"]         = fb_answer
+                            last["mode"]           = "fallback"
+                            last["allow_fallback"] = False
+                            last["confidence"]     = 0
+                            last["docs"]           = []
+                            st.session_state.chat_history[-1] = last
+                        except Exception as exc:
+                            st.error(f"❌ Fallback failed: {exc}")
+                    st.rerun()
 
     # ── Query input ────────────────────────────────────
+    st.markdown('<div class="composer-shell"><div class="composer-card">', unsafe_allow_html=True)
     q_l, q_r = st.columns([8, 1])
     with q_l:
         query_input = st.text_input(
@@ -1173,11 +1510,12 @@ def render_chat_column():
 
     st.markdown(
         '<div class="input-hint">'
-        '<span class="kbd">Enter</span> or click <strong style="color:#334155;">Send</strong>'
-        ' &nbsp;·&nbsp; Powered by Mistral Small + ChromaDB RAG'
+        '<span class="kbd">Enter</span> or click <strong style="color:#94a3b8;">Send</strong>'
+        ' &nbsp;·&nbsp; Powered by Mistral Small + FAISS RAG'
         '</div>',
         unsafe_allow_html=True,
     )
+    st.markdown('</div></div>', unsafe_allow_html=True)
 
     if prefill:
         st.session_state.prefill_query = ""
@@ -1215,10 +1553,13 @@ def render_chat_column():
                 confidence  = calculate_confidence(results)
                 answer      = "".join(list(answer_gen))
 
+                # If the RAG chain indicates the answer is not in the document,
+                # keep the reply neutral and offer an explicit fallback button.
                 if answer.strip().startswith("NOT_FOUND"):
-                    fallback_llm = get_fallback_llm()
-                    answer       = fallback_llm.invoke(query_to_run).content
-                    docs         = []; confidence = 0; mode = "fallback"
+                    mode        = "not_found"
+                    docs        = []
+                    confidence  = 0
+                    answer      = "The required context is not present in the uploaded document."
                 else:
                     mode = "rag"
 
@@ -1242,10 +1583,11 @@ def render_chat_column():
                     st.session_state.conf_scores.append(confidence)
 
                 st.session_state.chat_history.append({
-                    "question":   query_to_run,
-                    "answer":     answer,
-                    "mode":       mode,
-                    "confidence": confidence,
+                    "question":       query_to_run,
+                    "answer":         answer,
+                    "mode":           mode,
+                    "confidence":     confidence,
+                    "allow_fallback": mode == "not_found",
                     "docs": [
                         {
                             "content": d.page_content,
@@ -1266,10 +1608,9 @@ def render_footer():
     st.markdown(
         '<div class="footer-bar">'
         'Powered by '
-        '<span style="color:#0d9488;font-weight:800;">Mistral Small</span> · '
-        '<span style="color:#1d4ed8;font-weight:800;">ChromaDB</span> · '
-        '<span style="color:#059669;font-weight:800;">LangChain</span>'
-        '&nbsp;|&nbsp; RAG Pipeline · v5.1'
+        '<span style="color:#0f172a;font-weight:800;">Mistral Small</span> · '
+        '<span style="color:#0f172a;font-weight:800;">FAISS</span> · '
+        '<span style="color:#0f172a;font-weight:800;">LangChain</span>'
         '</div>',
         unsafe_allow_html=True,
     )
@@ -1282,16 +1623,7 @@ def main():
     inject_css()
     init_session_state()
     render_sidebar()
-    render_header()
-    render_metrics()
-
-    left_col, chat_col = st.columns([5, 8], gap="large")
-    with left_col:
-        render_left_column()
-    with chat_col:
-        render_chat_column()
-
-    render_footer()
+    render_chat_column()
 
 
 if __name__ == "__main__":
