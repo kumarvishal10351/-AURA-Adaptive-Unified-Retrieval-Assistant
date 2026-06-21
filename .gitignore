@@ -7,3 +7,8 @@ chroma_db/
 .DS_Store
 .streamlit/secrets.toml
 data/docs/
+venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+.env
