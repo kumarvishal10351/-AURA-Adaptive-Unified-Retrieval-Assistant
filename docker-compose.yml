@@ -1,0 +1,10 @@
+services:
+  aura:
+    image: aura
+    ports:
+      - "8501:8501"
+    env_file:
+      - .env
+    volumes:
+      - ./faiss_db:/app/faiss_db
+      - ./data:/app/data
