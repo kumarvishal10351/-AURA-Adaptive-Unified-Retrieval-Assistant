@@ -1,0 +1,17 @@
+venv/
+__pycache__/
+*.pyc
+
+.git/
+.gitignore
+
+.env
+
+faiss_db/
+data/
+
+.streamlit/
+
+.devcontainer/
+
+ARCHITECTURE_AND_INTERVIEW_GUIDE.md
