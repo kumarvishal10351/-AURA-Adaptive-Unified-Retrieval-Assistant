@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/kumarvishal10351/rag-assistant/actions"><img src="https://img.shields.io/github/actions/workflow/status/kumarvishal10351/rag-assistant/ci.yml?branch=main&style=for-the-badge&logo=githubactions&logoColor=white&label=CI%2FCD" alt="CI/CD" /></a>
+  <a href="https://github.com/kumarvishal10351/-AURA-Adaptive-Unified-Retrieval-Assistant/actions"><img src="https://img.shields.io/github/actions/workflow/status/kumarvishal10351/-AURA-Adaptive-Unified-Retrieval-Assistant/ci.yml?branch=main&style=for-the-badge&logo=githubactions&logoColor=white&label=CI%2FCD" alt="CI/CD" /></a>
   <img src="https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python" />
   <img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI" />
   <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker" />
@@ -387,8 +387,8 @@ rag-assistant/
 
 ```bash
 # Clone the repository
-git clone https://github.com/kumarvishal10351/rag-assistant.git
-cd rag-assistant
+git clone https://github.com/kumarvishal10351/-AURA-Adaptive-Unified-Retrieval-Assistant.git
+cd -AURA-Adaptive-Unified-Retrieval-Assistant
 
 # Create and activate virtual environment
 python -m venv venv
@@ -1148,8 +1148,8 @@ Contributions are welcome. AURA follows standard open-source practices.
 
 ```bash
 # Fork and clone
-git clone https://github.com/<your-username>/rag-assistant.git
-cd rag-assistant
+git clone https://github.com/<your-username>/-AURA-Adaptive-Unified-Retrieval-Assistant.git
+cd -AURA-Adaptive-Unified-Retrieval-Assistant
 
 # Create a feature branch
 git checkout -b feature/your-feature-name

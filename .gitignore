@@ -1,14 +1,31 @@
+# ─── Python ───────────────────────────────────────────────
 venv/
 __pycache__/
 *.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+
+# ─── Environment & Secrets ────────────────────────────────
 .env
+.streamlit/secrets.toml
+
+# ─── Data & Artifacts ─────────────────────────────────────
+data/docs/
+faiss_db/
+mlflow.db
+mlruns/
+
+# ─── OS ───────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ─── IDE ──────────────────────────────────────────────────
+.vscode/
+.idea/
+
+# ─── Legacy ───────────────────────────────────────────────
 chroma_db/
 *.log
-.DS_Store
-.streamlit/secrets.toml
-data/docs/
-venv/
-__pycache__/
-.pytest_cache/
-*.pyc
-.env
