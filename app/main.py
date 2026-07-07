@@ -113,12 +113,15 @@ def render_header():
                     if st.button("Load documents", use_container_width=True, key="proc_btn"):
                         with st.status("Processing...", expanded=True) as status:
                             try:
+                                from utils import mlflow_logger
+                                mlflow_logger.start_experiment()
                                 st.write("Parsing PDF...")
                                 docs_raw = load_pdf(file_path)
                                 st.write("Splitting into chunks...")
                                 chunks = split_documents(docs_raw)
                                 st.write("Generating embeddings...")
                                 store_embeddings(chunks)
+                                mlflow_logger.end_run()
                                 st.write("Indexing complete.")
                                 time.sleep(0.3)
                                 status.update(label="Document ready", state="complete")
@@ -240,6 +243,8 @@ def handle_input():
 
     with st.chat_message("assistant"):
         with st.spinner("Retrieving..."):
+            from utils import mlflow_logger
+            mlflow_logger.start_experiment()
             try:
                 vectorstore = get_vectorstore()
                 llm = get_mistral_llm()
@@ -262,6 +267,8 @@ def handle_input():
             except Exception as exc:
                 st.error(f"Error: {str(exc)}")
                 answer = ""
+            finally:
+                mlflow_logger.end_run()
 
     if answer:
         st.session_state.total_queries += 1

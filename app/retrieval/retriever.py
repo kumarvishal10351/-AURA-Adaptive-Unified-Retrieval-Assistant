@@ -32,6 +32,8 @@ from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
 
 from config.settings import EMBEDDING_MODEL, FAISS_DB_DIR
+import time
+from utils import mlflow_logger
 
 
 # ─────────────────────────────────────────────────────────────────
@@ -166,14 +168,42 @@ def retrieve(
     """
     vs = get_vectorstore()
 
+    mlflow_logger.log_metric(
+        "query_length",
+        len(query)
+    )
+
     # ── Stage 1: FAISS over-fetch ─────────────────────────────────
     fetch_k = min(k * 3, _MAX_FETCH)
+    start_time = time.time()
+
     docs_and_scores: list[tuple] = vs.similarity_search_with_relevance_scores(
         query, k=fetch_k
     )
 
+    latency = time.time() - start_time
+
+    mlflow_logger.log_metric(
+        "retrieval_latency",
+        latency
+    )
+
+    mlflow_logger.log_param(
+        "top_k",
+        k
+    )
+
     if not docs_and_scores:
         return []
+
+    best_score = max(
+        score for _, score in docs_and_scores
+    )
+
+    mlflow_logger.log_metric(
+        "best_similarity",
+        float(best_score)
+    )
 
     # ── Stage 2: Score threshold ──────────────────────────────────
     above_threshold = [
@@ -188,6 +218,22 @@ def retrieve(
         above_threshold = docs_and_scores[:k]
 
     docs = [doc for doc, _ in above_threshold]
+
+    mlflow_logger.log_metric(
+        "retrieved_docs",
+        len(docs)
+    )
+
+    if above_threshold:
+        avg_score = (
+            sum(score for _, score in above_threshold)
+            / len(above_threshold)
+        )
+
+        mlflow_logger.log_metric(
+            "avg_similarity",
+            avg_score
+        )
 
     if len(docs) <= 1:
         # Nothing to rerank
@@ -204,8 +250,16 @@ def retrieve(
             key=lambda x: x[0],
             reverse=True,
         )
+        mlflow_logger.log_metric(
+            "reranker_used",
+            1
+        )
         return [doc for _, doc in ranked_pairs[:rerank_top_n]]
 
     except Exception:
         # CrossEncoder unavailable — return score-filtered results
+        mlflow_logger.log_metric(
+            "reranker_used",
+            0
+        )
         return docs[:rerank_top_n]

@@ -17,10 +17,12 @@ Fixes vs original:
 from __future__ import annotations
 
 import os
+import time
 
 from langchain_community.vectorstores import FAISS
 
 from config.settings import FAISS_DB_DIR
+from utils import mlflow_logger
 
 # Re-use the single shared, cached embeddings model from retriever.
 # Avoids loading the same ~400 MB HuggingFace model a second time.
@@ -60,7 +62,34 @@ def store_embeddings(chunks: list) -> FAISS:
     embeddings = _get_embeddings()
 
     try:
-        vectorstore = FAISS.from_documents(documents=chunks, embedding=embeddings)
+        mlflow_logger.log_param(
+            "embedding_model",
+            "all-MiniLM-L6-v2"
+        )
+
+        mlflow_logger.log_param(
+            "vector_store",
+            "FAISS"
+        )
+
+        start_time = time.time()
+
+        vectorstore = FAISS.from_documents(
+            documents=chunks,
+            embedding=embeddings
+        )
+
+        embedding_time = time.time() - start_time
+
+        mlflow_logger.log_metric(
+            "embedding_time",
+            embedding_time
+        )
+
+        mlflow_logger.log_metric(
+            "embedded_chunks",
+            len(chunks)
+        )
     except MemoryError:
         raise MemoryError(
             f"Not enough memory to embed {len(chunks)} chunks. "
