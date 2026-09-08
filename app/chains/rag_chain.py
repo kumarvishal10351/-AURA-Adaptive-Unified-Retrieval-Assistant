@@ -1,19 +1,12 @@
 """
 chains/rag_chain.py
 ────────────────────
-Fixes vs previous version:
-  • Two separate thresholds: COSINE_THRESHOLD on FAISS scores (0–1 range),
-    CrossEncoder used for ranking ONLY — no CE-score gating.
-    The root bug was using _SCORE_THRESHOLD (calibrated for cosine) as a
-    post-CE gate; CE logits are unbounded so it wiped valid chunks for any
-    broad / summary question.
-  • results is now always List[Tuple[doc, cosine_score: float]] — consistent
-    regardless of whether CE rerank ran or fell back, so confidence.py
-    always receives 0–1 values it can scale correctly.
-  • Prompt rewritten: less aggressive NOT_FOUND trigger; instructs LLM to
-    give partial answers rather than giving up on broad questions.
-  • NOT_FOUND detection hardened in app.py (see note at bottom of file).
-  • Parallel architecture and expansion timeout unchanged.
+Core RAG Pipeline:
+  Stage 1: Parallel original FAISS fetch + LLM multi-query expansion
+  Stage 2: Score merge, deduplication, and cosine threshold filter (≥ 0.20)
+  Stage 3: CrossEncoder rerank (ms-marco-MiniLM-L-6-v2) for Top-5 ordering
+  Stage 4: 16,000-character context assembly with 3-turn conversation history
+  Stage 5: Strict grounded token streaming via Mistral Nemo with NOT_FOUND sentinel
 """
 
 from __future__ import annotations
@@ -23,22 +16,16 @@ from concurrent.futures import as_completed
 
 from langchain_core.prompts import ChatPromptTemplate
 
-from config.settings import TOP_K, MAX_CONTEXT_LENGTH
+from config.settings import (
+    TOP_K,
+    FETCH_K,
+    FINAL_TOP_N,
+    EXPAND_TIMEOUT,
+    HISTORY_TURNS,
+    MAX_CONTEXT_LENGTH,
+    COSINE_THRESHOLD,
+)
 from retrieval.retriever import get_vectorstore, _get_reranker
-
-# ─────────────────────────────────────────────────────────────────
-# Constants
-# ─────────────────────────────────────────────────────────────────
-
-# Applied to FAISS cosine scores (0–1 range with normalize_embeddings=True).
-# 0.20 is intentionally lower than the old 0.30 to prevent over-filtering
-# on broad questions like "summarise the document" or "what are the conclusions".
-COSINE_THRESHOLD: float = 0.20
-
-FETCH_K: int        = max(TOP_K * 2, 12)  # candidates per query variation
-FINAL_TOP_N: int    = 5                   # chunks sent to the LLM
-EXPAND_TIMEOUT: int = 18                  # seconds for LLM expansion call
-HISTORY_TURNS: int  = 3                   # recent turns included in prompt
 
 # ─────────────────────────────────────────────────────────────────
 # Prompts
@@ -82,19 +69,17 @@ _REWRITE_PROMPT = ChatPromptTemplate.from_template(
     "Question: {question}"
 )
 
-# ─────────────────────────────────────────────────────────────────
-# Internal helpers
-# ─────────────────────────────────────────────────────────────────
 
 def _build_history(history: list) -> str:
     if not history:
         return "No previous conversation."
     lines = []
     for h in history[-HISTORY_TURNS:]:
-        preview = h["answer"][:300].rstrip()
-        if len(h["answer"]) > 300:
+        ans = h.get("answer", "")
+        preview = ans[:300].rstrip()
+        if len(ans) > 300:
             preview += "…"
-        lines.append(f"Q: {h['question']}\nA: {preview}")
+        lines.append(f"Q: {h.get('question', '')}\nA: {preview}")
     return "\n\n".join(lines)
 
 
@@ -113,8 +98,7 @@ def _parse_expansion(raw: str) -> list[str]:
 
 def _fetch_candidates(vs, query: str, k: int = FETCH_K) -> dict[str, tuple]:
     """
-    FAISS search. Returns {content: (doc, cosine_score)}.
-    Keyed by content for dedup; callers keep highest score on collision.
+    FAISS search returning {content: (doc, cosine_score)}.
     """
     try:
         results = vs.similarity_search_with_relevance_scores(query, k=k)
@@ -124,7 +108,7 @@ def _fetch_candidates(vs, query: str, k: int = FETCH_K) -> dict[str, tuple]:
 
 
 def _build_context(docs: list, max_chars: int = MAX_CONTEXT_LENGTH) -> str:
-    """Build labelled chunk context, truncating at a chunk boundary."""
+    """Build labelled chunk context, bounded at chunk borders within max_chars."""
     parts: list[str] = []
     total = 0
     for i, doc in enumerate(docs):
@@ -136,47 +120,38 @@ def _build_context(docs: list, max_chars: int = MAX_CONTEXT_LENGTH) -> str:
     return "\n\n".join(parts)
 
 
-# ─────────────────────────────────────────────────────────────────
-# Public factory
-# ─────────────────────────────────────────────────────────────────
-
-def create_rag_chain(llm, vectorstore):
+def create_rag_chain(llm, vectorstore=None):
     """
     Returns rag_pipeline(question, history) -> (generator, docs, results).
-
-    results is always List[Tuple[doc, cosine_score: float]] so that
-    calculate_confidence() in utils/confidence.py always receives 0–1
-    values and can produce a meaningful percentage.
+    results is always List[Tuple[doc, cosine_score: float]] in [0, 1].
     """
 
     def rag_pipeline(question: str, history: list):
-        vs           = get_vectorstore()
+        vs = vectorstore or get_vectorstore()
         history_text = _build_history(history)
 
-        # ── Stage 1: parallel original fetch + query expansion ────────────
+        # ── Stage 1: Parallel original fetch + query expansion ────────────
         with concurrent.futures.ThreadPoolExecutor(max_workers=5) as ex:
-
-            # Kick off FAISS search for the raw question immediately
             orig_future = ex.submit(_fetch_candidates, vs, question)
-
-            # Simultaneously ask LLM to expand the question
             expand_future = ex.submit(
                 llm.invoke,
                 _REWRITE_PROMPT.format_messages(
-                    history=history_text, question=question,
+                    history=history_text, question=question
                 ),
             )
 
-            merged: dict[str, tuple] = orig_future.result(timeout=30)
+            try:
+                merged: dict[str, tuple] = orig_future.result(timeout=30)
+            except Exception:
+                merged = {}
 
             extra_queries: list[str] = []
             try:
                 rewrite_res = expand_future.result(timeout=EXPAND_TIMEOUT)
-                extra_queries = _parse_expansion(rewrite_res.content)
+                extra_queries = _parse_expansion(getattr(rewrite_res, "content", str(rewrite_res)))
             except Exception:
-                pass  # expansion failed; original question is enough
+                pass  # Fallback to original query candidates
 
-            # Fetch for each expanded query in parallel
             if extra_queries:
                 extra_futures = {
                     ex.submit(_fetch_candidates, vs, q): q
@@ -196,11 +171,7 @@ def create_rag_chain(llm, vectorstore):
                 yield "NOT_FOUND"
             return _empty(), [], []
 
-        # ── Stage 2: cosine threshold filter ──────────────────────────────
-        # COSINE_THRESHOLD applies only to FAISS scores (0–1 range).
-        # If nothing passes, keep the raw top candidates so broad questions
-        # ("explain the document", "what are the conclusions") are never
-        # silently dropped — let the LLM decide from whatever context exists.
+        # ── Stage 2: Cosine threshold filter ──────────────────────────────
         above = [
             (doc, score)
             for _, (doc, score) in merged.items()
@@ -215,16 +186,12 @@ def create_rag_chain(llm, vectorstore):
             )[:FETCH_K]
 
         docs_to_rerank = [doc for doc, _ in above]
-        # Keep a cosine-score lookup so results tuple stays consistent
-        cosine_lookup  = {doc.page_content: score for doc, score in above}
+        cosine_lookup = {id(doc): score for doc, score in above}
 
-        # ── Stage 3: CrossEncoder rerank (ordering only) ─────────────────
-        # CE logit scores are unbounded (-∞ to +∞).  We use them ONLY to
-        # reorder candidates — we never threshold on them or expose them as
-        # confidence.  Confidence always comes from cosine scores (0–1).
+        # ── Stage 3: CrossEncoder rerank (ordering only) ───────────────────
         try:
-            reranker  = _get_reranker()
-            pairs     = [[question, doc.page_content] for doc in docs_to_rerank]
+            reranker = _get_reranker()
+            pairs = [[question, doc.page_content] for doc in docs_to_rerank]
             ce_scores = reranker.predict(pairs)
 
             ranked = sorted(
@@ -236,18 +203,16 @@ def create_rag_chain(llm, vectorstore):
             final_docs = [doc for _, doc in ranked]
 
         except Exception:
-            # Reranker unavailable — order by cosine score
             final_docs = [
                 doc for doc, _ in sorted(above, key=lambda x: x[1], reverse=True)
             ][:FINAL_TOP_N]
 
-        # results: (doc, cosine_score) — always 0–1, always consistent
         results = [
-            (doc, cosine_lookup.get(doc.page_content, 0.0))
+            (doc, cosine_lookup.get(id(doc), 0.0))
             for doc in final_docs
         ]
 
-        # ── Stage 4: build context + stream answer ────────────────────────
+        # ── Stage 4: Build context + stream answer ────────────────────────
         context = _build_context(final_docs)
 
         formatted_prompt = _ANSWER_PROMPT.format_messages(
@@ -261,17 +226,17 @@ def create_rag_chain(llm, vectorstore):
             has_yielded = False
             try:
                 for chunk in llm.stream(formatted_prompt):
-                    if chunk.content:
+                    c = getattr(chunk, "content", str(chunk))
+                    if c:
                         has_yielded = True
-                        yield chunk.content
+                        yield c
             except Exception as exc:
                 yield f"\n\n[Generation error]: {exc}"
                 has_yielded = True
+
             if not has_yielded:
                 yield "NOT_FOUND"
 
         return token_generator(), final_docs, results
 
     return rag_pipeline
-
-

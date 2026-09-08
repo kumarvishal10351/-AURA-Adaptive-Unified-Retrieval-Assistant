@@ -10,4 +10,6 @@ def get_fallback_llm():
         api_key=get_api_key(),
         model="mistral-large-latest",
         temperature=0.7,
+        timeout=30,
+        max_retries=2,
     )

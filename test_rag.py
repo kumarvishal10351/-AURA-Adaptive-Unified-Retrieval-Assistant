@@ -1,3 +1,10 @@
+"""
+test_rag.py — Standalone pipeline verification script.
+
+Manually tests the FAISS → LLM → RAG chain from the command line.
+Not part of the pytest suite (requires a real FAISS index and Mistral API key).
+"""
+
 import os
 import sys
 import logging
@@ -34,7 +41,10 @@ except Exception as e:
 print("Invoking RAG chain...")
 try:
     rag_chain = create_rag_chain(llm, vectorstore)
-    answer, docs, results = rag_chain("What are the technical skills?", [])
+    # create_rag_chain returns (generator, docs, results) — consume the generator
+    answer_gen, docs, results = rag_chain("What are the technical skills?", [])
+    answer = "".join(str(chunk) for chunk in answer_gen)
     print("Answer:", answer)
+    print(f"Docs: {len(docs)}, Results: {len(results)}")
 except Exception as e:
     print("RAG chain failed:", repr(e))

@@ -1,24 +1,36 @@
+"""
+chains/router.py
+────────────────
+Hybrid relevance gate combining fast vector similarity thresholding
+with an optional LLM semantic judge.
+"""
+
+from __future__ import annotations
 from langchain_core.prompts import ChatPromptTemplate
+from config.settings import COSINE_THRESHOLD
 
 
-def is_relevant(llm, question: str, context: str, score: float, threshold: float = 1.4) -> bool:
+def is_relevant(llm, question: str, context: str, score: float, threshold: float = COSINE_THRESHOLD) -> bool:
     """
     Hybrid relevance gate:
-      1. Fast embedding-distance filter  (no LLM call needed if score is bad)
-      2. LLM semantic judge              (accurate but costs one API call)
+      1. Fast cosine similarity filter (rejects immediately if score < threshold).
+      2. LLM semantic judge (checks if context explicitly answers question).
 
-    Returns True if the context is relevant to the question.
+    Parameters
+    ----------
+    llm : LangChain LLM instance.
+    question : User query.
+    context : Retrieved context string.
+    score : Cosine similarity score [0, 1].
+    threshold : Minimum acceptable cosine score. Default 0.20.
 
-    Args:
-        llm:       LangChain LLM instance.
-        question:  The user's question.
-        context:   Retrieved context text.
-        score:     Best L2 distance from ChromaDB (lower = more similar).
-        threshold: Maximum acceptable distance before skipping LLM check.
-                   Default 1.4 (tighter than previous 2.0 to reduce false positives).
+    Returns
+    -------
+    bool
+        True if the context is relevant to the question.
     """
-    # Quick filter — skip LLM call if distance is clearly too large
-    if score > threshold:
+    # Fast filter: skip LLM call if score is below minimum threshold
+    if score < threshold:
         return False
 
     prompt = ChatPromptTemplate.from_template(
@@ -29,7 +41,12 @@ def is_relevant(llm, question: str, context: str, score: float, threshold: float
         'Reply with exactly "YES" or "NO".'
     )
 
-    response = llm.invoke(
-        prompt.format(context=context[:2000], question=question)
-    )
-    return response.content.strip().upper().startswith("YES")
+    try:
+        response = llm.invoke(
+            prompt.format(context=context[:2000], question=question)
+        )
+        content = getattr(response, "content", str(response)).strip().upper()
+        return content.startswith("YES")
+    except Exception:
+        # If LLM check fails, fall back to cosine score
+        return score >= threshold

@@ -5,13 +5,19 @@ __pycache__/
 .git/
 .gitignore
 
+# Secrets must not be in the image — passed via env_file at runtime
 .env
+.streamlit/secrets.toml
 
+# Data and indexes are mounted as volumes, not baked into the image
 faiss_db/
 data/
 
-.streamlit/
-
+# Development files
 .devcontainer/
+.pytest_cache/
+mlflow.db
+mlruns/
+*.log
 
 ARCHITECTURE_AND_INTERVIEW_GUIDE.md
