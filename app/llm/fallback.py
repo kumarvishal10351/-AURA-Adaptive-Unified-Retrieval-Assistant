@@ -1,9 +1,9 @@
-import streamlit as st
+from functools import lru_cache
 from langchain_mistralai import ChatMistralAI
 from config.settings import get_api_key
 
 
-@st.cache_resource
+@lru_cache(maxsize=1)
 def get_fallback_llm():
     """Cached fallback LLM client. Higher temperature for general knowledge."""
     return ChatMistralAI(

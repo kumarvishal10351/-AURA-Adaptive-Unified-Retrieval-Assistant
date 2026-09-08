@@ -12,7 +12,10 @@
 <p align="center">
   <a href="https://github.com/kumarvishal10351/-AURA-Adaptive-Unified-Retrieval-Assistant/actions"><img src="https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-blue?style=for-the-badge&logo=githubactions&logoColor=white" alt="CI/CD" /></a>
   <img src="https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python" />
-  <img src="https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" alt="Streamlit" />
+  <img src="https://img.shields.io/badge/FastAPI-0.115+-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI" />
+  <img src="https://img.shields.io/badge/React-19.0-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React" />
+  <img src="https://img.shields.io/badge/Vite-6.0-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
   <img src="https://img.shields.io/badge/LangChain-1C3C3C?style=for-the-badge&logo=langchain&logoColor=white" alt="LangChain" />
   <img src="https://img.shields.io/badge/Mistral_AI-F34E3A?style=for-the-badge&logo=mistralai&logoColor=white" alt="Mistral AI" />
   <img src="https://img.shields.io/badge/FAISS-0467DF?style=for-the-badge&logo=meta&logoColor=white" alt="FAISS" />
@@ -95,10 +98,12 @@ AURA implements a **multi-stage, confidence-aware decision layer** that verifies
 * **Zero-Failure Telemetry**: Graceful wrapper around MLflow ensuring that application execution continues unhindered even if the tracking server is unreachable.
 * **Lifecycle Tracking Framework**: Modular `ExperimentManager`, `tracker`, and `artifacts` modules ready for automated evaluation.
 
-### 🖥️ User Experience & UI
-* **Clean Streamlit Frontend**: Native dashboard with session persistence, real-time status indicators, and collapsible document management popover.
-* **Session Metrics Bar**: Displays total documents indexed, total queries executed, and rolling average confidence score.
-* **Source Transparency**: Expandable source drawer per assistant turn displaying chunk count, source page index, and exact textual context.
+### 🖥️ Modern Archival Research UI (React 19 & Tailwind CSS)
+* **Classical Archival Research Interface**: High-precision, editorial research workspace styled with Stitch design tokens, EB Garamond typography, hairline dividers, and fluid responsive layouts.
+* **Live Telemetry Bar**: Real-time status indicators showing index health, query execution counters, rolling calibrated confidence, and cosine similarity gating floors.
+* **Interactive Query Composer**: Auto-expanding input area with architectural gradients, keyboard shortcuts (`↵ Enter` / `Shift+Enter`), and source swapping.
+* **Grounded Synthesis Memo**: Structured synthesis results featuring exact quote citations, confidence score badges, execution latency benchmarks, and deep-dive metadata.
+
 
 ---
 
@@ -137,12 +142,13 @@ flowchart TD
         TOP5 --> CS["Calculate Confidence<br/>20 + (top_cosine / 0.80) × 80"]
         TOP5 --> CTX["Build 16K Context Window"]
         CTX --> LLM["Mistral Nemo (T=0.1)<br/>Strict Grounding Prompt"]
-        CS --> UI["Streamlit Interface<br/>(Stream Tokens + Confidence Bar)"]
+        CS --> UI["React Research Workbench<br/>(FastAPI REST + Calibrated Telemetry)"]
         LLM --> NF{"NOT_FOUND<br/>Sentinel?"}
         NF -->|"No: Grounded"| UI
         NF -->|"Yes: Missing"| FBO["Offer General Fallback<br/>(Mistral Large, T=0.7)"]
         FBO --> UI
     end
+
 
     subgraph MLOPS ["📈 MLOps & Telemetry"]
         B -.-> ML["MLflow Tracking<br/>(mlflow.db / mlruns)"]
@@ -164,7 +170,8 @@ flowchart TD
 rag-assistant/
 ├── app/
 │   ├── __init__.py
-│   ├── main.py                       # Streamlit UI & session state controller
+│   ├── main.py                       # FastAPI application entrypoint & CLI runner
+│   ├── api.py                        # FastAPI REST API & static asset server
 │   ├── chains/
 │   │   ├── __init__.py
 │   │   ├── rag_chain.py              # Parallel retrieval, reranking, and generation pipeline
@@ -194,6 +201,21 @@ rag-assistant/
 │       ├── __init__.py
 │       ├── confidence.py             # Calibrated confidence mathematical model
 │       └── mlflow_logger.py          # MLflow integration layer with graceful fallback
+├── frontend/                         # Modern React 19 + Vite + Tailwind CSS UI
+│   ├── src/
+│   │   ├── components/               # Stitch design system components
+│   │   │   ├── Header.jsx            # Fixed archival masthead & navigation
+│   │   │   ├── TelemetryBar.jsx      # Live index telemetry & status indicators
+│   │   │   ├── Hero.jsx              # Wordmark & greeting banner
+│   │   │   ├── QueryComposer.jsx     # Floating search composer with gradient rule
+│   │   │   ├── SuggestedPrompts.jsx  # Interactive research prompt matrix
+│   │   │   ├── SynthesisMemo.jsx     # Grounded synthesis response & citation tags
+│   │   │   ├── UploadModal.jsx       # Drag-and-drop PDF ingestion modal
+│   │   │   └── Footer.jsx            # Scholarly research institutional footer
+│   │   ├── App.jsx                   # React root state orchestration
+│   │   └── main.jsx                  # React DOM mounting
+│   ├── dist/                         # Pre-compiled high-performance production build
+│   └── package.json                  # Frontend dependencies and Vite configuration
 ├── data/
 │   └── docs/                         # Uploaded PDFs (gitignored)
 ├── docs/
@@ -234,6 +256,7 @@ rag-assistant/
 ├── requirements.txt                  # Pinned production dependencies
 ├── test_rag.py                       # Standalone pipeline verification script
 └── README.md
+
 ```
 
 ---
@@ -242,7 +265,8 @@ rag-assistant/
 
 | Layer | Component | Specification | Technical Rationale |
 |---|---|---|---|
-| **Frontend** | Streamlit | v1.35+ | Interactive reactive UI with native session-state, streaming, and custom CSS |
+| **Frontend** | React 19 + Vite + Tailwind CSS | v19.x / v6.x | Modular component architecture, sub-millisecond hot reloads, Stitch archival design system |
+| **Backend API**| FastAPI + Uvicorn | v0.115+ | High-throughput asynchronous REST API serving vector queries and static assets |
 | **Orchestration** | LangChain Core & Community | v0.2+ | Composable abstractions for prompts, document loaders, and vectorstore retrieval |
 | **Primary LLM** | Mistral AI | `open-mistral-nemo` ($T=0.1$) | 128k context support, high-accuracy reasoning, optimized for strict document synthesis |
 | **Fallback LLM** | Mistral AI | `mistral-large-latest` ($T=0.7$) | Top-tier general-knowledge capabilities for off-document fallback inquiries |
@@ -292,11 +316,13 @@ MISTRAL_API_KEY="your_actual_mistral_api_key_here"
 
 ### 3. Run the Application
 
-Launch the Streamlit web interface:
+Launch the research workspace server (serves the React UI + FastAPI backend):
 ```bash
-streamlit run app/main.py
+python app/main.py
+# Or directly via Uvicorn:
+uvicorn app.api:app --host 0.0.0.0 --port 8000
 ```
-Open your browser at `http://localhost:8501`.
+Open your browser at `http://localhost:8000`.
 
 ### 4. Running Tests
 Run the test suite via `pytest`:
@@ -401,7 +427,8 @@ AURA includes built-in logging using **MLflow**:
 
 ## 🏛 Architectural Blueprint & Enterprise Roadmap
 
-AURA’s modular design allows it to scale horizontally from an in-process Streamlit assistant into a distributed enterprise service. The complete scaling strategy (as documented in `ARCHITECTURE_AND_INTERVIEW_GUIDE.md`) includes:
+AURA’s modular design allows it to scale horizontally from a standalone research assistant into a distributed enterprise microservice cluster. The complete scaling strategy (as documented in `ARCHITECTURE_AND_INTERVIEW_GUIDE.md`) includes:
+
 
 ### Target Architecture (Phase 2 Roadmap)
 * **REST API Gateway**: A dedicated **FastAPI** service (`/api/v1/query`, `/api/v1/upload`, `/health`, `/metrics`) providing asynchronous endpoints with JWT authentication and Pydantic validation.

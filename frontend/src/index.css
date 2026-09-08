@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #005239;
+  --color-primary-container: #1f6b4f;
+  --color-on-primary: #ffffff;
+  --color-secondary: #46645a;
+  --color-secondary-container: #c8eadd;
+  --color-on-secondary-container: #4c6b60;
+  --color-background: #faf9fb;
+  --color-surface: #faf9fb;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f5f3f5;
+  --color-surface-container: #efedf0;
+  --color-surface-container-high: #e9e8ea;
+  --color-surface-container-highest: #e3e2e4;
+  --color-on-surface: #1b1c1e;
+  --color-on-surface-variant: #3f4943;
+  --color-outline: #6f7973;
+  --color-outline-variant: #bfc9c1;
+
+  --font-headline: "EB Garamond", Georgia, serif;
+  --font-body: "Manrope", sans-serif;
+  --font-code: "JetBrains Mono", monospace;
+}
+
+@layer base {
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-body);
+    background-color: var(--color-background);
+    color: var(--color-on-surface);
+  }
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.9); }
+}
+
+.dot-pulse {
+  animation: pulse-dot 2s infinite ease-in-out;
+}
+
+.fade-in {
+  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}

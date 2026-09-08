@@ -10,7 +10,7 @@ Three-stage retrieval pipeline:
 from __future__ import annotations
 
 import os
-import streamlit as st
+from functools import lru_cache
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
 
@@ -28,7 +28,7 @@ except ImportError:
     from utils import mlflow_logger
 
 
-@st.cache_resource(show_spinner=False)
+@lru_cache(maxsize=1)
 def _get_embeddings() -> HuggingFaceEmbeddings:
     """
     Single shared, cached embedding model for the entire session.
@@ -44,7 +44,7 @@ def _get_embeddings() -> HuggingFaceEmbeddings:
     )
 
 
-@st.cache_resource(show_spinner=False)
+@lru_cache(maxsize=1)
 def get_vectorstore() -> FAISS:
     """
     Load the FAISS index from disk. Cached for the session.
@@ -66,7 +66,7 @@ def get_vectorstore() -> FAISS:
     )
 
 
-@st.cache_resource(show_spinner=False)
+@lru_cache(maxsize=1)
 def _get_reranker():
     """
     Load the CrossEncoder reranker. Cached for the session.

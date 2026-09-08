@@ -1,5 +1,4 @@
 import os
-import streamlit as st
 from dotenv import load_dotenv
 
 # Environment configuration for thread-safety and tokenizer performance
@@ -11,17 +10,21 @@ load_dotenv()
 
 
 def get_api_key() -> str:
-    """Unified API key resolver: tries st.secrets first, falls back to .env."""
-    try:
-        return st.secrets["MISTRAL_API_KEY"]
-    except Exception:
-        key = os.getenv("MISTRAL_API_KEY", "")
-        if not key:
-            raise ValueError(
-                "MISTRAL_API_KEY not found. "
-                "Set it in .streamlit/secrets.toml or .env"
-            )
+    """Unified API key resolver: tries .env/environment first, falls back to st.secrets if present."""
+    key = os.getenv("MISTRAL_API_KEY", "")
+    if key:
         return key
+    try:
+        import streamlit as st
+        if hasattr(st, "secrets") and "MISTRAL_API_KEY" in st.secrets:
+            return st.secrets["MISTRAL_API_KEY"]
+    except Exception:
+        pass
+    raise ValueError(
+        "MISTRAL_API_KEY not found. "
+        "Set it in your .env file or environment variables."
+    )
+
 
 
 # ── Project directories ───────────────────────────────────────────────────────

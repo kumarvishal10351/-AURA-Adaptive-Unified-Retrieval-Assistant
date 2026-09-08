@@ -1,11 +1,11 @@
-import streamlit as st
+from functools import lru_cache
 from langchain_mistralai import ChatMistralAI
 from config.settings import get_api_key
 
 
-@st.cache_resource
+@lru_cache(maxsize=1)
 def get_mistral_llm():
-    """Cached Mistral LLM client. Created once per session."""
+    """Cached Mistral LLM client. Created once per process."""
     return ChatMistralAI(
         api_key=get_api_key(),
         model="open-mistral-nemo",
