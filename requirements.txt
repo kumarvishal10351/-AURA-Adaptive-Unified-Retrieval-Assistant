@@ -12,6 +12,7 @@ pydantic
 protobuf>=3.20
 torch
 mlflow==3.1.0
+python-multipart
 
 # Development / Testing
 pytest
