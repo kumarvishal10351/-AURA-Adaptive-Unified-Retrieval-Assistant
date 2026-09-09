@@ -22,7 +22,9 @@ if str(_APP_DIR) not in sys.path:
 from app.api import app
 
 def run():
-    port = int(os.environ.get("PORT", 7860))
+    port = int(os.environ.get("PORT", 8000))
+    print(f"--> [Render Startup] Launching Viora on 0.0.0.0:{port}...")
+    sys.stdout.flush()
     uvicorn.run(app, host="0.0.0.0", port=port, log_level="info")
 
 if __name__ == "__main__":
