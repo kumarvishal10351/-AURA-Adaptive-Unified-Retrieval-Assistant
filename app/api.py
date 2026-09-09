@@ -120,6 +120,7 @@ def get_status():
     avg_conf = int(sum(scores) / len(scores)) if scores else 94
 
     return {
+        "version": "3.1-fast-retrieval",
         "ready": is_ready,
         "total_docs": doc_count,
         "total_queries": telemetry["queries_count"],
