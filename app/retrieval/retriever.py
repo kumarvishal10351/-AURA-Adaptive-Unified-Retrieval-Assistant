@@ -12,6 +12,7 @@ from __future__ import annotations
 import os
 from functools import lru_cache
 from langchain_community.vectorstores import FAISS
+from langchain_community.vectorstores.utils import DistanceStrategy
 from langchain_community.embeddings import HuggingFaceEmbeddings
 
 from config.settings import (
@@ -63,6 +64,7 @@ def get_vectorstore() -> FAISS:
         folder_path=FAISS_DB_DIR,
         embeddings=_get_embeddings(),
         allow_dangerous_deserialization=True,
+        distance_strategy=DistanceStrategy.COSINE,
     )
 
 

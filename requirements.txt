@@ -13,6 +13,8 @@ protobuf>=3.20
 torch
 mlflow==3.1.0
 python-multipart
+fastapi>=0.110.0
+uvicorn[standard]>=0.28.0
 
 # Development / Testing
 pytest

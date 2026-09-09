@@ -40,6 +40,7 @@ from ingestion.splitter import split_documents
 from ingestion.embedder import store_embeddings
 from retrieval.retriever import get_vectorstore
 from utils.confidence import calculate_confidence
+from llm.fallback import get_fallback_llm
 
 app = FastAPI(title="Viora Research Workspace API", version="3.0")
 
@@ -83,6 +84,8 @@ def _get_llm():
 class QueryRequest(BaseModel):
     query: str
     history: Optional[List[Dict[str, str]]] = []
+    selected_doc: Optional[str] = None
+    use_fallback: Optional[bool] = False
 
 
 class QueryResponse(BaseModel):
@@ -91,6 +94,8 @@ class QueryResponse(BaseModel):
     anchors: List[str]
     latency_ms: int
     sources: List[Dict[str, Any]]
+    can_fallback: Optional[bool] = False
+    is_fallback: Optional[bool] = False
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -109,18 +114,165 @@ def get_status():
         doc_count = len([f for f in os.listdir(DATA_DOCS_DIR) if f.lower().endswith(".pdf")])
 
     faiss_file = os.path.join(FAISS_DB_DIR, "index.faiss")
-    is_ready = os.path.exists(faiss_file)
+    is_ready = os.path.exists(faiss_file) and doc_count > 0
 
     scores = telemetry["confidence_scores"]
     avg_conf = int(sum(scores) / len(scores)) if scores else 94
 
     return {
         "ready": is_ready,
-        "total_docs": max(doc_count, 1 if is_ready else 0),
+        "total_docs": doc_count,
         "total_queries": telemetry["queries_count"],
         "avg_confidence": avg_conf,
         "cosine_threshold": COSINE_THRESHOLD,
     }
+
+
+@app.get("/api/documents")
+def get_documents():
+    docs = []
+    if os.path.exists(DATA_DOCS_DIR):
+        for f in sorted(os.listdir(DATA_DOCS_DIR)):
+            if f.lower().endswith(".pdf"):
+                p = os.path.join(DATA_DOCS_DIR, f)
+                size_bytes = os.path.getsize(p)
+                # Friendly size
+                if size_bytes >= 1024 * 1024:
+                    size_str = f"{size_bytes / (1024 * 1024):.1f} MB"
+                else:
+                    size_str = f"{max(1, round(size_bytes / 1024))} KB"
+
+                docs.append({
+                    "name": f,
+                    "size": size_str,
+                    "size_bytes": size_bytes,
+                })
+    return {"documents": docs}
+
+
+@app.delete("/api/documents")
+def clear_all_documents():
+    """Removes all indexed PDF documents and clears FAISS index."""
+    if os.path.exists(DATA_DOCS_DIR):
+        for f in os.listdir(DATA_DOCS_DIR):
+            if f.lower().endswith(".pdf"):
+                try:
+                    os.remove(os.path.join(DATA_DOCS_DIR, f))
+                except Exception:
+                    pass
+
+    if os.path.exists(FAISS_DB_DIR):
+        for f in os.listdir(FAISS_DB_DIR):
+            try:
+                os.remove(os.path.join(FAISS_DB_DIR, f))
+            except Exception:
+                pass
+
+    try:
+        get_vectorstore.clear()
+    except Exception:
+        pass
+
+    return {"success": True, "message": "All documents and index have been removed."}
+
+
+@app.delete("/api/documents/{filename}")
+def delete_document(filename: str):
+    """Delete a single document and re-index remaining documents."""
+    target = os.path.join(DATA_DOCS_DIR, filename)
+    if os.path.exists(target):
+        os.remove(target)
+
+    # Re-index remaining PDFs if any
+    remaining_pdfs = [
+        os.path.join(DATA_DOCS_DIR, f)
+        for f in os.listdir(DATA_DOCS_DIR)
+        if f.lower().endswith(".pdf")
+    ]
+
+    if not remaining_pdfs:
+        if os.path.exists(FAISS_DB_DIR):
+            for f in os.listdir(FAISS_DB_DIR):
+                try:
+                    os.remove(os.path.join(FAISS_DB_DIR, f))
+                except Exception:
+                    pass
+        try:
+            get_vectorstore.clear()
+        except Exception:
+            pass
+    else:
+        all_chunks = []
+        for pdf_path in remaining_pdfs:
+            try:
+                docs = load_pdf(pdf_path)
+                chunks = split_documents(docs)
+                all_chunks.extend(chunks)
+            except Exception:
+                pass
+        if all_chunks:
+            store_embeddings(all_chunks)
+
+    return {"success": True, "deleted": filename}
+
+
+@app.post("/api/fallback", response_model=QueryResponse)
+def fallback_query(req: QueryRequest):
+    q = req.query.strip()
+    if not q:
+        raise HTTPException(status_code=400, detail="Query cannot be empty.")
+
+    start_t = time.perf_counter()
+    try:
+        llm = get_fallback_llm()
+        if not llm:
+            raise RuntimeError("Fallback LLM is unavailable or API key is not configured.")
+
+        system_msg = (
+            "You are Viora's general-knowledge intelligence model (Mistral Large). "
+            "The user is asking a question that is outside the indexed document corpus or requesting comprehensive general knowledge. "
+            "Provide a thorough, authoritative, engaging, and well-structured answer with clear explanations and formatting."
+        )
+        chat_messages = [
+            {"role": "system", "content": system_msg}
+        ]
+        if req.history:
+            for m in req.history[-6:]:
+                chat_messages.append({
+                    "role": m.get("role", "user"),
+                    "content": m.get("content", "")
+                })
+        chat_messages.append({"role": "user", "content": q})
+
+        response = llm.invoke(chat_messages)
+        answer_text = response.content.strip()
+        elapsed_ms = max(int((time.perf_counter() - start_t) * 1000), 45)
+
+        return QueryResponse(
+            answer=answer_text,
+            confidence=95,
+            anchors=["Fallback Model: Mistral Large (General Knowledge)"],
+            latency_ms=elapsed_ms,
+            sources=[{
+                "file_name": "Mistral Large (General Knowledge Fallback)",
+                "page": 1,
+                "score": 1.0,
+                "preview": "Reasoned directly via Viora general-knowledge fallback intelligence."
+            }],
+            can_fallback=False,
+            is_fallback=True
+        )
+    except Exception as exc:
+        elapsed_ms = max(int((time.perf_counter() - start_t) * 1000), 45)
+        return QueryResponse(
+            answer=f"Fallback model encountered an issue: {exc}",
+            confidence=50,
+            anchors=["Fallback Notice"],
+            latency_ms=elapsed_ms,
+            sources=[],
+            can_fallback=False,
+            is_fallback=True
+        )
 
 
 @app.post("/api/query", response_model=QueryResponse)
@@ -128,6 +280,25 @@ def process_query(req: QueryRequest):
     q = req.query.strip()
     if not q:
         raise HTTPException(status_code=400, detail="Query cannot be empty.")
+
+    if req.use_fallback:
+        return fallback_query(req)
+
+    faiss_file = os.path.join(FAISS_DB_DIR, "index.faiss")
+    doc_count = 0
+    if os.path.exists(DATA_DOCS_DIR):
+        doc_count = len([f for f in os.listdir(DATA_DOCS_DIR) if f.lower().endswith(".pdf")])
+
+    if doc_count == 0 or not os.path.exists(faiss_file):
+        return QueryResponse(
+            answer="No documents are currently indexed in your library. Please upload a PDF using the 'Add PDF' button to start asking questions, or consult the general-knowledge fallback model.",
+            confidence=0,
+            anchors=[],
+            latency_ms=10,
+            sources=[],
+            can_fallback=True,
+            is_fallback=False
+        )
 
     start_t = time.perf_counter()
     try:
@@ -137,12 +308,14 @@ def process_query(req: QueryRequest):
 
         rag_pipeline = create_rag_chain(llm)
         token_gen, final_docs, ranked_results = rag_pipeline(
-            q, req.history or []
+            q, req.history or [], req.selected_doc
         )
         answer_text = "".join(list(token_gen)).strip()
         elapsed_ms = max(int((time.perf_counter() - start_t) * 1000), 42)
 
-        if answer_text == "NOT_FOUND":
+        can_fallback = False
+        if answer_text == "NOT_FOUND" or "does not contain sufficient grounded evidence" in answer_text.lower():
+            can_fallback = True
             answer_text = (
                 "The indexed document corpus does not contain sufficient grounded evidence "
                 "to answer this query under strict zero-speculation thresholds."
@@ -177,7 +350,9 @@ def process_query(req: QueryRequest):
             confidence=conf,
             anchors=anchors[:3],
             latency_ms=elapsed_ms,
-            sources=sources[:5]
+            sources=sources[:5],
+            can_fallback=can_fallback,
+            is_fallback=False
         )
 
     except Exception as exc:
@@ -185,23 +360,31 @@ def process_query(req: QueryRequest):
         # Check if we have documents in FAISS to give a grounded answer
         try:
             vs = get_vectorstore()
-            docs_and_scores = vs.similarity_search_with_relevance_scores(q, k=3)
+            docs_and_scores = vs.similarity_search_with_relevance_scores(q, k=5)
+            if req.selected_doc and req.selected_doc.strip().lower() not in ("all", "all documents", ""):
+                target_clean = req.selected_doc.strip().lower()
+                docs_and_scores = [
+                    (d, s) for d, s in docs_and_scores
+                    if (getattr(d, "metadata", {}) or {}).get("file_name", "").strip().lower() == target_clean
+                ]
             if docs_and_scores:
-                snippets = "\n\n".join([f"• {doc.page_content[:250]}..." for doc, _ in docs_and_scores])
+                snippets = "\n\n".join([f"• {doc.page_content[:250]}..." for doc, _ in docs_and_scores[:3]])
                 fallback_answer = (
                     f"Grounded synthesis extracted directly from vector store chunks:\n\n{snippets}"
                 )
-                conf = calculate_confidence([s for _, s in docs_and_scores])
+                conf = calculate_confidence([s for _, s in docs_and_scores[:3]])
                 anchors = [
                     f"Anchor: [{getattr(doc, 'metadata', {}).get('file_name', 'Doc')} p. {getattr(doc, 'metadata', {}).get('page', 0)+1}, Chunk #{i+1}]"
-                    for i, (doc, _) in enumerate(docs_and_scores)
+                    for i, (doc, _) in enumerate(docs_and_scores[:3])
                 ]
                 return QueryResponse(
                     answer=fallback_answer,
                     confidence=conf,
                     anchors=anchors,
                     latency_ms=elapsed_ms,
-                    sources=[]
+                    sources=[],
+                    can_fallback=True,
+                    is_fallback=False
                 )
         except Exception:
             pass
@@ -215,7 +398,9 @@ def process_query(req: QueryRequest):
             confidence=85,
             anchors=["Anchor: [Verified Index]"],
             latency_ms=elapsed_ms,
-            sources=[]
+            sources=[],
+            can_fallback=True,
+            is_fallback=False
         )
 
 

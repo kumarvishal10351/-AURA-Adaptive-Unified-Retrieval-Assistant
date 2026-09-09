@@ -1,57 +1,48 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #005239;
-  --color-primary-container: #1f6b4f;
-  --color-on-primary: #ffffff;
-  --color-secondary: #46645a;
-  --color-secondary-container: #c8eadd;
-  --color-on-secondary-container: #4c6b60;
-  --color-background: #faf9fb;
-  --color-surface: #faf9fb;
-  --color-surface-container-lowest: #ffffff;
-  --color-surface-container-low: #f5f3f5;
-  --color-surface-container: #efedf0;
-  --color-surface-container-high: #e9e8ea;
-  --color-surface-container-highest: #e3e2e4;
-  --color-on-surface: #1b1c1e;
-  --color-on-surface-variant: #3f4943;
-  --color-outline: #6f7973;
-  --color-outline-variant: #bfc9c1;
+  --color-primary: #124332;
+  --color-primary-hover: #195842;
+  --color-primary-light: #eaf3ee;
+  --color-canvas: #fbfbfa;
+  --color-card: #ffffff;
+  --color-border: #e8e6e1;
+  --color-border-subtle: #f0eee9;
+  --color-text-main: #191b1a;
+  --color-text-muted: #5e6661;
+  --color-text-dim: #8b938e;
 
-  --font-headline: "EB Garamond", Georgia, serif;
-  --font-body: "Manrope", sans-serif;
-  --font-code: "JetBrains Mono", monospace;
+  --font-serif: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
 }
 
 @layer base {
-  html, body {
+  html, body, button, input, textarea {
     margin: 0;
     padding: 0;
-    font-family: var(--font-body);
-    background-color: var(--color-background);
-    color: var(--color-on-surface);
+    font-family: var(--font-sans);
+    background-color: var(--color-canvas);
+    color: var(--color-text-main);
+    -webkit-font-smoothing: antialiased;
   }
 }
 
+/* Custom subtle scrollbar */
 ::-webkit-scrollbar {
-  display: none;
+  width: 6px;
+  height: 6px;
 }
 
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(0.9); }
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-.dot-pulse {
-  animation: pulse-dot 2s infinite ease-in-out;
+::-webkit-scrollbar-thumb {
+  background: #dcd9d2;
+  border-radius: 9999px;
 }
 
-.fade-in {
-  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+::-webkit-scrollbar-thumb:hover {
+  background: #c3c0b8;
 }

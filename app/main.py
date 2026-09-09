@@ -5,6 +5,7 @@ Viora — Grounded Research Workspace
 Main application entrypoint running the FastAPI server and serving the React UI.
 """
 
+import os
 import sys
 from pathlib import Path
 import uvicorn
@@ -21,7 +22,8 @@ if str(_APP_DIR) not in sys.path:
 from app.api import app
 
 def run():
-    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port, log_level="info")
 
 if __name__ == "__main__":
     run()

@@ -1,8 +1,16 @@
 import React, { useState, useRef } from 'react';
+import { Check, FileText, Loader2, Trash2, UploadCloud, X } from 'lucide-react';
 
-export default function UploadModal({ isOpen, onClose, onUploadSuccess }) {
+export default function UploadModal({
+  isOpen,
+  onClose,
+  documents = [],
+  onUploadSuccess,
+  onDeleteDocument,
+  onClearAll
+}) {
   const [isUploading, setIsUploading] = useState(false);
-  const [statusMessage, setStatusMessage] = useState('');
+  const [uploadStatus, setUploadStatus] = useState(null); // { type: 'success'|'error', text: '' }
   const fileInputRef = useRef(null);
 
   if (!isOpen) return null;
@@ -12,7 +20,7 @@ export default function UploadModal({ isOpen, onClose, onUploadSuccess }) {
     if (!file) return;
 
     setIsUploading(true);
-    setStatusMessage(`Ingesting and embedding ${file.name}...`);
+    setUploadStatus({ type: 'info', text: `Uploading and indexing ${file.name}...` });
 
     const formData = new FormData();
     formData.append('file', file);
@@ -25,76 +33,157 @@ export default function UploadModal({ isOpen, onClose, onUploadSuccess }) {
 
       if (res.ok) {
         const data = await res.json();
-        setStatusMessage(`✓ Successfully indexed ${file.name} (${data.chunks_count || 'complete'} chunks)!`);
+        setUploadStatus({
+          type: 'success',
+          text: `Successfully indexed ${file.name} (${data.chunks_count || 'all'} chunks)!`,
+        });
         setTimeout(() => {
           setIsUploading(false);
-          setStatusMessage('');
-          onClose();
+          setUploadStatus(null);
           if (onUploadSuccess) onUploadSuccess();
         }, 1200);
       } else {
-        setStatusMessage(`Indexing failed: status ${res.status}`);
+        setUploadStatus({
+          type: 'error',
+          text: `Upload failed: server responded with ${res.status}`,
+        });
         setIsUploading(false);
       }
-    } catch (err) {
-      setStatusMessage(`✓ Document queued for vectorization.`);
-      setTimeout(() => {
-        setIsUploading(false);
-        setStatusMessage('');
-        onClose();
-        if (onUploadSuccess) onUploadSuccess();
-      }, 1200);
+    } catch {
+      setUploadStatus({
+        type: 'error',
+        text: 'Connection error while uploading document.',
+      });
+      setIsUploading(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 fade-in">
-      <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl border border-[#bfc9c1]/30">
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2 font-['EB_Garamond',serif] text-xl text-[#005239] font-semibold">
-            <span className="material-symbols-outlined text-[24px]">upload_file</span>
-            <span>Index Research Document</span>
+    <div className="fixed inset-0 z-50 bg-black/30 backdrop-blur-xs flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-[#e8e6e1] animate-slide-up">
+        {/* Modal Header */}
+        <div className="flex items-center justify-between pb-3 border-b border-[#f0eee9]">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-md bg-[#eaf3ee] text-[#124332] flex items-center justify-center">
+              <FileText className="w-4 h-4" />
+            </div>
+            <h2 className="text-base font-semibold text-[#191b1a]">Document Library</h2>
           </div>
           <button
             onClick={onClose}
-            className="text-[#6f7973] hover:text-[#1b1c1e] cursor-pointer"
+            className="p-1 rounded-md text-[#8b938e] hover:text-[#191b1a] hover:bg-[#f5f4f0] transition-colors cursor-pointer"
+            type="button"
           >
-            <span className="material-symbols-outlined text-[20px]">close</span>
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        <p className="font-sans text-xs text-[#3f4943] mb-4">
-          Upload PDF documents into the high-performance FAISS vector store with automated chunking and cross-encoder calibration.
-        </p>
+        {/* Upload Zone */}
+        <div className="mt-4">
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            accept=".pdf"
+            className="hidden"
+          />
 
-        <input
-          type="file"
-          ref={fileInputRef}
-          onChange={handleFileChange}
-          accept=".pdf"
-          className="hidden"
-        />
+          <div
+            onClick={() => !isUploading && fileInputRef.current && fileInputRef.current.click()}
+            className={`border border-dashed rounded-xl p-6 text-center cursor-pointer transition-all ${
+              isUploading
+                ? 'border-[#124332] bg-[#f5fbf8]'
+                : 'border-[#dcd9d2] hover:border-[#124332] hover:bg-[#faf9f6]'
+            }`}
+          >
+            {isUploading ? (
+              <div className="flex flex-col items-center justify-center gap-2 text-[#124332]">
+                <Loader2 className="w-6 h-6 animate-spin" />
+                <span className="text-xs font-medium">{uploadStatus?.text}</span>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center gap-1.5">
+                <div className="w-10 h-10 rounded-full bg-[#f0eee9] text-[#124332] flex items-center justify-center mb-1">
+                  <UploadCloud className="w-5 h-5" />
+                </div>
+                <div className="text-xs font-semibold text-[#191b1a]">
+                  Click or drag PDF to index
+                </div>
+                <div className="text-[11px] text-[#8b938e]">
+                  Supports PDF documents up to 50MB
+                </div>
+              </div>
+            )}
+          </div>
 
-        <div
-          onClick={() => fileInputRef.current && fileInputRef.current.click()}
-          className="border-2 border-dashed border-[#bfc9c1]/60 hover:border-[#005239] rounded-lg p-6 text-center cursor-pointer transition-colors bg-[#f5f3f5]/50"
-        >
-          <span className="material-symbols-outlined text-[#005239] text-[36px] mb-2">
-            cloud_upload
-          </span>
-          <div className="font-semibold text-xs text-[#1b1c1e]">
-            Select or Drop PDF Document
-          </div>
-          <div className="font-mono text-[11px] text-[#6f7973] mt-1">
-            Deterministic vectorization up to 50MB
-          </div>
+          {uploadStatus && !isUploading && (
+            <div
+              className={`mt-2.5 text-xs text-center py-1.5 px-2 rounded-md ${
+                uploadStatus.type === 'success'
+                  ? 'bg-[#eaf3ee] text-[#124332]'
+                  : 'bg-red-50 text-red-700'
+              }`}
+            >
+              {uploadStatus.text}
+            </div>
+          )}
         </div>
 
-        {statusMessage && (
-          <div className="mt-3 font-mono text-[11px] text-center text-[#005239]">
-            {statusMessage}
+        {/* Currently Indexed Documents List */}
+        <div className="mt-5">
+          <div className="flex items-center justify-between mb-2">
+            <div className="text-[11px] font-medium text-[#8b938e] uppercase tracking-wider">
+              Active Documents ({documents.length})
+            </div>
+            {documents.length > 0 && onClearAll && (
+              <button
+                onClick={onClearAll}
+                className="text-[11px] text-red-600 hover:text-red-700 hover:underline cursor-pointer"
+                type="button"
+              >
+                Clear all
+              </button>
+            )}
           </div>
-        )}
+
+          <div className="max-h-52 overflow-y-auto space-y-1.5 pr-1">
+            {documents.length > 0 ? (
+              documents.map((doc, idx) => (
+                <div
+                  key={idx}
+                  className="flex items-center justify-between p-2.5 rounded-lg bg-[#faf9f6] border border-[#f0eee9] text-xs text-[#191b1a]"
+                >
+                  <div className="flex items-center gap-2 min-w-0">
+                    <FileText className="w-3.5 h-3.5 text-[#124332] flex-shrink-0" />
+                    <span className="truncate font-medium">{doc.name}</span>
+                  </div>
+                  <div className="flex items-center gap-2 flex-shrink-0 ml-2">
+                    {doc.size && (
+                      <span className="text-[10px] font-mono text-[#8b938e]">{doc.size}</span>
+                    )}
+                    <span className="inline-flex items-center text-[10px] text-[#124332] bg-[#eaf3ee] px-1.5 py-0.5 rounded font-medium">
+                      <Check className="w-2.5 h-2.5 mr-0.5" /> Indexed
+                    </span>
+                    {onDeleteDocument && (
+                      <button
+                        onClick={() => onDeleteDocument(doc.name)}
+                        className="p-1 text-[#8b938e] hover:text-red-600 rounded transition-colors cursor-pointer"
+                        title={`Remove ${doc.name}`}
+                        type="button"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-xs text-[#8b938e] text-center py-5 border border-dashed border-[#e8e6e1] rounded-lg">
+                No documents indexed yet. Upload a PDF above to get started.
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

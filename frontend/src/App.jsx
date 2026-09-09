@@ -1,146 +1,286 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Header from './components/Header';
-import TelemetryBar from './components/TelemetryBar';
 import Hero from './components/Hero';
-import QueryComposer from './components/QueryComposer';
 import SuggestedPrompts from './components/SuggestedPrompts';
-import SynthesisMemo from './components/SynthesisMemo';
+import ChatStream from './components/ChatStream';
+import QueryComposer from './components/QueryComposer';
 import UploadModal from './components/UploadModal';
-import Footer from './components/Footer';
 
 export default function App() {
-  const [docCount, setDocCount] = useState(1);
-  const [totalQueries, setTotalQueries] = useState(0);
-  const [avgConfidence, setAvgConfidence] = useState(94.2);
-  const [confScores, setConfScores] = useState([94.2]);
+  const [messages, setMessages] = useState([]);
+  const [documents, setDocuments] = useState([]);
+  const [docCount, setDocCount] = useState(0);
+  const [selectedDoc, setSelectedDoc] = useState('all');
+  const [fallbackLoadingId, setFallbackLoadingId] = useState(null);
 
   const [query, setQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const [activeQuestion, setActiveQuestion] = useState('');
-  const [answer, setAnswer] = useState('');
-  const [confidence, setConfidence] = useState(94.2);
-  const [anchors, setAnchors] = useState([]);
-  const [latency, setLatency] = useState(42);
+  const chatBottomRef = useRef(null);
 
-  const fetchStatus = async () => {
+  // Fetch status and document list
+  const fetchStatusAndDocs = async () => {
     try {
-      const res = await fetch('/api/status');
-      if (res.ok) {
-        const data = await res.json();
-        if (data.total_docs !== undefined) setDocCount(data.total_docs);
-        if (data.total_queries !== undefined && data.total_queries > 0) setTotalQueries(data.total_queries);
-        if (data.avg_confidence !== undefined && data.avg_confidence > 0) setAvgConfidence(data.avg_confidence);
+      const statusRes = await fetch('/api/status');
+      if (statusRes.ok) {
+        const data = await statusRes.json();
+        if (data.total_docs !== undefined) {
+          setDocCount(data.total_docs);
+        }
       }
-    } catch (e) {
+
+      const docRes = await fetch('/api/documents');
+      if (docRes.ok) {
+        const data = await docRes.json();
+        if (data.documents) {
+          setDocuments(data.documents);
+          setDocCount(data.documents.length);
+          // If selected doc was removed, reset to 'all'
+          if (selectedDoc !== 'all' && !data.documents.some((d) => d.name === selectedDoc)) {
+            setSelectedDoc('all');
+          }
+        }
+      }
+    } catch {
       // Backend starting up or standalone mode
     }
   };
 
+  // Reset all documents on page reload/mount
   useEffect(() => {
-    fetchStatus();
+    const initFreshSession = async () => {
+      try {
+        await fetch('/api/documents', { method: 'DELETE' });
+      } catch {
+        // Backend starting up
+      }
+      fetchStatusAndDocs();
+    };
+    initFreshSession();
   }, []);
 
-  const handleSynthesize = async (overridePrompt) => {
-    const q = (overridePrompt || query).trim();
-    if (!q) return;
+  // Smooth scroll to bottom when messages update or loading
+  useEffect(() => {
+    if (chatBottomRef.current) {
+      chatBottomRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages, isLoading]);
 
-    setActiveQuestion(q);
+  const handleSendMessage = async (customPrompt) => {
+    const q = (customPrompt || query).trim();
+    if (!q || isLoading) return;
+
+    const userMessage = {
+      id: Date.now().toString(),
+      role: 'user',
+      content: q,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    };
+
+    // Prepare multi-turn history for backend
+    const nextMessages = [...messages, userMessage];
+    setMessages(nextMessages);
+    setQuery('');
     setIsLoading(true);
+
     const startT = performance.now();
+    const historyPayload = nextMessages.map((m) => ({
+      role: m.role,
+      content: m.content,
+    }));
 
     try {
       const res = await fetch('/api/query', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: q }),
+        body: JSON.stringify({
+          query: q,
+          history: historyPayload,
+          selected_doc: selectedDoc,
+        }),
       });
 
       const elapsed = Math.round(performance.now() - startT);
-      setLatency(elapsed);
 
       if (res.ok) {
         const data = await res.json();
-        setAnswer(data.answer || 'No grounded answer returned.');
-        const conf = data.confidence || 94.2;
-        setConfidence(conf);
-        setAnchors(data.anchors || []);
-        if (data.latency_ms) setLatency(data.latency_ms);
-
-        // Update telemetry
-        setTotalQueries((prev) => prev + 1);
-        const nextScores = [...confScores, conf];
-        setConfScores(nextScores);
-        const avg = Math.round(nextScores.reduce((a, b) => a + b, 0) / nextScores.length);
-        setAvgConfidence(avg);
+        const assistantMessage = {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: data.answer || 'No grounded answer returned for this question.',
+          sources: data.sources || [],
+          latency: data.latency_ms || elapsed,
+          can_fallback: data.can_fallback || false,
+          is_fallback: data.is_fallback || false,
+          userQuery: q,
+          isNew: true,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        };
+        setMessages((prev) => [...prev, assistantMessage]);
       } else {
-        throw new Error(`API error ${res.status}`);
+        throw new Error(`Server returned error ${res.status}`);
       }
-    } catch (err) {
+    } catch {
       const elapsed = Math.round(performance.now() - startT);
-      setLatency(elapsed);
-      setAnswer(
-        'Based on the catalogued primary source documents, the system synthesizes verified findings across distributed systems architecture, event-driven backends, and low-latency vector retrieval.\n\n• Core Technical Stack: High-throughput Go, Python, and Rust microservices.\n• Cloud Infrastructure: Multi-region Kubernetes clusters with zero-downtime deployment pipelines.'
-      );
-      setConfidence(94.2);
-      setAnchors(['Anchor: [Knowledge Corpus p. 1, Chunk #1]', 'Anchor: [Knowledge Corpus p. 2, Chunk #3]']);
+      const fallbackMessage = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content:
+          documents.length > 0
+            ? 'Unable to complete search across indexed documents at this moment. Please check your connection and try again.'
+            : 'No documents are currently indexed in your library. Please upload a PDF document using the "Add PDF" button to start asking questions, or consult the general-knowledge fallback model.',
+        sources: [],
+        latency: elapsed,
+        can_fallback: true,
+        is_fallback: false,
+        userQuery: q,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      };
+      setMessages((prev) => [...prev, fallbackMessage]);
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Dedicated Fallback trigger for an existing message
+  const handleTriggerFallback = async (queryText, messageId) => {
+    if (!queryText || fallbackLoadingId) return;
+    setFallbackLoadingId(messageId);
+
+    const startT = performance.now();
+    try {
+      const res = await fetch('/api/fallback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query: queryText,
+          history: messages.map((m) => ({ role: m.role, content: m.content })),
+          selected_doc: selectedDoc,
+        }),
+      });
+
+      const elapsed = Math.round(performance.now() - startT);
+
+      if (res.ok) {
+        const data = await res.json();
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === messageId
+              ? {
+                  ...m,
+                  content: data.answer,
+                  sources: data.sources || [],
+                  latency: data.latency_ms || elapsed,
+                  can_fallback: false,
+                  is_fallback: true,
+                }
+              : m
+          )
+        );
+      }
+    } catch (err) {
+      console.error('Fallback query error:', err);
+    } finally {
+      setFallbackLoadingId(null);
+    }
+  };
+
+  const handleNewChat = () => {
+    setMessages([]);
+    setQuery('');
+  };
+
   const handleSelectPrompt = (promptText) => {
-    setQuery(promptText);
-    handleSynthesize(promptText);
+    handleSendMessage(promptText);
+  };
+
+  const handleDeleteDocument = async (filename) => {
+    try {
+      await fetch(`/api/documents/${encodeURIComponent(filename)}`, { method: 'DELETE' });
+      fetchStatusAndDocs();
+    } catch {
+      // Backend error handling
+    }
+  };
+
+  const handleClearAllDocuments = async () => {
+    try {
+      await fetch('/api/documents', { method: 'DELETE' });
+      fetchStatusAndDocs();
+    } catch {
+      // Backend error handling
+    }
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-[#faf9fb]">
-      <Header
-        docCount={docCount}
-        onOpenUpload={() => setIsModalOpen(true)}
+    <div className="min-h-screen flex flex-col justify-between bg-[#fbfbfa] relative">
+      {/* Background App Watermark with Luxurious Architectural Typography */}
+      <div
+        aria-hidden="true"
+        className="fixed inset-0 flex items-center justify-center pointer-events-none select-none z-0 overflow-hidden"
+      >
+        <span className="font-['Cinzel',serif] font-black text-[18vw] md:text-[230px] lg:text-[290px] tracking-[0.28em] text-[#124332]/[0.085] uppercase select-none leading-none pl-[0.28em] transition-all">
+          VIORA
+        </span>
+      </div>
+
+      <div className="relative z-10 flex-1 flex flex-col justify-between">
+        {/* Fixed Pinned Header */}
+        <Header
+          docCount={docCount}
+          hasMessages={messages.length > 0}
+          onOpenDocuments={() => setIsModalOpen(true)}
+          onOpenUpload={() => setIsModalOpen(true)}
+          onNewChat={handleNewChat}
+        />
+
+        {/* Main Content Viewport with Room for Fixed Header (pt-20) and Composer (pb-56) */}
+        <main className="flex-1 flex flex-col w-full max-w-4xl mx-auto px-4 sm:px-6 pt-20 pb-56">
+          {/* Empty State / Welcome Screen */}
+          {messages.length === 0 ? (
+            <div className="flex-1 flex flex-col items-center justify-center min-h-[50vh] gap-4">
+              <Hero />
+              <SuggestedPrompts onSelectPrompt={handleSelectPrompt} />
+            </div>
+          ) : (
+            /* Active Chat Stream */
+            <div className="flex-1">
+              <ChatStream
+                messages={messages}
+                isLoading={isLoading}
+                onTriggerFallback={handleTriggerFallback}
+                fallbackLoadingId={fallbackLoadingId}
+              />
+              <div ref={chatBottomRef} />
+            </div>
+          )}
+        </main>
+      </div>
+
+      {/* Docked Input Area with Translucent Glassmorphism */}
+      <div className="fixed bottom-0 left-0 right-0 z-30 bg-gradient-to-t from-[#fbfbfa]/60 via-[#fbfbfa]/30 to-transparent backdrop-blur-[2px] pt-6 pb-3 px-4 sm:px-6">
+        <QueryComposer
+          query={query}
+          setQuery={setQuery}
+          onSend={() => handleSendMessage()}
+          selectedDoc={selectedDoc}
+          setSelectedDoc={setSelectedDoc}
+          documents={documents}
+          onOpenUpload={() => setIsModalOpen(true)}
+          isLoading={isLoading}
+        />
+      </div>
+
+      {/* Document Library / Upload Modal */}
+      <UploadModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        documents={documents}
+        onUploadSuccess={fetchStatusAndDocs}
+        onDeleteDocument={handleDeleteDocument}
+        onClearAll={handleClearAllDocuments}
       />
-
-      <main className="w-full pt-16 flex-1 flex flex-col">
-        <TelemetryBar
-          queries={totalQueries}
-          avgConf={avgConfidence}
-          onSwitchTarget={() => setIsModalOpen(true)}
-          onIndexFile={() => setIsModalOpen(true)}
-        />
-
-        <div className="w-full max-w-7xl mx-auto px-8 py-10 flex flex-col gap-6 flex-1">
-          <Hero />
-
-          <QueryComposer
-            query={query}
-            setQuery={setQuery}
-            onSynthesize={() => handleSynthesize()}
-            onSwapSource={() => setIsModalOpen(true)}
-            isLoading={isLoading}
-          />
-
-          <SuggestedPrompts onSelectPrompt={handleSelectPrompt} />
-
-          <SynthesisMemo
-            question={activeQuestion}
-            answer={answer}
-            confidence={confidence}
-            anchors={anchors}
-            latency={latency}
-            isLoading={isLoading}
-          />
-        </div>
-
-        <UploadModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onUploadSuccess={fetchStatus}
-        />
-      </main>
-
-      <Footer latency={latency} />
     </div>
   );
 }
