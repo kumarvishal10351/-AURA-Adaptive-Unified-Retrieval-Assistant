@@ -1,3 +1,13 @@
+---
+title: Viora Research Assistant
+emoji: 📚
+colorFrom: green
+colorTo: emerald
+sdk: docker
+app_port: 7860
+pinned: false
+---
+
 <p align="center">
   <img src="docs/architecture.png" alt="AURA Architecture" width="900" />
 </p>

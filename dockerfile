@@ -16,20 +16,26 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Create runtime directories
-RUN mkdir -p /app/faiss_db /app/data/docs /app/mlruns
+# Create user with UID 1000 required by Hugging Face Spaces
+RUN useradd -m -u 1000 user && \
+    mkdir -p /app/faiss_db /app/data/docs /app/mlruns /home/user/.cache && \
+    chown -R user:user /app /home/user
 
 COPY requirements.txt .
 RUN pip install --upgrade pip && \
     pip install --default-timeout=1000 --no-cache-dir -r requirements.txt
 
-COPY . .
+COPY --chown=user:user . .
 
 # Ensure production frontend assets are copied from Stage 1
-COPY --from=frontend-builder /build/dist ./frontend/dist
+COPY --chown=user:user --from=frontend-builder /build/dist ./frontend/dist
 
-ENV PORT=8000
-EXPOSE 8000
+USER user
+ENV HOME=/home/user \
+    PATH=/home/user/.local/bin:$PATH \
+    PORT=7860
+
+EXPOSE 7860
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:${PORT}/api/status || exit 1
