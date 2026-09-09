@@ -71,11 +71,18 @@ def get_vectorstore() -> FAISS:
 @lru_cache(maxsize=1)
 def _get_reranker():
     """
-    Load the CrossEncoder reranker. Cached for the session.
-    Uses max_length=512 to truncate gracefully.
+    Load the CrossEncoder reranker if enabled.
+    In cloud environments (like Render 512MB RAM free tier), CrossEncoder loading
+    exceeds memory limits and triggers SIGKILL (502 Bad Gateway).
+    Defaults to disabled via DISABLE_CROSS_ENCODER=true, safely falling back to cosine ranking.
     """
-    from sentence_transformers import CrossEncoder
-    return CrossEncoder(RERANKER_MODEL, max_length=512)
+    if os.getenv("DISABLE_CROSS_ENCODER", "true").lower() in ("true", "1", "yes"):
+        return None
+    try:
+        from sentence_transformers import CrossEncoder
+        return CrossEncoder(RERANKER_MODEL, max_length=512)
+    except Exception:
+        return None
 
 
 def retrieve(
@@ -114,16 +121,21 @@ def retrieve(
 
     try:
         reranker = _get_reranker()
-        pairs = [[query, doc.page_content] for doc in candidate_docs]
-        ce_scores = reranker.predict(pairs)
+        if reranker is not None:
+            pairs = [[query, doc.page_content] for doc in candidate_docs]
+            ce_scores = reranker.predict(pairs)
 
-        ranked = sorted(
-            zip(ce_scores, candidate_docs),
-            key=lambda x: x[0],
-            reverse=True,
-        )[:rerank_top_n]
+            ranked = sorted(
+                zip(ce_scores, candidate_docs),
+                key=lambda x: x[0],
+                reverse=True,
+            )[:rerank_top_n]
 
-        final_docs = [doc for _, doc in ranked]
+            final_docs = [doc for _, doc in ranked]
+        else:
+            final_docs = [
+                doc for doc, _ in sorted(passing, key=lambda x: x[1], reverse=True)
+            ][:rerank_top_n]
     except Exception:
         # CrossEncoder unavailable — sort by cosine similarity
         final_docs = [

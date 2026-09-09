@@ -25,7 +25,10 @@ from config.settings import (
     MAX_CONTEXT_LENGTH,
     COSINE_THRESHOLD,
 )
-from retrieval.retriever import get_vectorstore, _get_reranker
+try:
+    from retrieval.retriever import get_vectorstore, _get_reranker
+except ImportError:
+    from app.retrieval.retriever import get_vectorstore, _get_reranker
 
 # ─────────────────────────────────────────────────────────────────
 # Prompts
@@ -140,7 +143,7 @@ def create_rag_chain(llm, vectorstore=None):
         history_text = _build_history(history)
 
         # ── Stage 1: Parallel original fetch + query expansion ────────────
-        with concurrent.futures.ThreadPoolExecutor(max_workers=5) as ex:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=2) as ex:
             orig_future = ex.submit(_fetch_candidates, vs, question, FETCH_K, target_doc)
             expand_future = ex.submit(
                 llm.invoke,
@@ -218,16 +221,21 @@ def create_rag_chain(llm, vectorstore=None):
         # ── Stage 3: CrossEncoder rerank (ordering only) ───────────────────
         try:
             reranker = _get_reranker()
-            pairs = [[question, doc.page_content] for doc in docs_to_rerank]
-            ce_scores = reranker.predict(pairs)
+            if reranker is not None:
+                pairs = [[question, doc.page_content] for doc in docs_to_rerank]
+                ce_scores = reranker.predict(pairs)
 
-            ranked = sorted(
-                zip(ce_scores, docs_to_rerank),
-                key=lambda x: x[0],
-                reverse=True,
-            )[:FINAL_TOP_N]
+                ranked = sorted(
+                    zip(ce_scores, docs_to_rerank),
+                    key=lambda x: x[0],
+                    reverse=True,
+                )[:FINAL_TOP_N]
 
-            final_docs = [doc for _, doc in ranked]
+                final_docs = [doc for _, doc in ranked]
+            else:
+                final_docs = [
+                    doc for doc, _ in sorted(above, key=lambda x: x[1], reverse=True)
+                ][:FINAL_TOP_N]
 
         except Exception:
             final_docs = [
