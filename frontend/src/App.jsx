@@ -5,6 +5,7 @@ import SuggestedPrompts from './components/SuggestedPrompts';
 import ChatStream from './components/ChatStream';
 import QueryComposer from './components/QueryComposer';
 import UploadModal from './components/UploadModal';
+import { API_BASE_URL } from './config';
 
 export default function App() {
   const [messages, setMessages] = useState([]);
@@ -22,7 +23,7 @@ export default function App() {
   // Fetch status and document list
   const fetchStatusAndDocs = async () => {
     try {
-      const statusRes = await fetch('/api/status');
+      const statusRes = await fetch(`${API_BASE_URL}/api/status`);
       if (statusRes.ok) {
         const data = await statusRes.json();
         if (data.total_docs !== undefined) {
@@ -30,7 +31,7 @@ export default function App() {
         }
       }
 
-      const docRes = await fetch('/api/documents');
+      const docRes = await fetch(`${API_BASE_URL}/api/documents`);
       if (docRes.ok) {
         const data = await docRes.json();
         if (data.documents) {
@@ -51,7 +52,7 @@ export default function App() {
   useEffect(() => {
     const initFreshSession = async () => {
       try {
-        await fetch('/api/documents', { method: 'DELETE' });
+        await fetch(`${API_BASE_URL}/api/documents`, { method: 'DELETE' });
       } catch {
         // Backend starting up
       }
@@ -91,7 +92,7 @@ export default function App() {
     }));
 
     try {
-      const res = await fetch('/api/query', {
+      const res = await fetch(`${API_BASE_URL}/api/query`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -150,7 +151,7 @@ export default function App() {
 
     const startT = performance.now();
     try {
-      const res = await fetch('/api/fallback', {
+      const res = await fetch(`${API_BASE_URL}/api/fallback`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -197,7 +198,7 @@ export default function App() {
 
   const handleDeleteDocument = async (filename) => {
     try {
-      await fetch(`/api/documents/${encodeURIComponent(filename)}`, { method: 'DELETE' });
+      await fetch(`${API_BASE_URL}/api/documents/${encodeURIComponent(filename)}`, { method: 'DELETE' });
       fetchStatusAndDocs();
     } catch {
       // Backend error handling
@@ -206,7 +207,7 @@ export default function App() {
 
   const handleClearAllDocuments = async () => {
     try {
-      await fetch('/api/documents', { method: 'DELETE' });
+      await fetch(`${API_BASE_URL}/api/documents`, { method: 'DELETE' });
       fetchStatusAndDocs();
     } catch {
       // Backend error handling

@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Check, FileText, Loader2, Trash2, UploadCloud, X } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 export default function UploadModal({
   isOpen,
@@ -26,7 +27,7 @@ export default function UploadModal({
     formData.append('file', file);
 
     try {
-      const res = await fetch('/api/upload', {
+      const res = await fetch(`${API_BASE_URL}/api/upload`, {
         method: 'POST',
         body: formData,
       });
