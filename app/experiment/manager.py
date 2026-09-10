@@ -29,7 +29,7 @@ class ExperimentManager:
     Central controller for experiment tracking.
     """
 
-    def __init__(self, experiment_name: str = "AURA-RAG"):
+    def __init__(self, experiment_name: str = "VIORA-RAG"):
         self.experiment_name = experiment_name
         self.is_active = False
 

@@ -19,7 +19,7 @@ class ExperimentTracker:
     Records parameters, metrics, and latency timings across ingestion and retrieval.
     """
 
-    def __init__(self, experiment_name: str = "AURA-RAG"):
+    def __init__(self, experiment_name: str = "VIORA-RAG"):
         self.experiment_name = experiment_name
         self._timers: dict[str, float] = {}
 

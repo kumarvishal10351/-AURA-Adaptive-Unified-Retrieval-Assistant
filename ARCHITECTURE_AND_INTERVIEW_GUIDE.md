@@ -1,6 +1,6 @@
-# 🧠 AURA — Architecture Flow & Interview Preparation Guide
+# 🧠 VIORA — Architecture Flow & Interview Preparation Guide
 
-> **Purpose**: This document serves as a comprehensive technical reference for understanding the AURA RAG system's architecture and preparing for AI/ML engineering interviews.
+> **Purpose**: This document serves as a comprehensive technical reference for understanding the VIORA RAG system's architecture and preparing for AI/ML engineering interviews.
 
 ---
 
@@ -290,7 +290,7 @@ RAG Pipeline Returns Answer
 - RAG grounds responses in actual documents, reducing hallucination
 - It enables domain-specific Q&A without fine-tuning the model
 
-**In AURA specifically**: We go beyond basic RAG by adding confidence scoring and fallback routing — the system knows when it doesn't know.
+**In VIORA specifically**: We go beyond basic RAG by adding confidence scoring and fallback routing — the system knows when it doesn't know.
 
 ---
 
@@ -305,7 +305,7 @@ RAG Pipeline Returns Answer
 | Accuracy | Good for recall | Excellent for precision |
 | Use case | First-stage retrieval | Second-stage reranking |
 
-**In AURA**: We use bi-encoder for initial fetch (24 candidates) and cross-encoder to rerank down to 5. This gives us both speed and accuracy.
+**In VIORA**: We use bi-encoder for initial fetch (24 candidates) and cross-encoder to rerank down to 5. This gives us both speed and accuracy.
 
 ---
 
@@ -445,7 +445,7 @@ Range: [-1, 1] (or [0, 1] for normalized positive embeddings)
 - **temp=0.1**: Nearly deterministic; always picks the highest-probability token
 - **temp=0.7**: More diverse; allows lower-probability tokens to be selected
 
-**In AURA:**
+**In VIORA:**
 - RAG uses 0.1 because we want faithful extraction from documents (no creativity)
 - Fallback uses 0.7 because general knowledge answers benefit from natural, varied phrasing
 
@@ -570,7 +570,7 @@ HuggingFace tokenizers use Rust parallelism by default. When Streamlit hot-reloa
 
 ### How to Explain This Project in 2 Minutes
 
-> "I built AURA, a production-grade RAG system that solves the hallucination problem in document Q&A. Most RAG systems blindly trust retrieved context — AURA doesn't. It uses a three-stage retrieval pipeline: FAISS over-fetch for recall, cosine threshold filtering to remove noise, and CrossEncoder reranking for precision. Every response includes a confidence score so users know how reliable the answer is. When the document doesn't contain the answer, instead of hallucinating, the system explicitly detects this and offers a fallback to a general-knowledge LLM. The architecture uses parallel query expansion, streaming responses, and session-aware conversation history."
+> "I built VIORA, a production-grade RAG system that solves the hallucination problem in document Q&A. Most RAG systems blindly trust retrieved context — VIORA doesn't. It uses a three-stage retrieval pipeline: FAISS over-fetch for recall, cosine threshold filtering to remove noise, and CrossEncoder reranking for precision. Every response includes a confidence score so users know how reliable the answer is. When the document doesn't contain the answer, instead of hallucinating, the system explicitly detects this and offers a fallback to a general-knowledge LLM. The architecture uses parallel query expansion, streaming responses, and session-aware conversation history."
 
 ### Key Talking Points for Interviews
 

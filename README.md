@@ -10,14 +10,14 @@ pinned: false
 
 <div align="center">
 
-# 🧠 VIORA / AURA
-### **Adaptive Unified Retrieval Assistant**
+# 🧠 VIORA
+### **Grounded Research & Retrieval Assistant**
 **A Production-Grade, Decoupled Full-Stack RAG System Engineered for Zero-Hallucination Grounding, Calibrated Confidence Scoring, and Autonomous Fallbacks.**
 
 [![Live Web App](https://img.shields.io/badge/🚀_Live_Web_App-vioraassistant.vercel.app-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vioraassistant.vercel.app)
 [![Hugging Face Space](https://img.shields.io/badge/🤗_HF_Space-djShashi%2FViora--Assistance-yellow?style=for-the-badge&logo=huggingface&logoColor=black)](https://huggingface.co/spaces/djShashi/Viora-Assistance)
 [![Backend Status](https://img.shields.io/badge/⚡_Backend_API-Online-success?style=for-the-badge&logo=fastapi&logoColor=white)](https://djshashi-viora-assistance.hf.space/backend/api/status)
-[![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/kumarvishal10351/-AURA-Adaptive-Unified-Retrieval-Assistant)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/kumarvishal10351/VIORA-Assistant)
 
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.11+-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python" />
@@ -41,7 +41,7 @@ pinned: false
 
 ## 🎯 Executive Summary (For Hiring Managers & Recruiters)
 
-**VIORA / AURA** is an enterprise-grade, full-stack Retrieval-Augmented Generation (RAG) platform designed to eliminate the systemic reliability defects of traditional RAG systems: **hallucinations, blind context injection, lack of quality signals, and silent failure on out-of-domain inquiries.**
+**VIORA** is an enterprise-grade, full-stack Retrieval-Augmented Generation (RAG) platform designed to eliminate the systemic reliability defects of traditional RAG systems: **hallucinations, blind context injection, lack of quality signals, and silent failure on out-of-domain inquiries.**
 
 ### Key Engineering Highlights:
 - **Decoupled Architecture**: High-speed **React 19** frontend deployed on **Vercel edge network**, communicating via asynchronous REST APIs with a **FastAPI + Gradio** backend hosted on **Hugging Face Spaces** accelerated by **Nvidia ZeroGPU (RTX Pro 6000 Blackwell)**.
@@ -57,16 +57,15 @@ pinned: false
 | Component | Platform | URL | Status |
 | :--- | :--- | :--- | :--- |
 | **Production Frontend** | Vercel Edge | [**vioraassistant.vercel.app**](https://vioraassistant.vercel.app) | ![Vercel](https://img.shields.io/badge/Vercel-Live-success?style=flat-square&logo=vercel) |
-| **Mirror Frontend** | Vercel Edge | [**aura-adaptive-unified-retrieval-assistant.vercel.app**](https://aura-adaptive-unified-retrieval-assistant.vercel.app) | ![Vercel](https://img.shields.io/badge/Vercel-Live-success?style=flat-square&logo=vercel) |
 | **Backend & Space UI** | Hugging Face Spaces | [**huggingface.co/spaces/djShashi/Viora-Assistance**](https://huggingface.co/spaces/djShashi/Viora-Assistance) | ![Hugging Face](https://img.shields.io/badge/ZeroGPU-Running-blue?style=flat-square&logo=huggingface) |
 | **Backend REST API** | HF Space (Port 7860) | [**djshashi-viora-assistance.hf.space/backend/api/status**](https://djshashi-viora-assistance.hf.space/backend/api/status) | ![FastAPI](https://img.shields.io/badge/REST_API-Active-success?style=flat-square&logo=fastapi) |
-| **Source Repository** | GitHub | [**github.com/kumarvishal10351/-AURA-Adaptive-Unified-Retrieval-Assistant**](https://github.com/kumarvishal10351/-AURA-Adaptive-Unified-Retrieval-Assistant) | ![GitHub](https://img.shields.io/badge/Code-Public-black?style=flat-square&logo=github) |
+| **Source Repository** | GitHub | [**github.com/kumarvishal10351/VIORA-Assistant**](https://github.com/kumarvishal10351/VIORA-Assistant) | ![GitHub](https://img.shields.io/badge/Code-Public-black?style=flat-square&logo=github) |
 
 ---
 
-## ⚖️ Traditional RAG vs. VIORA / AURA
+## ⚖️ Traditional RAG vs. VIORA
 
-| Capability | Naive / Traditional RAG | VIORA / AURA Platform |
+| Capability | Naive / Traditional RAG | VIORA Platform |
 | :--- | :--- | :--- |
 | **Candidate Retrieval** | Single raw query vector lookup | **Parallel Multi-Query Expansion** (3 async variations + chat pronoun resolution) |
 | **Cosine Gating** | ❌ None (blind dump of Top-$K$ noise) | ✅ **Cosine Threshold Gate ($\ge 0.20$)** with adaptive fallback |
@@ -158,10 +157,10 @@ flowchart TD
 
 ## 🔬 Deep Dive: The 5-Stage Retrieval Pipeline
 
-AURA rejects naive similarity search in favor of a mathematically bounded, multi-stage retrieval architecture:
+VIORA rejects naive similarity search in favor of a mathematically bounded, multi-stage retrieval architecture:
 
 ### 1. Parallel Multi-Query Expansion
-User queries often suffer from vocabulary mismatch or implicit pronoun references (e.g., *"What were their primary findings?"*). AURA runs an asynchronous `ThreadPoolExecutor` that queries `open-mistral-nemo` to produce 3 alternate semantic formulations informed by prior conversation turns.
+User queries often suffer from vocabulary mismatch or implicit pronoun references (e.g., *"What were their primary findings?"*). VIORA runs an asynchronous `ThreadPoolExecutor` that queries `open-mistral-nemo` to produce 3 alternate semantic formulations informed by prior conversation turns.
 
 ### 2. $L_2$-Normalized Dense Embedding & Over-Fetch
 Embeddings are computed via `all-MiniLM-L6-v2` with `normalize_embeddings=True`. Crucially, enforcing unit norm ensures that inner products calculated by FAISS equate strictly to cosine similarity in $[0, 1]$, preventing score distortion:
@@ -173,13 +172,13 @@ The system queries $k \times 2$ candidates across all expanded queries, deduplic
 Irrelevant passages and noise are stripped out by a calibrated relevance floor ($\text{score} \ge 0.20$). If no passages clear the threshold (common with broad introductory inquiries), an adaptive fallback retains the top-$k$ candidates for further evaluation.
 
 ### 4. Cross-Encoder Joint-Attention Reranking
-Bi-encoders embed queries and passages independently, missing cross-token interactions. AURA feeds the filtered candidates into `cross-encoder/ms-marco-MiniLM-L-6-v2`. The model evaluates query-passage pairs jointly across all attention layers:
+Bi-encoders embed queries and passages independently, missing cross-token interactions. VIORA feeds the filtered candidates into `cross-encoder/ms-marco-MiniLM-L-6-v2`. The model evaluates query-passage pairs jointly across all attention layers:
 $$\text{Score}_{\text{CE}} = \text{CrossEncoder}([\text{Query}, \text{Passage}])$$
 
 *Engineering safeguard:* Cross-encoder raw logits $(-\infty, +\infty)$ are used **strictly for candidate ordering**. They are never used for thresholding, isolating the pipeline from logit calibration drift.
 
 ### 5. Calibrated Confidence Scoring Formula
-To provide enterprise users with a dependable reliability metric, AURA transforms the top cosine score into an intuitive $0\text{--}100\%$ score:
+To provide enterprise users with a dependable reliability metric, VIORA transforms the top cosine score into an intuitive $0\text{--}100\%$ score:
 $$\text{Confidence} = \min\left(100, \left\lfloor 20 + \frac{\text{top\_cosine}}{0.80} \times 80 \right\rfloor\right)$$
 
 - $\text{top\_cosine} \ge 0.80 \implies \mathbf{100\%}$ (Rock-solid citation)
@@ -228,19 +227,19 @@ The backend exposes a fully documented, CORS-enabled REST API:
 #### Sample Query Response:
 ```json
 {
-  "answer": "According to the financial statement, Q4 operating revenue increased by 23.4%...",
-  "confidence": 92,
+  "answer": "According to the document, the initiative focuses on collaborative applied intelligence...",
+  "confidence": 94,
   "anchors": [
-    "Anchor: [Financial_Report.pdf p. 4, Chunk #2]",
-    "Anchor: [Financial_Report.pdf p. 7, Chunk #5]"
+    "Anchor: [Document.pdf p. 2, Chunk #1]",
+    "Anchor: [Document.pdf p. 4, Chunk #3]"
   ],
-  "latency_ms": 1420,
+  "latency_ms": 1380,
   "sources": [
     {
-      "file_name": "Financial_Report.pdf",
-      "page": 4,
-      "score": 0.784,
-      "preview": "Total operating revenue for the fourth fiscal quarter reached $4.2B, representing a 23.4% YoY increase..."
+      "file_name": "Document.pdf",
+      "page": 2,
+      "score": 0.812,
+      "preview": "The initiative outlines key strategic objectives designed to foster..."
     }
   ],
   "can_fallback": false,
@@ -252,7 +251,7 @@ The backend exposes a fully documented, CORS-enabled REST API:
 
 ## 📊 MLOps & Experiment Tracking
 
-AURA includes comprehensive experiment telemetry powered by **MLflow**:
+VIORA includes comprehensive experiment telemetry powered by **MLflow**:
 
 - **Telemetry Database**: Persistent SQLite store in `mlflow.db`.
 - **Tracked Parameters**:
@@ -303,8 +302,8 @@ pytest -v
 ### 2. Repository Setup
 ```bash
 # Clone the repository
-git clone https://github.com/kumarvishal10351/-AURA-Adaptive-Unified-Retrieval-Assistant.git
-cd -AURA-Adaptive-Unified-Retrieval-Assistant
+git clone https://github.com/kumarvishal10351/VIORA-Assistant.git
+cd VIORA-Assistant
 
 # Create and activate Python virtual environment
 python -m venv venv
@@ -343,7 +342,7 @@ Open `http://localhost:5173` to interact with the local development UI.
 
 ## 🐳 Docker Deployment
 
-AURA is containerized with multi-stage builds and persistent volume bindings:
+VIORA is containerized with multi-stage builds and persistent volume bindings:
 
 ```bash
 # Run with Docker Compose

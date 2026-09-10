@@ -1,7 +1,7 @@
 """
 experiment package
 ──────────────────
-MLOps lifecycle, tracking, and evaluation suite for AURA.
+MLOps lifecycle, tracking, and evaluation suite for VIORA.
 """
 
 try:
