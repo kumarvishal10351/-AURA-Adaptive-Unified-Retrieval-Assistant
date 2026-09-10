@@ -48,17 +48,9 @@ export default function App() {
     }
   };
 
-  // Reset all documents on page reload/mount
+  // Load active documents and status on initial mount (never wipe database on reload)
   useEffect(() => {
-    const initFreshSession = async () => {
-      try {
-        await fetch(`${API_BASE_URL}/api/documents`, { method: 'DELETE' });
-      } catch {
-        // Backend starting up
-      }
-      fetchStatusAndDocs();
-    };
-    initFreshSession();
+    fetchStatusAndDocs();
   }, []);
 
   // Smooth scroll to bottom when messages update or loading
@@ -127,10 +119,7 @@ export default function App() {
       const fallbackMessage = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content:
-          documents.length > 0
-            ? 'Unable to complete search across indexed documents at this moment. Please check your connection and try again.'
-            : 'No documents are currently indexed in your library. Please upload a PDF document using the "Add PDF" button to start asking questions, or consult the general-knowledge fallback model.',
+        content: 'Unable to connect to the assistant service at this moment. Please check your connection and try again, or consult the general-knowledge fallback model.',
         sources: [],
         latency: elapsed,
         can_fallback: true,
