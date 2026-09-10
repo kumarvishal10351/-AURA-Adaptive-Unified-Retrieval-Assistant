@@ -22,9 +22,10 @@ function TypewriterMessage({
     let count = 0;
     setDisplayedCount(0);
 
+    // Dynamic token increment ensuring the typewriter finishes smoothly in ~1-1.2s max
+    const step = Math.max(3, Math.ceil(tokens.length / 50));
     const timer = setInterval(() => {
-      // Advance 2 tokens per tick (~1 word + whitespace) every 16ms for natural ChatGPT cadence
-      count += 2;
+      count += step;
       if (count >= tokens.length) {
         clearInterval(timer);
         setDisplayedCount(null);
@@ -32,7 +33,7 @@ function TypewriterMessage({
       } else {
         setDisplayedCount(count);
       }
-    }, 16);
+    }, 14);
 
     return () => clearInterval(timer);
   }, [text, isNew]);

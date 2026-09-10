@@ -242,19 +242,21 @@ def fallback_query(req: QueryRequest):
             raise RuntimeError("Fallback LLM is unavailable or API key is not configured.")
 
         system_msg = (
-            "You are Viora's general-knowledge intelligence model (Mistral Large). "
-            "The user is asking a question that is outside the indexed document corpus or requesting comprehensive general knowledge. "
-            "Provide a thorough, authoritative, engaging, and well-structured answer with clear explanations and formatting."
+            "You are Viora's general-knowledge intelligence model. "
+            "Provide a direct, concise, and structured answer to the user's question. "
+            "Use clear bullet points and bold key terms. Keep explanations informative, focused, and under 3 paragraphs."
         )
         chat_messages = [
             {"role": "system", "content": system_msg}
         ]
         if req.history:
-            for m in req.history[-6:]:
-                chat_messages.append({
-                    "role": m.get("role", "user"),
-                    "content": m.get("content", "")
-                })
+            for m in req.history[-2:]:
+                content = m.get("content", "")
+                if content:
+                    chat_messages.append({
+                        "role": m.get("role", "user"),
+                        "content": content[:400]
+                    })
         chat_messages.append({"role": "user", "content": q})
 
         response = llm.invoke(chat_messages)
