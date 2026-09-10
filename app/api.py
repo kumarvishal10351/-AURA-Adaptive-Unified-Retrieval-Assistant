@@ -316,12 +316,34 @@ def process_query(req: QueryRequest):
         elapsed_ms = max(int((time.perf_counter() - start_t) * 1000), 42)
 
         can_fallback = False
-        if answer_text == "NOT_FOUND" or "does not contain sufficient grounded evidence" in answer_text.lower():
+        clean_text = answer_text.strip()
+        lower_text = clean_text.lower()
+
+        # Robust detection of out-of-domain / missing evidence responses
+        is_missing_evidence = (
+            clean_text.startswith("NOT_FOUND")
+            or "not_found" in lower_text
+            or "not found" in lower_text
+            or "does not contain sufficient grounded evidence" in lower_text
+            or "does not contain any information" in lower_text
+            or "context does not contain" in lower_text
+            or "cannot find any information" in lower_text
+            or "not mentioned in the provided" in lower_text
+            or "no information about" in lower_text
+            or "do not define or explain" in lower_text
+        )
+
+        if is_missing_evidence:
             can_fallback = True
-            answer_text = (
-                "The indexed document corpus does not contain sufficient grounded evidence "
-                "to answer this query under strict zero-speculation thresholds."
-            )
+            import re
+            cleaned = re.sub(r"^NOT_FOUND[\s:\-\n]*", "", clean_text, flags=re.IGNORECASE).strip()
+            if cleaned:
+                answer_text = cleaned
+            else:
+                answer_text = (
+                    "The indexed document corpus does not contain sufficient grounded evidence "
+                    "to answer this query under strict zero-speculation thresholds."
+                )
 
         # Calculate calibrated confidence
         scores = [score for _, score in ranked_results] if ranked_results else []

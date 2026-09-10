@@ -150,11 +150,21 @@ export default function ChatStream({
         }
 
         const userQuery = getQueryForMessage(msg, idx);
+        const lowerContent = (msg.content || '').toLowerCase();
         const hasInsufficientEvidence =
           msg.can_fallback ||
-          (msg.content && msg.content.toLowerCase().includes('not contain sufficient grounded evidence'));
+          lowerContent.includes('not_found') ||
+          lowerContent.includes('not found') ||
+          lowerContent.includes('does not contain sufficient grounded evidence') ||
+          lowerContent.includes('does not contain any information') ||
+          lowerContent.includes('context does not contain') ||
+          lowerContent.includes('cannot find any information') ||
+          lowerContent.includes('no information') ||
+          lowerContent.includes('do not define or explain') ||
+          lowerContent.includes('not mentioned in the');
         const shouldAnimate = msg.isNew && !completedAnimationIds[msg.id];
         const isTypingDone = !shouldAnimate;
+        const displayContent = (msg.content || '').replace(/^NOT_FOUND[\s:\-\n]*/i, '');
 
         // Assistant Message
         return (
@@ -186,7 +196,7 @@ export default function ChatStream({
             {/* Answer Card with Translucent Glassmorphism */}
             <div className="bg-white/35 backdrop-blur-sm rounded-xl p-5 border border-[#e8e6e1]/60 shadow-2xs transition-all">
               <TypewriterMessage
-                text={msg.content}
+                text={displayContent}
                 isNew={shouldAnimate}
                 onComplete={() => markAnimationComplete(msg.id)}
                 renderFormattedText={renderFormattedText}
