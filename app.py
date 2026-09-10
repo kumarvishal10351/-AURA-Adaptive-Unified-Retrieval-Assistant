@@ -11,6 +11,8 @@ import sys
 import shutil
 from pathlib import Path
 
+os.environ["GRADIO_SSR_MODE"] = "False"
+
 # Ensure project root and app directory are in sys.path
 _ROOT = Path(__file__).resolve().parent
 _APP_DIR = _ROOT / "app"
@@ -245,7 +247,7 @@ from gradio.routes import App
 from fastapi.middleware.cors import CORSMiddleware
 from app.api import app as fastapi_app
 
-app = App.create_app(demo)
+app = App.create_app(demo, strict_cors=False)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -257,4 +259,11 @@ app.mount("/backend", fastapi_app)
 app.mount("", fastapi_app)
 
 if __name__ == "__main__":
-    demo.launch(server_name="0.0.0.0", server_port=7860, _app=app, css=custom_css)
+    demo.launch(
+        server_name="0.0.0.0",
+        server_port=7860,
+        _app=app,
+        css=custom_css,
+        ssr_mode=False,
+        strict_cors=False,
+    )
