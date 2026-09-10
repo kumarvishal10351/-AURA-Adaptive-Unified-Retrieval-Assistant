@@ -163,7 +163,12 @@ custom_css = """
 .header-box { text-align: center; margin-bottom: 20px; }
 """
 
-with gr.Blocks(title="Viora Research Workspace", css=custom_css) as demo:
+try:
+    demo = gr.Blocks(title="Viora Research Workspace", css=custom_css)
+except Exception:
+    demo = gr.Blocks(title="Viora Research Workspace")
+
+with demo:
     with gr.Column(elem_id="container"):
         gr.Markdown(
             """
@@ -202,16 +207,30 @@ with gr.Blocks(title="Viora Research Workspace", css=custom_css) as demo:
 
         gr.Markdown("---")
         gr.Markdown("### 💬 Research Consultation")
-        gr.ChatInterface(
-            fn=rag_chat_response,
-            type="messages",
-            examples=[
-                "Summarize the key findings in this document.",
-                "What are the technical qualifications mentioned?",
-                "What are the main risks or limitations discussed?",
-            ],
-            cache_examples=False,
-        )
+        try:
+            gr.ChatInterface(
+                fn=rag_chat_response,
+                examples=[
+                    "Summarize the key findings in this document.",
+                    "What are the technical qualifications mentioned?",
+                    "What are the main risks or limitations discussed?",
+                ],
+                cache_examples=False,
+            )
+        except TypeError:
+            gr.ChatInterface(
+                fn=rag_chat_response,
+                type="messages",
+                examples=[
+                    "Summarize the key findings in this document.",
+                    "What are the technical qualifications mentioned?",
+                    "What are the main risks or limitations discussed?",
+                ],
+                cache_examples=False,
+            )
 
 if __name__ == "__main__":
-    demo.launch(server_name="0.0.0.0", server_port=7860)
+    try:
+        demo.launch(server_name="0.0.0.0", server_port=7860, css=custom_css)
+    except TypeError:
+        demo.launch(server_name="0.0.0.0", server_port=7860)
