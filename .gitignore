@@ -18,6 +18,7 @@ data/docs/*
 faiss_db/
 mlflow.db
 mlruns/
+docs/architecture.png
 
 # ─── OS ───────────────────────────────────────────────────
 .DS_Store

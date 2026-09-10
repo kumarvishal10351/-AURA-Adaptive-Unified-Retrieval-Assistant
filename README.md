@@ -9,7 +9,7 @@ pinned: false
 ---
 
 <p align="center">
-  <img src="docs/architecture.png" alt="AURA Architecture" width="900" />
+  <img src="https://raw.githubusercontent.com/kumarvishal10351/-AURA-Adaptive-Unified-Retrieval-Assistant/main/docs/architecture.png" alt="AURA Architecture" width="900" />
 </p>
 
 <h1 align="center">AURA</h1>
