@@ -256,10 +256,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-initial_count = len(app.router.routes)
-app.include_router(fastapi_app.router)
-new_routes = app.router.routes[initial_count:]
-app.router.routes = new_routes + app.router.routes[:initial_count]
+app.mount("", fastapi_app)
 
 if __name__ == "__main__":
     demo.launch(server_name="0.0.0.0", server_port=7860, _app=app)
