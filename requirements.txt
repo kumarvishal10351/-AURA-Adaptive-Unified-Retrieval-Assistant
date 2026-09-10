@@ -14,3 +14,4 @@ pymupdf
 python-dotenv
 pydantic
 protobuf>=3.20
+gradio

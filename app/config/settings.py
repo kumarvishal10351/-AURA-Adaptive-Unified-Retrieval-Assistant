@@ -11,18 +11,21 @@ load_dotenv()
 
 def get_api_key() -> str:
     """Unified API key resolver: tries .env/environment first, falls back to st.secrets if present."""
-    key = os.getenv("MISTRAL_API_KEY", "")
+    key = os.getenv("MISTRAL_API_KEY", "") or os.getenv("MISTRAL_KEY", "")
     if key:
         return key
     try:
         import streamlit as st
-        if hasattr(st, "secrets") and "MISTRAL_API_KEY" in st.secrets:
-            return st.secrets["MISTRAL_API_KEY"]
+        if hasattr(st, "secrets"):
+            if "MISTRAL_API_KEY" in st.secrets:
+                return st.secrets["MISTRAL_API_KEY"]
+            if "MISTRAL_KEY" in st.secrets:
+                return st.secrets["MISTRAL_KEY"]
     except Exception:
         pass
     raise ValueError(
         "MISTRAL_API_KEY not found. "
-        "Set it in your .env file or environment variables."
+        "Set it in your .env file, Space secrets, or environment variables."
     )
 
 
