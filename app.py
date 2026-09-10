@@ -20,6 +20,18 @@ if str(_APP_DIR) not in sys.path:
     sys.path.insert(0, str(_APP_DIR))
 
 import gradio as gr
+try:
+    import spaces
+except ImportError:
+    class spaces:
+        @staticmethod
+        def GPU(*args, **kwargs):
+            if len(args) == 1 and callable(args[0]):
+                return args[0]
+            def decorator(func):
+                return func
+            return decorator
+
 from config.settings import DATA_DOCS_DIR, FAISS_DB_DIR
 from ingestion.loader import load_pdf
 from ingestion.splitter import split_documents
@@ -30,6 +42,7 @@ from chains.rag_chain import create_rag_chain
 from utils.confidence import calculate_confidence
 
 
+@spaces.GPU
 def upload_pdf_file(files):
     if not files:
         return "⚠️ No file selected. Please choose a PDF file to upload.", get_indexed_docs_summary()
@@ -104,6 +117,7 @@ def format_history(history):
     return formatted
 
 
+@spaces.GPU
 def rag_chat_response(message, history):
     if not message or not message.strip():
         return
