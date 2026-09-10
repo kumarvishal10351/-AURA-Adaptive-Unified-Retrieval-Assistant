@@ -154,16 +154,19 @@ export default function App() {
 
       if (res.ok) {
         const data = await res.json();
+        const fallbackMsgId = `${messageId}-fallback-${Date.now()}`;
         setMessages((prev) =>
           prev.map((m) =>
             m.id === messageId
               ? {
                   ...m,
+                  id: fallbackMsgId,
                   content: data.answer,
                   sources: data.sources || [],
                   latency: data.latency_ms || elapsed,
                   can_fallback: false,
                   is_fallback: true,
+                  isNew: true,
                 }
               : m
           )

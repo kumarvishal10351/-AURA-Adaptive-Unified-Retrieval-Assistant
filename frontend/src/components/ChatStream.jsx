@@ -20,6 +20,7 @@ function TypewriterMessage({
     const tokens = text.split(/(\s+)/);
     tokensRef.current = tokens;
     let count = 0;
+    setDisplayedCount(0);
 
     const timer = setInterval(() => {
       // Advance 2 tokens per tick (~1 word + whitespace) every 16ms for natural ChatGPT cadence
@@ -196,6 +197,7 @@ export default function ChatStream({
             {/* Answer Card with Translucent Glassmorphism */}
             <div className="bg-white/35 backdrop-blur-sm rounded-xl p-5 border border-[#e8e6e1]/60 shadow-2xs transition-all">
               <TypewriterMessage
+                key={msg.id}
                 text={displayContent}
                 isNew={shouldAnimate}
                 onComplete={() => markAnimationComplete(msg.id)}
