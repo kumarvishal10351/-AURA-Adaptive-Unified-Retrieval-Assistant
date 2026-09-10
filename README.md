@@ -1,10 +1,10 @@
 ---
-title: Viora Research Assistant
-emoji: 📚
-colorFrom: green
-colorTo: emerald
-sdk: gradio
-app_file: app.py
+title: Viora Assistance
+emoji: 🧠
+colorFrom: indigo
+colorTo: blue
+sdk: docker
+app_port: 7860
 pinned: false
 ---
 
