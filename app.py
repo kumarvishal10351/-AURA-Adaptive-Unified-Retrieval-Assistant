@@ -177,10 +177,7 @@ custom_css = """
 .header-box { text-align: center; margin-bottom: 20px; }
 """
 
-try:
-    demo = gr.Blocks(title="Viora Research Workspace", css=custom_css)
-except Exception:
-    demo = gr.Blocks(title="Viora Research Workspace")
+demo = gr.Blocks(title="Viora Research Workspace")
 
 with demo:
     with gr.Column(elem_id="container"):
@@ -256,7 +253,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.mount("/backend", fastapi_app)
 app.mount("", fastapi_app)
 
 if __name__ == "__main__":
-    demo.launch(server_name="0.0.0.0", server_port=7860, _app=app)
+    demo.launch(server_name="0.0.0.0", server_port=7860, _app=app, css=custom_css)
