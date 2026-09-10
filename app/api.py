@@ -133,6 +133,11 @@ def get_status():
 @app.get("/api/documents")
 def get_documents():
     docs = []
+    faiss_file = os.path.join(FAISS_DB_DIR, "index.faiss")
+    # If FAISS index doesn't exist, no documents are actively indexed
+    if not os.path.exists(faiss_file):
+        return {"documents": []}
+
     if os.path.exists(DATA_DOCS_DIR):
         for f in sorted(os.listdir(DATA_DOCS_DIR)):
             if f.lower().endswith(".pdf"):
@@ -155,18 +160,24 @@ def get_documents():
 @app.delete("/api/documents")
 def clear_all_documents():
     """Removes all indexed PDF documents and clears FAISS index."""
+    import gc
+    gc.collect()
+
     if os.path.exists(DATA_DOCS_DIR):
         for f in os.listdir(DATA_DOCS_DIR):
-            if f.lower().endswith(".pdf"):
-                try:
-                    os.remove(os.path.join(DATA_DOCS_DIR, f))
-                except Exception:
-                    pass
+            p = os.path.join(DATA_DOCS_DIR, f)
+            try:
+                if os.path.isfile(p):
+                    os.remove(p)
+            except Exception:
+                pass
 
     if os.path.exists(FAISS_DB_DIR):
         for f in os.listdir(FAISS_DB_DIR):
+            p = os.path.join(FAISS_DB_DIR, f)
             try:
-                os.remove(os.path.join(FAISS_DB_DIR, f))
+                if os.path.isfile(p):
+                    os.remove(p)
             except Exception:
                 pass
 

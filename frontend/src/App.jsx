@@ -48,9 +48,21 @@ export default function App() {
     }
   };
 
-  // Load active documents and status on initial mount (never wipe database on reload)
+  // Reset session and clear documents on page refresh for a clean slate
   useEffect(() => {
-    fetchStatusAndDocs();
+    const resetSessionOnRefresh = async () => {
+      setDocuments([]);
+      setDocCount(0);
+      setSelectedDoc('all');
+      setMessages([]);
+      try {
+        await fetch(`${API_BASE_URL}/api/documents`, { method: 'DELETE' });
+      } catch {
+        // Backend starting up
+      }
+      fetchStatusAndDocs();
+    };
+    resetSessionOnRefresh();
   }, []);
 
   // Smooth scroll to bottom when messages update or loading
