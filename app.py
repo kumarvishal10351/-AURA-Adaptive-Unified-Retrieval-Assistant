@@ -87,7 +87,7 @@ def clear_library():
             except Exception:
                 pass
     try:
-        get_vectorstore.clear()
+        get_vectorstore.cache_clear()
     except Exception:
         pass
     return "🗑️ Library cleared. Upload a new PDF to begin.", get_indexed_docs_summary()

@@ -171,7 +171,7 @@ def clear_all_documents():
                 pass
 
     try:
-        get_vectorstore.clear()
+        get_vectorstore.cache_clear()
     except Exception:
         pass
 
@@ -200,7 +200,7 @@ def delete_document(filename: str):
                 except Exception:
                     pass
         try:
-            get_vectorstore.clear()
+            get_vectorstore.cache_clear()
         except Exception:
             pass
     else:

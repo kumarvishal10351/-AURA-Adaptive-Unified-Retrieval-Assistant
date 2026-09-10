@@ -82,7 +82,7 @@ def store_embeddings(chunks: list) -> FAISS:
 
     # Invalidate cached vectorstore so fresh index is immediately loaded
     try:
-        get_vectorstore.clear()
+        get_vectorstore.cache_clear()
     except Exception:
         pass
 
