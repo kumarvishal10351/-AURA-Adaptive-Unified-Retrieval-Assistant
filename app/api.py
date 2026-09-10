@@ -336,7 +336,7 @@ def process_query(req: QueryRequest):
         if is_missing_evidence:
             can_fallback = True
             import re
-            cleaned = re.sub(r"^NOT_FOUND[\s:\-\n]*", "", clean_text, flags=re.IGNORECASE).strip()
+            cleaned = re.sub(r"^\*{0,2}NOT[ _]FOUND\*{0,2}[\s:\-\n]*", "", clean_text, flags=re.IGNORECASE).strip()
             if cleaned:
                 answer_text = cleaned
             else:

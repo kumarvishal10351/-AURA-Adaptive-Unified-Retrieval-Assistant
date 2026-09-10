@@ -164,7 +164,7 @@ export default function ChatStream({
           lowerContent.includes('not mentioned in the');
         const shouldAnimate = msg.isNew && !completedAnimationIds[msg.id];
         const isTypingDone = !shouldAnimate;
-        const displayContent = (msg.content || '').replace(/^NOT_FOUND[\s:\-\n]*/i, '');
+        const displayContent = (msg.content || '').replace(/^\*{0,2}NOT[ _]FOUND\*{0,2}[\s:\-\n]*/i, '');
 
         // Assistant Message
         return (
