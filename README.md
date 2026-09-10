@@ -8,112 +8,75 @@ app_file: app.py
 pinned: false
 ---
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/kumarvishal10351/-AURA-Adaptive-Unified-Retrieval-Assistant/main/docs/architecture.png" alt="AURA Architecture" width="900" />
-</p>
+<div align="center">
 
-<h1 align="center">AURA</h1>
-<h3 align="center">Adaptive Unified Retrieval Assistant</h3>
+# 🧠 VIORA / AURA
+### **Adaptive Unified Retrieval Assistant**
+**A Production-Grade, Decoupled Full-Stack RAG System Engineered for Zero-Hallucination Grounding, Calibrated Confidence Scoring, and Autonomous Fallbacks.**
 
-<p align="center">
-  <em>A production-grade, MLOps-instrumented Retrieval-Augmented Generation platform<br/>engineered for strict factual grounding, calibrated confidence scoring, and zero-hallucination fallbacks.</em>
-</p>
-
-<p align="center">
-  <a href="https://github.com/kumarvishal10351/-AURA-Adaptive-Unified-Retrieval-Assistant/actions"><img src="https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-blue?style=for-the-badge&logo=githubactions&logoColor=white" alt="CI/CD" /></a>
-  <img src="https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python" />
-  <img src="https://img.shields.io/badge/FastAPI-0.115+-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI" />
-  <img src="https://img.shields.io/badge/React-19.0-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React" />
-  <img src="https://img.shields.io/badge/Vite-6.0-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite" />
-  <img src="https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
-  <img src="https://img.shields.io/badge/LangChain-1C3C3C?style=for-the-badge&logo=langchain&logoColor=white" alt="LangChain" />
-  <img src="https://img.shields.io/badge/Mistral_AI-F34E3A?style=for-the-badge&logo=mistralai&logoColor=white" alt="Mistral AI" />
-  <img src="https://img.shields.io/badge/FAISS-0467DF?style=for-the-badge&logo=meta&logoColor=white" alt="FAISS" />
-  <img src="https://img.shields.io/badge/MLflow-0194E2?style=for-the-badge&logo=mlflow&logoColor=white" alt="MLflow" />
-  <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker" />
-  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License" />
-</p>
+[![Live Web App](https://img.shields.io/badge/🚀_Live_Web_App-vioraassistant.vercel.app-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vioraassistant.vercel.app)
+[![Hugging Face Space](https://img.shields.io/badge/🤗_HF_Space-djShashi%2FViora--Assistance-yellow?style=for-the-badge&logo=huggingface&logoColor=black)](https://huggingface.co/spaces/djShashi/Viora-Assistance)
+[![Backend Status](https://img.shields.io/badge/⚡_Backend_API-Online-success?style=for-the-badge&logo=fastapi&logoColor=white)](https://djshashi-viora-assistance.hf.space/backend/api/status)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/kumarvishal10351/-AURA-Adaptive-Unified-Retrieval-Assistant)
 
 <p align="center">
-  <a href="#-overview">Overview</a> •
-  <a href="#-key-features">Features</a> •
-  <a href="#-system-architecture">Architecture</a> •
-  <a href="#-end-to-end-workflow">Workflow</a> •
-  <a href="#-project-structure">Project Structure</a> •
-  <a href="#-technology-stack">Stack</a> •
-  <a href="#-quick-start">Quick Start</a> •
-  <a href="#-deep-dive-retrieval-pipeline">Retrieval Pipeline</a> •
-  <a href="#-mlops--experiment-tracking">MLOps</a> •
-  <a href="#-architectural-blueprint--roadmap">Enterprise Blueprint</a>
+  <img src="https://img.shields.io/badge/Python-3.11+-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python" />
+  <img src="https://img.shields.io/badge/FastAPI-0.115+-009688?style=flat-square&logo=fastapi&logoColor=white" alt="FastAPI" />
+  <img src="https://img.shields.io/badge/React-19.0-61DAFB?style=flat-square&logo=react&logoColor=black" alt="React" />
+  <img src="https://img.shields.io/badge/Vite-6.0-646CFF?style=flat-square&logo=vite&logoColor=white" alt="Vite" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/Mistral_AI-open--mistral--nemo-F34E3A?style=flat-square&logo=mistralai&logoColor=white" alt="Mistral AI" />
+  <img src="https://img.shields.io/badge/Vector_DB-FAISS_(Normalized_Cosine)-0467DF?style=flat-square&logo=meta&logoColor=white" alt="FAISS" />
+  <img src="https://img.shields.io/badge/Reranker-Cross--Encoder_(ms--marco)-FF6F00?style=flat-square" alt="Cross-Encoder" />
+  <img src="https://img.shields.io/badge/MLOps-MLflow_3.1-0194E2?style=flat-square&logo=mlflow&logoColor=white" alt="MLflow" />
+  <img src="https://img.shields.io/badge/Hardware-Nvidia_ZeroGPU_(RTX_Pro_6000)-76B900?style=flat-square&logo=nvidia&logoColor=white" alt="ZeroGPU" />
+  <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License" />
 </p>
+
+[**Explore Live Demo**](https://vioraassistant.vercel.app) • [**Hugging Face Space**](https://huggingface.co/spaces/djShashi/Viora-Assistance) • [**Architecture**](#-system-architecture) • [**Key Features**](#-key-features) • [**RAG Deep Dive**](#-deep-dive-the-5-stage-retrieval-pipeline) • [**API Docs**](#-rest-api-reference) • [**Local Setup**](#-local-development-quick-start)
+
+</div>
 
 ---
 
-## 🔍 Overview
+## 🎯 Executive Summary (For Hiring Managers & Recruiters)
 
-**AURA** (Adaptive Unified Retrieval Assistant) is an end-to-end, enterprise-ready Retrieval-Augmented Generation (RAG) platform specifically designed to eliminate the systemic reliability defects of traditional RAG pipelines.
+**VIORA / AURA** is an enterprise-grade, full-stack Retrieval-Augmented Generation (RAG) platform designed to eliminate the systemic reliability defects of traditional RAG systems: **hallucinations, blind context injection, lack of quality signals, and silent failure on out-of-domain inquiries.**
 
-### The Problem with Traditional RAG
-
-Most baseline RAG implementations follow a simplistic flow: convert documents to embeddings, query top-$k$ nearest neighbors, and dump raw chunks into an LLM prompt. In production, this causes three critical failure modes:
-
-1. **Blind Context Injection**: Retrieved chunks are sent to the LLM regardless of semantic relevance, forcing the model to confabulate answers from noise.
-2. **Missing Quality Signals**: Responses are returned without confidence metrics or relevance guarantees, leaving users unaware if an answer is an accurate quotation or a hallucination.
-3. **Catastrophic Degradation**: When a document does not contain an answer, typical systems either hallucinate fabricated facts or crash with uninformative errors.
-
-### How AURA Solves This
-
-AURA implements a **multi-stage, confidence-aware decision layer** that verifies, filters, and reranks candidate passages before passing them to the generator:
-
-* **Parallel Multi-Query Expansion**: Uses an asynchronous `ThreadPoolExecutor` to expand user queries into 3 alternative formulations simultaneously, resolving conversational pronouns from chat history to maximize recall without latency penalties.
-* **Over-Fetch & Cosine Threshold Gating**: Fetches $k \times 2$ candidate chunks from a normalized FAISS vector index, filtering out chunks below a calibrated cosine threshold ($\ge 0.20$) while maintaining an automatic fallback to top-$k$ for broad document inquiries.
-* **CrossEncoder Precision Reranking**: Re-scores candidate pairs using `cross-encoder/ms-marco-MiniLM-L-6-v2` joint query-passage cross-attention, using raw logits strictly for candidate ordering (preventing logit truncation bugs).
-* **Calibrated Confidence Scoring**: Maps top cosine similarity through a non-linear scaling formula to deliver an intuitive, user-facing $0\text{--}100\%$ reliability score.
-* **Sentinel Hallucination Protection**: Prompts the primary document analyst (`open-mistral-nemo`) under zero-temperature grounding rules to emit `NOT_FOUND` if evidence is absent, triggering an interactive UI fallback to `mistral-large-latest` for general knowledge.
-* **Built-in MLOps Instrumentation**: Seamlessly records document ingestion metrics, chunk distributions, and retrieval latencies directly into an MLflow tracking backend (`mlflow.db`).
-
-| Dimension | Traditional RAG | AURA |
-|---|---|---|
-| **Context Selection** | Naive Top-$K$ Nearest Neighbors | Multi-Query Expansion $\to$ Over-fetch $\to$ Cosine Gate $\to$ CrossEncoder Rerank |
-| **Relevance Gate** | None (Blind injection) | Cosine similarity thresholding ($\ge 0.20$) with fallback |
-| **Quality Signal** | None | Calibrated $0\text{--}100\%$ confidence score with visual meter |
-| **Insufficient Context** | Silent hallucination | Explicit `NOT_FOUND` sentinel + interactive LLM fallback |
-| **Source Attribution** | Generic chunk dump | Per-response expandable citations with exact page numbers and snippets |
-| **Experiment Tracking**| None | Native MLflow run, parameter, and metric tracking |
-| **Deployment** | Local script | Docker containerization, Docker Compose, GitHub Actions CI/CD |
+### Key Engineering Highlights:
+- **Decoupled Architecture**: High-speed **React 19** frontend deployed on **Vercel edge network**, communicating via asynchronous REST APIs with a **FastAPI + Gradio** backend hosted on **Hugging Face Spaces** accelerated by **Nvidia ZeroGPU (RTX Pro 6000 Blackwell)**.
+- **5-Stage Guardrailed Retrieval Pipeline**: Combines **Parallel Multi-Query LLM Expansion**, **$L_2$-Normalized Dense Embeddings**, **Cosine Threshold Gating ($\ge 0.20$)**, **Joint-Attention Cross-Encoder Reranking**, and **Strict Zero-Speculation Prompting**.
+- **Calibrated Confidence Engine**: Proprietary mathematical formula mapping raw cosine similarities into an intuitive $0\text{--}100\%$ factual grounding score, giving users full transparency over retrieval quality.
+- **Zero-Speculation Sentinel & Autonomous Fallback**: If retrieved passages lack sufficient evidence, the system returns a deterministic `NOT_FOUND` sentinel and seamlessly routes to **Mistral Large** for general knowledge synthesis.
+- **Full MLOps Instrumentation**: Built-in tracking with **MLflow** recording document parsing latencies, chunk volume, token distributions, and retrieval scores into `mlflow.db`.
 
 ---
 
-## ⭐ Key Features
+## 🌐 Live Deployments & Interactive Links
 
-### 📄 Ingestion & Document Intelligence
-* **High-Throughput PDF Parsing**: Uses `PyMuPDF` (`fitz`) for lightning-fast text extraction that preserves paragraph structures and layout boundaries.
-* **Text Normalization Engine**: Resolves line breaks, soft wraps, and anomalous spacing while preserving true paragraph splits (`\n\n`).
-* **Hierarchical Chunking**: Employs `RecursiveCharacterTextSplitter` configured with 1000-character chunks and 150-character overlap across semantic boundaries (`\n\n`, `\n`, `. `, `! `, `? `).
-* **L2-Normalized Dense Embeddings**: Generates 384-dimensional dense vectors using `sentence-transformers/all-MiniLM-L6-v2` with `normalize_embeddings=True` to ensure authentic cosine similarity bounds $[0, 1]$.
-* **Persistent Vector Store**: Disk-serialized FAISS index (`faiss_db/`) enabling instant reloads across server restarts without re-embedding.
+| Component | Platform | URL | Status |
+| :--- | :--- | :--- | :--- |
+| **Production Frontend** | Vercel Edge | [**vioraassistant.vercel.app**](https://vioraassistant.vercel.app) | ![Vercel](https://img.shields.io/badge/Vercel-Live-success?style=flat-square&logo=vercel) |
+| **Mirror Frontend** | Vercel Edge | [**aura-adaptive-unified-retrieval-assistant.vercel.app**](https://aura-adaptive-unified-retrieval-assistant.vercel.app) | ![Vercel](https://img.shields.io/badge/Vercel-Live-success?style=flat-square&logo=vercel) |
+| **Backend & Space UI** | Hugging Face Spaces | [**huggingface.co/spaces/djShashi/Viora-Assistance**](https://huggingface.co/spaces/djShashi/Viora-Assistance) | ![Hugging Face](https://img.shields.io/badge/ZeroGPU-Running-blue?style=flat-square&logo=huggingface) |
+| **Backend REST API** | HF Space (Port 7860) | [**djshashi-viora-assistance.hf.space/backend/api/status**](https://djshashi-viora-assistance.hf.space/backend/api/status) | ![FastAPI](https://img.shields.io/badge/REST_API-Active-success?style=flat-square&logo=fastapi) |
+| **Source Repository** | GitHub | [**github.com/kumarvishal10351/-AURA-Adaptive-Unified-Retrieval-Assistant**](https://github.com/kumarvishal10351/-AURA-Adaptive-Unified-Retrieval-Assistant) | ![GitHub](https://img.shields.io/badge/Code-Public-black?style=flat-square&logo=github) |
 
-### 🔍 Multi-Stage Retrieval & Generation
-* **Parallel Asynchronous Expansion**: Generates 3 alternative query variations via LLM in parallel with the primary FAISS vector lookup.
-* **Deduplicated Over-Fetch**: Aggregates candidates from all query variations, deduplicating chunks while retaining each chunk's highest similarity score.
-* **Two-Tier Thresholding**: Discards noise below a cosine similarity floor ($0.20$), gracefully falling back to raw candidates for high-level exploratory questions.
-* **Cross-Encoder Reranking**: Evaluates query-passage cross-attention using `ms-marco-MiniLM-L-6-v2` to select the Top-5 most relevant passages.
-* **Calibrated Confidence Formula**:
-  $$\text{Confidence} = \min\left(100, \left\lfloor 20 + \frac{\text{top\_cosine}}{0.80} \times 80 \right\rfloor\right)$$
-* **Grounded LLM Streaming**: Streams tokens from `open-mistral-nemo` ($T=0.1$) under strict factual constraints with a 16,000-character context budget.
-* **Interactive Fallback Routing**: When context is absent, the system warns the user and provides an on-demand button to consult `mistral-large-latest` ($T=0.7$) for general knowledge.
+---
 
-### 📊 MLOps & Experiment Tracking
-* **MLflow Run Management**: Automatically records ingestion runs, chunk counts, parsing durations, document sizes, and query metrics in `mlflow.db`.
-* **Zero-Failure Telemetry**: Graceful wrapper around MLflow ensuring that application execution continues unhindered even if the tracking server is unreachable.
-* **Lifecycle Tracking Framework**: Modular `ExperimentManager`, `tracker`, and `artifacts` modules ready for automated evaluation.
+## ⚖️ Traditional RAG vs. VIORA / AURA
 
-### 🖥️ Modern Archival Research UI (React 19 & Tailwind CSS)
-* **Classical Archival Research Interface**: High-precision, editorial research workspace styled with Stitch design tokens, EB Garamond typography, hairline dividers, and fluid responsive layouts.
-* **Live Telemetry Bar**: Real-time status indicators showing index health, query execution counters, rolling calibrated confidence, and cosine similarity gating floors.
-* **Interactive Query Composer**: Auto-expanding input area with architectural gradients, keyboard shortcuts (`↵ Enter` / `Shift+Enter`), and source swapping.
-* **Grounded Synthesis Memo**: Structured synthesis results featuring exact quote citations, confidence score badges, execution latency benchmarks, and deep-dive metadata.
-
+| Capability | Naive / Traditional RAG | VIORA / AURA Platform |
+| :--- | :--- | :--- |
+| **Candidate Retrieval** | Single raw query vector lookup | **Parallel Multi-Query Expansion** (3 async variations + chat pronoun resolution) |
+| **Cosine Gating** | ❌ None (blind dump of Top-$K$ noise) | ✅ **Cosine Threshold Gate ($\ge 0.20$)** with adaptive fallback |
+| **Candidate Ranking** | Bi-Encoder similarity only (prone to drift) | ✅ **Cross-Encoder Reranker** (`ms-marco-MiniLM-L-6-v2`) via joint attention |
+| **Hallucination Control** | High hallucination risk when answer is missing | ✅ **Strict Grounding Guardrails** + deterministic `NOT_FOUND` sentinel |
+| **Confidence Scoring** | ❌ None (black-box generation) | ✅ **Calibrated $0\text{--}100\%$ Metric** with visual confidence indicator |
+| **Out-of-Domain Query** | Silent confabulation / fabricated facts | ✅ **Interactive Fallback** to Mistral Large ($T=0.7$) on demand |
+| **Source Transparency** | Generic or non-existent citations | ✅ **Page-level citations**, chunk identifiers, and similarity match scores |
+| **Experiment Tracking** | ❌ None | ✅ **Built-in MLflow** tracking ingestion, chunks, and latency metrics |
+| **Architecture** | Monolithic local script | ✅ **Decoupled cloud-native microservice** (Vercel CDN + ZeroGPU Backend) |
 
 ---
 
@@ -121,353 +84,337 @@ AURA implements a **multi-stage, confidence-aware decision layer** that verifies
 
 ```mermaid
 flowchart TD
-    subgraph INGESTION ["📥 Ingestion Pipeline"]
-        A["📄 Upload PDF"] --> B["PyMuPDF Loader"]
-        B --> C["Text Normalizer<br/>(Clean whitespace & line-breaks)"]
-        C --> D["Recursive Character Splitter<br/>(Chunk: 1000 | Overlap: 150)"]
-        D --> E["HuggingFace Embedder<br/>(all-MiniLM-L6-v2, 384-dim, L2-norm)"]
-        E --> F[("FAISS Vector Index<br/>(faiss_db/)")]
+    subgraph CLIENT ["🖥️ Frontend Layer (Vercel CDN)"]
+        UI["React 19 + Tailwind CSS Archival Interface"]
+        COMP["Floating Query Composer & Source Swapper"]
+        TEL["Live Index Telemetry & Calibrated Meter"]
+        UI --- COMP
+        UI --- TEL
     end
 
-    subgraph RETRIEVAL ["🔍 Retrieval & Reranking"]
-        Q["❓ User Query"] --> PE["ThreadPoolExecutor<br/>(max_workers=5)"]
-        PE -->|"Branch 1"| FQ["FAISS Primary Search<br/>(k×2 over-fetch)"]
-        PE -->|"Branch 2"| QE["Mistral Query Expansion<br/>(3 Alternate Phrasings)"]
-        QE --> EQF["FAISS Secondary Searches"]
+    subgraph API_GATEWAY ["⚡ API & Orchestration Layer (Hugging Face / FastAPI)"]
+        FROUTER["FastAPI Asynchronous Gateway (/backend/api)"]
+        CORS["Cross-Origin Resource Sharing (CORS Middleware)"]
+        FROUTER --- CORS
+    end
+
+    subgraph INGESTION ["📥 Ingestion & Embedding Pipeline"]
+        PDF["📄 Document Upload (PyMuPDF / fitz)"]
+        CLEAN["Text Normalizer (Whitespace & Layout Repair)"]
+        SPLIT["RecursiveCharacterTextSplitter (1000 char / 150 overlap)"]
+        EMBED["SentenceTransformers (all-MiniLM-L6-v2, 384d, L2-Norm)"]
+        FAISS_DB[("FAISS Vector Store (faiss_db/)")]
+
+        PDF --> CLEAN --> SPLIT --> EMBED --> FAISS_DB
+    end
+
+    subgraph RETRIEVAL ["🔍 Multi-Stage Confidence Retrieval"]
+        Q["User Query + History"] --> PE["ThreadPoolExecutor (Parallel Workers)"]
+        PE -->|"Direct Vector Search"| FQ["FAISS Candidate Lookup (2× Over-Fetch)"]
+        PE -->|"Async Multi-Query"| QE["Mistral Query Expansion (3 Variations)"]
+        QE --> SQ["Secondary FAISS Lookups"]
         
-        FQ --> M["Merge & Deduplicate Chunks<br/>(Keep highest cosine scores)"]
-        EQF --> M
-        F -.-> FQ
-        F -.-> EQF
+        FQ & SQ --> MERGE["Deduplicate & Merge Candidates"]
+        MERGE --> GATE{"Cosine Score Gate (≥ 0.20)"}
+        
+        GATE -->|"Pass"| CE["Cross-Encoder Reranker (ms-marco-MiniLM-L-6-v2)"]
+        GATE -->|"Empty"| FALLBACK_K["Top-K Candidate Fallback"] --> CE
 
-        M --> GATE{"Cosine Gate<br/>(Score ≥ 0.20)"}
-        GATE -->|"Passes"| CE["CrossEncoder Reranker<br/>(ms-marco-MiniLM-L-6-v2)"]
-        GATE -->|"Empty"| FB_K["Fallback to Top-K Candidates"]
-        FB_K --> CE
-
-        CE --> TOP5["Top-5 Reranked Chunks"]
+        CE --> TOP5["Top-5 Re-ranked Evidence Chunks"]
     end
 
-    subgraph GENERATION ["🧠 Confidence & Generation"]
-        TOP5 --> CS["Calculate Confidence<br/>20 + (top_cosine / 0.80) × 80"]
-        TOP5 --> CTX["Build 16K Context Window"]
-        CTX --> LLM["Mistral Nemo (T=0.1)<br/>Strict Grounding Prompt"]
-        CS --> UI["React Research Workbench<br/>(FastAPI REST + Calibrated Telemetry)"]
-        LLM --> NF{"NOT_FOUND<br/>Sentinel?"}
-        NF -->|"No: Grounded"| UI
-        NF -->|"Yes: Missing"| FBO["Offer General Fallback<br/>(Mistral Large, T=0.7)"]
-        FBO --> UI
+    subgraph GENERATION ["🧠 Guardrailed Generation & Fallback"]
+        TOP5 --> CALC["Confidence Engine: 20 + (top_cosine / 0.80) × 80"]
+        TOP5 --> PROMPT["Grounding Context Window (16k token limit)"]
+        PROMPT --> MISTRAL_NEMO["Mistral Nemo (open-mistral-nemo, T=0.1)"]
+        
+        MISTRAL_NEMO --> CHECK{"Sentinel Match: NOT_FOUND?"}
+        CHECK -->|"Grounded Evidence Found"| SYNTHESIS["Structured Synthesis with Exact Page Citations"]
+        CHECK -->|"Evidence Missing"| SENTINEL["Emit Grounding Notice + Fallback Offer"]
+        SENTINEL --> MISTRAL_LARGE["Fallback: Mistral Large (General Intelligence)"]
     end
 
-
-    subgraph MLOPS ["📈 MLOps & Telemetry"]
-        B -.-> ML["MLflow Tracking<br/>(mlflow.db / mlruns)"]
-        D -.-> ML
-        Q -.-> ML
+    subgraph MLOPS ["📊 MLOps Tracking Layer"]
+        MLFLOW[("MLflow Tracking Engine (mlflow.db / SQLite)")]
+        INGESTION -.->|"Document & Chunk Metrics"| MLFLOW
+        RETRIEVAL -.->|"Search Latencies & Scores"| MLFLOW
     end
 
-    style INGESTION fill:#1e293b,stroke:#3b82f6,color:#f8fafc
-    style RETRIEVAL fill:#0f172a,stroke:#10b981,color:#f8fafc
-    style GENERATION fill:#18181b,stroke:#8b5cf6,color:#f8fafc
-    style MLOPS fill:#1c1917,stroke:#f59e0b,color:#f8fafc
+    CLIENT ==>|"Async HTTPS / REST"| API_GATEWAY
+    API_GATEWAY ==> INGESTION
+    API_GATEWAY ==> RETRIEVAL
+    RETRIEVAL ==> GENERATION
+    GENERATION ==>|"Streamed Synthesis & Telemetry"| CLIENT
+
+    style CLIENT fill:#0f172a,stroke:#38bdf8,stroke-width:2px,color:#f8fafc
+    style API_GATEWAY fill:#1e1e2e,stroke:#a855f7,stroke-width:2px,color:#f8fafc
+    style INGESTION fill:#111827,stroke:#10b981,stroke-width:2px,color:#f8fafc
+    style RETRIEVAL fill:#18181b,stroke:#f59e0b,stroke-width:2px,color:#f8fafc
+    style GENERATION fill:#1e1b4b,stroke:#ec4899,stroke-width:2px,color:#f8fafc
+    style MLOPS fill:#1a2e05,stroke:#84cc16,stroke-width:2px,color:#f8fafc
 ```
 
 ---
 
-## 📁 Project Structure
+## 🔬 Deep Dive: The 5-Stage Retrieval Pipeline
 
-```
-rag-assistant/
-├── app/
-│   ├── __init__.py
-│   ├── main.py                       # FastAPI application entrypoint & CLI runner
-│   ├── api.py                        # FastAPI REST API & static asset server
-│   ├── chains/
-│   │   ├── __init__.py
-│   │   ├── rag_chain.py              # Parallel retrieval, reranking, and generation pipeline
-│   │   └── router.py                 # Hybrid distance + LLM relevance judge
-│   ├── config/
-│   │   ├── __init__.py
-│   │   └── settings.py               # Model constants, thresholds, and secrets resolution
-│   ├── experiment/                   # MLOps experiment lifecycle framework
-│   │   ├── __init__.py
-│   │   ├── artifacts.py              # Artifact serialization & tracking
-│   │   ├── evaluator.py              # Evaluation harness
-│   │   ├── manager.py                # ExperimentManager controller
-│   │   └── tracker.py                # Metrics & parameter logger
-│   ├── ingestion/
-│   │   ├── __init__.py
-│   │   ├── embedder.py               # HuggingFace dense embedding & FAISS disk store
-│   │   ├── loader.py                 # PyMuPDF document parser & text normalizer
-│   │   └── splitter.py               # Recursive text chunking with separator hierarchy
-│   ├── llm/
-│   │   ├── __init__.py
-│   │   ├── fallback.py               # Fallback LLM client (mistral-large-latest)
-│   │   └── mistral_client.py         # Primary LLM client (open-mistral-nemo)
-│   ├── retrieval/
-│   │   ├── __init__.py
-│   │   └── retriever.py              # FAISS loading, CrossEncoder setup, scoring routines
-│   └── utils/
-│       ├── __init__.py
-│       ├── confidence.py             # Calibrated confidence mathematical model
-│       └── mlflow_logger.py          # MLflow integration layer with graceful fallback
-├── frontend/                         # Modern React 19 + Vite + Tailwind CSS UI
-│   ├── src/
-│   │   ├── components/               # Stitch design system components
-│   │   │   ├── Header.jsx            # Fixed archival masthead & navigation
-│   │   │   ├── TelemetryBar.jsx      # Live index telemetry & status indicators
-│   │   │   ├── Hero.jsx              # Wordmark & greeting banner
-│   │   │   ├── QueryComposer.jsx     # Floating search composer with gradient rule
-│   │   │   ├── SuggestedPrompts.jsx  # Interactive research prompt matrix
-│   │   │   ├── SynthesisMemo.jsx     # Grounded synthesis response & citation tags
-│   │   │   ├── UploadModal.jsx       # Drag-and-drop PDF ingestion modal
-│   │   │   └── Footer.jsx            # Scholarly research institutional footer
-│   │   ├── App.jsx                   # React root state orchestration
-│   │   └── main.jsx                  # React DOM mounting
-│   ├── dist/                         # Pre-compiled high-performance production build
-│   └── package.json                  # Frontend dependencies and Vite configuration
-├── data/
-│   └── docs/                         # Uploaded PDFs (gitignored)
-├── docs/
-│   └── architecture.png              # Architectural diagram
-├── faiss_db/                         # Serialized FAISS vector store on disk
-│   ├── index.faiss
-│   └── index.pkl
-├── tests/                            # Automated test suite
-│   ├── conftest.py                  # Shared fixtures and test utilities
-│   ├── test_app_structure.py         # Project layout and path integrity tests
-│   ├── test_confidence.py            # Confidence scoring unit tests
-│   ├── test_confidence_regression.py # Regression: cosine vs CE logit isolation
-│   ├── test_embedding_normalization.py # Embedding config verification
-│   ├── test_experiment_manager.py    # Experiment tracking unit tests
-│   ├── test_grounding_and_fallback.py # Grounding, NOT_FOUND, and chunk cleaning
-│   ├── test_imports.py               # Package and dependency import validation
-│   ├── test_ingestion_and_chunking.py # Loader validation and chunk splitting
-│   ├── test_loader_validation.py     # Extended loader, normalization, metadata tests
-│   ├── test_mlflow_and_experiment.py # MLflow lifecycle and artifact tests
-│   ├── test_mlflow_graceful_degradation.py # MLflow failure resilience
-│   ├── test_rag_chain_unit.py        # RAG chain internal function tests
-│   ├── test_retrieval_and_thresholds.py # Threshold boundaries and CE isolation
-│   ├── test_retrieval_pipeline.py    # End-to-end pipeline integration tests
-│   ├── test_router.py               # Router hybrid relevance gate tests
-│   ├── test_session_state.py         # UI helpers and session logic tests
-│   └── test_source_attribution.py    # Source page indexing and citation tests
-├── .devcontainer/
-│   └── devcontainer.json             # VS Code & GitHub Codespaces dev container
-├── .github/
-│   └── workflows/
-│       └── ci.yml                    # Automated CI/CD (Pytest + Docker build & push)
-├── .env.example                      # Template environment variables
-├── .dockerignore
-├── .gitignore
-├── docker-compose.yml                # Docker Compose orchestration
-├── dockerfile                        # Multi-stage production container image
-├── mlflow.db                         # Local SQLite database for MLflow experiments
-├── requirements.txt                  # Pinned production dependencies
-├── test_rag.py                       # Standalone pipeline verification script
-└── README.md
+AURA rejects naive similarity search in favor of a mathematically bounded, multi-stage retrieval architecture:
 
+### 1. Parallel Multi-Query Expansion
+User queries often suffer from vocabulary mismatch or implicit pronoun references (e.g., *"What were their primary findings?"*). AURA runs an asynchronous `ThreadPoolExecutor` that queries `open-mistral-nemo` to produce 3 alternate semantic formulations informed by prior conversation turns.
+
+### 2. $L_2$-Normalized Dense Embedding & Over-Fetch
+Embeddings are computed via `all-MiniLM-L6-v2` with `normalize_embeddings=True`. Crucially, enforcing unit norm ensures that inner products calculated by FAISS equate strictly to cosine similarity in $[0, 1]$, preventing score distortion:
+$$\cos(\mathbf{u}, \mathbf{v}) = \frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{u}\|_2 \|\mathbf{v}\|_2} = \mathbf{u}_{\text{norm}} \cdot \mathbf{v}_{\text{norm}}$$
+
+The system queries $k \times 2$ candidates across all expanded queries, deduplicating chunks while preserving each chunk's highest semantic match.
+
+### 3. Cosine Threshold Gating ($\ge 0.20$)
+Irrelevant passages and noise are stripped out by a calibrated relevance floor ($\text{score} \ge 0.20$). If no passages clear the threshold (common with broad introductory inquiries), an adaptive fallback retains the top-$k$ candidates for further evaluation.
+
+### 4. Cross-Encoder Joint-Attention Reranking
+Bi-encoders embed queries and passages independently, missing cross-token interactions. AURA feeds the filtered candidates into `cross-encoder/ms-marco-MiniLM-L-6-v2`. The model evaluates query-passage pairs jointly across all attention layers:
+$$\text{Score}_{\text{CE}} = \text{CrossEncoder}([\text{Query}, \text{Passage}])$$
+
+*Engineering safeguard:* Cross-encoder raw logits $(-\infty, +\infty)$ are used **strictly for candidate ordering**. They are never used for thresholding, isolating the pipeline from logit calibration drift.
+
+### 5. Calibrated Confidence Scoring Formula
+To provide enterprise users with a dependable reliability metric, AURA transforms the top cosine score into an intuitive $0\text{--}100\%$ score:
+$$\text{Confidence} = \min\left(100, \left\lfloor 20 + \frac{\text{top\_cosine}}{0.80} \times 80 \right\rfloor\right)$$
+
+- $\text{top\_cosine} \ge 0.80 \implies \mathbf{100\%}$ (Rock-solid citation)
+- $\text{top\_cosine} \approx 0.60 \implies \mathbf{80\%}$ (Strong relevance)
+- $\text{top\_cosine} < 0.40 \implies \mathbf{\le 60\%}$ (Exploratory / Weak correlation)
+
+---
+
+## 🛠 Tech Stack & Engineering Specifications
+
+| Layer | Technology | Version | Engineering Justification |
+| :--- | :--- | :--- | :--- |
+| **Frontend Framework** | **React** | `19.2.8` | Concurrent rendering, declarative hooks, stateful streaming response |
+| **Build Tool** | **Vite** | `8.2.2` | Ultra-fast HMR, Rollup optimized code-splitting and asset minification |
+| **Styling** | **Tailwind CSS** | `v4.3.3` | Modern JIT engine, CSS variable design tokens, responsive dark-mode styling |
+| **Backend Framework** | **FastAPI** | `0.115+` | Native asynchronous endpoints, automatic OpenAPI/Swagger documentation |
+| **ASGI Server** | **Uvicorn** | `0.30+` | High-performance ASGI server with uvloop event loops |
+| **LLM Orchestration** | **LangChain** | `0.2+` | Clean abstraction for prompts, message histories, and vector retrieval chains |
+| **Primary LLM** | **Mistral AI** | `open-mistral-nemo` | 128K context, high-precision reasoning, $T=0.1$ for zero-speculation |
+| **Fallback LLM** | **Mistral AI** | `mistral-large-latest` | Frontier reasoning for out-of-domain knowledge queries ($T=0.7$) |
+| **Embedding Model** | **Sentence-Transformers** | `all-MiniLM-L6-v2` | 384-dimensional dense vectors, fast CPU inference, lightweight 80MB footprint |
+| **Vector Engine** | **FAISS CPU** | `1.8+` | Sub-millisecond vector similarity search, disk-persistent serialization |
+| **Reranking Model** | **Cross-Encoder** | `ms-marco-MiniLM-L-6-v2`| Joint query-passage cross-attention, eliminates bi-encoder semantic drift |
+| **Document Parser** | **PyMuPDF (`fitz`)** | `1.24+` | High-speed C-based PDF text extraction with layout and page retention |
+| **Experiment Tracking**| **MLflow** | `3.1.0` | Local SQLite logging of ingestion parameters, chunk sizes, and latencies |
+| **Cloud Hosting** | **Vercel + Hugging Face** | Edge + ZeroGPU | 100% serverless, zero-cost production infrastructure with Nvidia RTX Pro 6000 |
+
+---
+
+## ⚡ REST API Reference
+
+The backend exposes a fully documented, CORS-enabled REST API:
+
+### Base URL: `https://djshashi-viora-assistance.hf.space/backend`
+
+| Method | Endpoint | Description | Request Body / Params |
+| :--- | :--- | :--- | :--- |
+| **`GET`** | `/api/status` | System health, indexed doc counts, and rolling confidence telemetry | None |
+| **`GET`** | `/api/documents` | List all currently indexed PDF documents and sizes | None |
+| **`POST`** | `/api/upload` | Upload, parse, chunk, and index a PDF file into FAISS | `multipart/form-data` (`file: .pdf`) |
+| **`POST`** | `/api/query` | Execute 5-stage RAG query against the indexed documents | JSON: `{ "query": str, "history": list, "selected_doc": str }` |
+| **`POST`** | `/api/fallback` | Query general-knowledge fallback model (Mistral Large) | JSON: `{ "query": str, "history": list }` |
+| **`DELETE`** | `/api/documents` | Wipe all documents and reset the FAISS vector index | None |
+| **`DELETE`** | `/api/documents/{name}`| Delete an individual document and re-index remainder | URL parameter: `filename` |
+
+#### Sample Query Response:
+```json
+{
+  "answer": "According to the financial statement, Q4 operating revenue increased by 23.4%...",
+  "confidence": 92,
+  "anchors": [
+    "Anchor: [Financial_Report.pdf p. 4, Chunk #2]",
+    "Anchor: [Financial_Report.pdf p. 7, Chunk #5]"
+  ],
+  "latency_ms": 1420,
+  "sources": [
+    {
+      "file_name": "Financial_Report.pdf",
+      "page": 4,
+      "score": 0.784,
+      "preview": "Total operating revenue for the fourth fiscal quarter reached $4.2B, representing a 23.4% YoY increase..."
+    }
+  ],
+  "can_fallback": false,
+  "is_fallback": false
+}
 ```
 
 ---
 
-## 🛠 Technology Stack
+## 📊 MLOps & Experiment Tracking
 
-| Layer | Component | Specification | Technical Rationale |
-|---|---|---|---|
-| **Frontend** | React 19 + Vite + Tailwind CSS | v19.x / v6.x | Modular component architecture, sub-millisecond hot reloads, Stitch archival design system |
-| **Backend API**| FastAPI + Uvicorn | v0.115+ | High-throughput asynchronous REST API serving vector queries and static assets |
-| **Orchestration** | LangChain Core & Community | v0.2+ | Composable abstractions for prompts, document loaders, and vectorstore retrieval |
-| **Primary LLM** | Mistral AI | `open-mistral-nemo` ($T=0.1$) | 128k context support, high-accuracy reasoning, optimized for strict document synthesis |
-| **Fallback LLM** | Mistral AI | `mistral-large-latest` ($T=0.7$) | Top-tier general-knowledge capabilities for off-document fallback inquiries |
-| **Embeddings** | Sentence Transformers | `all-MiniLM-L6-v2` (384d) | Fast CPU inference (~80MB footprint), $L_2$-normalized for bounded cosine scoring |
-| **Vector Store** | FAISS CPU | `faiss-cpu` | In-process sub-millisecond similarity search with zero external infrastructure overhead |
-| **Reranker** | Cross-Encoder | `ms-marco-MiniLM-L-6-v2` | Joint query-passage cross-attention re-ranking; mitigates bi-encoder semantic drift |
-| **PDF Extraction**| PyMuPDF (`fitz`) | `pymupdf` | Fast, layout-aware C-based PDF text parsing |
-| **Experimentation**| MLflow | v3.1.0 | Local SQLite tracking of ingestion metrics, chunk counts, and retrieval parameters |
-| **Containerization**| Docker & Compose | Python 3.11-slim | Lightweight, hermetic container deployment with persistent disk mounts |
-| **CI/CD** | GitHub Actions | Pytest + Docker Build | Continuous test execution and automated Docker image packaging |
+AURA includes comprehensive experiment telemetry powered by **MLflow**:
+
+- **Telemetry Database**: Persistent SQLite store in `mlflow.db`.
+- **Tracked Parameters**:
+  - `embedding_model`: `all-MiniLM-L6-v2`
+  - `vector_store`: `FAISS`
+  - `chunk_size`: `1000` | `chunk_overlap`: `150`
+- **Tracked Metrics**:
+  - `document_size_kb`: Processed document size
+  - `page_count`: Number of extracted pages
+  - `load_time`: PyMuPDF extraction duration
+  - `embedded_chunks`: Total vector chunks generated
+  - `embedding_time`: Sentence-transformers embedding latency
+
+### Launching MLflow Dashboard:
+```bash
+mlflow ui --backend-store-uri sqlite:///mlflow.db --port 5000
+```
+Open `http://localhost:5000` to visualize ingestion runs, latency metrics, and parameter logs.
 
 ---
 
-## 🚀 Quick Start
+## 🧪 Test Suite & Validation
+
+The project maintains **17+ comprehensive test suites** covering unit, regression, and end-to-end functionality:
+
+```bash
+# Run the entire test suite
+pytest -v
+```
+
+### Verified Test Areas:
+- **`test_retrieval_pipeline.py`**: End-to-end verification of the 5-stage retrieval pipeline.
+- **`test_confidence_regression.py`**: Validates mathematical score isolation between CrossEncoder logits and cosine similarities.
+- **`test_embedding_normalization.py`**: Asserts that embedding vectors are strictly $L_2$-normalized to unit length.
+- **`test_grounding_and_fallback.py`**: Tests `NOT_FOUND` sentinel triggering and fallback routing.
+- **`test_loader_validation.py`**: Tests edge cases for PDF parsing (corrupt files, 0-byte PDFs, scan-only PDFs).
+- **`test_mlflow_graceful_degradation.py`**: Confirms that API execution continues smoothly even if the telemetry tracking server is unreachable.
+
+---
+
+## 💻 Local Development Quick Start
 
 ### 1. Prerequisites
-* **Python 3.11+**
-* **Git**
-* A valid **Mistral AI API Key** ([Get your key at console.mistral.ai](https://console.mistral.ai/))
+- Python 3.11+
+- Node.js 18+ (for frontend development)
+- Valid [Mistral AI API Key](https://console.mistral.ai/)
 
-### 2. Local Setup
-
+### 2. Repository Setup
 ```bash
 # Clone the repository
 git clone https://github.com/kumarvishal10351/-AURA-Adaptive-Unified-Retrieval-Assistant.git
 cd -AURA-Adaptive-Unified-Retrieval-Assistant
 
-# Create and activate a virtual environment
+# Create and activate Python virtual environment
 python -m venv venv
-# On Windows:
+# Windows:
 venv\Scripts\activate
-# On macOS / Linux:
+# Linux/macOS:
 source venv/bin/activate
 
-# Install dependencies
-pip install --upgrade pip
+# Install backend dependencies
 pip install -r requirements.txt
 
-# Configure your environment variables
+# Configure environment variables
 cp .env.example .env
 ```
 
-Open `.env` and add your Mistral API key:
-```ini
+Add your API key inside `.env`:
+```env
 MISTRAL_API_KEY="your_actual_mistral_api_key_here"
 ```
 
-### 3. Run the Application
-
-Launch the research workspace server (serves the React UI + FastAPI backend):
+### 3. Run Backend
 ```bash
-python app/main.py
-# Or directly via Uvicorn:
-uvicorn app.api:app --host 0.0.0.0 --port 8000
+# Start FastAPI backend server
+uvicorn app.api:app --host 0.0.0.0 --port 8000 --reload
 ```
-Open your browser at `http://localhost:8000`.
 
-### 4. Running Tests
-Run the test suite via `pytest`:
+### 4. Run Frontend
 ```bash
-pytest
+cd frontend
+npm install
+npm run dev
 ```
+Open `http://localhost:5173` to interact with the local development UI.
 
 ---
 
 ## 🐳 Docker Deployment
 
-AURA is fully containerized with persistent storage for indexed vector databases and uploaded documents.
-
-### Using Docker Compose (Recommended)
+AURA is containerized with multi-stage builds and persistent volume bindings:
 
 ```bash
-# Build and run in detached mode
+# Run with Docker Compose
 docker compose up --build -d
 
-# View real-time container logs
-docker compose logs -f aura
+# View container logs
+docker compose logs -f
 
 # Stop container
 docker compose down
 ```
 
-### Using Standard Docker CLI
+---
 
-```bash
-# Build the Docker image
-docker build -t aura:latest .
+## 📁 Repository Structure
 
-# Run the container mapping port 8501 and mounting local volumes
-docker run -d \
-  --name aura_container \
-  -p 8501:8501 \
-  --env-file .env \
-  -v ${PWD}/faiss_db:/app/faiss_db \
-  -v ${PWD}/data:/app/data \
-  aura:latest
+```
+rag-assistant/
+├── app/
+│   ├── api.py                     # FastAPI REST API & static routing
+│   ├── main.py                    # Server launcher & CLI entrypoint
+│   ├── chains/
+│   │   ├── rag_chain.py           # 5-stage parallel retrieval & generation pipeline
+│   │   └── router.py              # Hybrid distance & relevance routing
+│   ├── config/
+│   │   └── settings.py            # Environment configurations & threshold constants
+│   ├── ingestion/
+│   │   ├── loader.py              # PyMuPDF text extraction & layout normalizer
+│   │   ├── splitter.py            # Recursive character chunking engine
+│   │   └── embedder.py            # SentenceTransformers embedding & FAISS disk store
+│   ├── llm/
+│   │   ├── mistral_client.py      # Primary LLM client (open-mistral-nemo)
+│   │   └── fallback.py            # Fallback general-knowledge client (mistral-large)
+│   ├── retrieval/
+│   │   └── retriever.py           # FAISS search, cosine filter & CrossEncoder reranker
+│   └── utils/
+│       ├── confidence.py          # Calibrated confidence mathematical model
+│       └── mlflow_logger.py       # MLflow logging wrapper with graceful degradation
+├── frontend/                      # React 19 + Tailwind CSS Archival Interface
+│   ├── src/
+│   │   ├── components/            # Stitch design system UI components
+│   │   │   ├── Header.jsx         # Archival masthead & navigation
+│   │   │   ├── TelemetryBar.jsx   # Live system telemetry indicators
+│   │   │   ├── QueryComposer.jsx  # Floating query composer with keyboard shortcuts
+│   │   │   ├── SynthesisMemo.jsx  # Structured answer synthesis with citations
+│   │   │   └── UploadModal.jsx    # Drag-and-drop document indexing modal
+│   │   ├── App.jsx                # Root application orchestration
+│   │   └── config.js              # Centralized API base URL resolver
+│   ├── dist/                      # Pre-compiled production bundle
+│   └── package.json
+├── app.py                         # Root entrypoint for Hugging Face Spaces (Gradio + FastAPI)
+├── docker-compose.yml             # Container orchestration config
+├── dockerfile                     # Multi-stage production container image
+├── mlflow.db                      # Local SQLite tracking database
+├── requirements.txt               # Pinned Python dependencies
+└── tests/                         # Comprehensive Pytest test suite (17+ files)
 ```
 
 ---
 
-## 🔬 Deep Dive: Retrieval Pipeline
+## 👤 Author & Connect
 
-AURA’s retrieval architecture was designed to eliminate common RAG pitfalls through a 5-stage pipeline:
+**Kumar Vishal**  
+*AI & Machine Learning Engineer | Generative AI & Full-Stack Systems*
 
-```
-User Query
-    │
-    ├──► FAISS Direct Search (k=24 candidates) ──────────────┐
-    │                                                        │
-    └──► Mistral Query Expansion (3 variations in parallel) ──┼──► Merge & Deduplicate
-                                                             │    (highest score retained)
-                                                             │
-    ┌────────────────────────────────────────────────────────┘
-    ▼
-Stage 1: Cosine Threshold Gate (filter chunks where score < 0.20)
-    │
-    ▼
-Stage 2: CrossEncoder Rerank (ms-marco-MiniLM-L-6-v2 evaluates (Q, Chunk) pairs)
-    │     * Logits used STRICTLY for sorting, never for filtering
-    ▼
-Stage 3: Extract Top-5 Candidates & Compute Calibrated Confidence
-    │
-    ▼
-Stage 4: Construct 16,000-char Context Window with 3-turn Conversation History
-    │
-    ▼
-Stage 5: Stream answer from Mistral Nemo; if context missing -> emit NOT_FOUND -> Fallback
-```
-
-### Critical Implementation Safeguards:
-1. **Embedding Normalization**: In `retrieval/retriever.py`, `encode_kwargs={"normalize_embeddings": True}` is strictly enforced. Without this, FAISS returns unbounded dot products rather than cosine similarities, corrupting all score thresholds.
-2. **Unbounded Logit Isolation**: The CrossEncoder model produces unnormalized logits in $(-\infty, +\infty)$. AURA avoids the common pitfall of thresholding on CrossEncoder logits; instead, logits are used exclusively to sort candidate documents, and the original normalized cosine score is passed to the confidence engine.
-3. **Calibrated Confidence Formula**: A raw cosine score of $0.55$ often indicates a strong semantic match, but presenting "55%" to an enterprise user undermines confidence. AURA scales scores using:
-   $$\text{Score} = 20 + \left(\frac{\text{top\_cosine}}{0.80}\right) \times 80$$
-   This scales scores of $\ge 0.80$ to $100\%$ (High Confidence), $\sim 0.60$ to $80\%$ (High Confidence border), and $< 0.40$ to $\le 60\%$ (Low–Medium range).
-
----
-
-## 🧪 MLOps & Experiment Tracking
-
-AURA includes built-in logging using **MLflow**:
-
-* **Experiment Store**: Stored locally in `mlflow.db` using SQLite (`sqlite:///mlflow.db`) and artifact folders in `mlruns/`.
-* **Tracked Ingestion Parameters & Metrics**:
-  * `document_name`: Name of processed file
-  * `document_size_kb`: File size in KB
-  * `page_count`: Number of extracted pages
-  * `load_time`: Extraction latency in seconds
-  * `chunk_size` & `chunk_overlap`: Chunking configuration parameters
-  * `chunk_count`: Total chunks indexed in FAISS
-* **To inspect runs in the MLflow UI**:
-  ```bash
-  mlflow ui --backend-store-uri sqlite:///mlflow.db --port 5000
-  ```
-  Open `http://localhost:5000` to compare ingestion runs, examine chunk metrics, and review execution artifacts.
-
----
-
-## 🏛 Architectural Blueprint & Enterprise Roadmap
-
-AURA’s modular design allows it to scale horizontally from a standalone research assistant into a distributed enterprise microservice cluster. The complete scaling strategy (as documented in `ARCHITECTURE_AND_INTERVIEW_GUIDE.md`) includes:
-
-
-### Target Architecture (Phase 2 Roadmap)
-* **REST API Gateway**: A dedicated **FastAPI** service (`/api/v1/query`, `/api/v1/upload`, `/health`, `/metrics`) providing asynchronous endpoints with JWT authentication and Pydantic validation.
-* **Asynchronous Document Processing**: Offloading document ingestion and embedding to **Celery + Redis** worker pools.
-* **Distributed Vector Storage**: Migrating from in-process FAISS to **Qdrant** or **Milvus** cluster for multi-tenant collection indexing and filtered search.
-* **Infrastructure Telemetry**: Exposing Prometheus metrics (`/metrics`) paired with pre-configured Grafana dashboards for query latency, token throughput, and vector recall tracking.
-* **Hybrid Search (Sparse + Dense)**: Combining BM25 lexical search with dense vector embeddings via Reciprocal Rank Fusion (RRF) to optimize retrieval over technical codes and serial identifiers.
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Follow these steps:
-
-1. Fork the repository.
-2. Create a feature branch: `git checkout -b feature/amazing-feature`.
-3. Commit your changes: `git commit -m "Add amazing feature"`.
-4. Run tests: `pytest`.
-5. Push to the branch: `git push origin feature/amazing-feature`.
-6. Open a Pull Request.
+- 🌐 **Portfolio / Live Project**: [vioraassistant.vercel.app](https://vioraassistant.vercel.app)
+- 💼 **GitHub**: [github.com/kumarvishal10351](https://github.com/kumarvishal10351)
+- 🤗 **Hugging Face**: [huggingface.co/djShashi](https://huggingface.co/djShashi)
 
 ---
 
 ## 📄 License
 
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
-
----
-
-<p align="center">
-  Built with precision for reliable, grounded Generative AI applications.
-</p>
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
