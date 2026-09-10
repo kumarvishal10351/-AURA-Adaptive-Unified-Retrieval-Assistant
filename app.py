@@ -243,8 +243,14 @@ with demo:
                 cache_examples=False,
             )
 
+# ── Mount FastAPI REST API with Gradio UI ────────────────────────
+import uvicorn
+from app.api import app as fastapi_app
+
+# Mount Gradio Blocks demo onto the FastAPI application at root "/"
+# This serves the Gradio interactive UI at "/" while exposing all FastAPI REST API routes:
+# /api/upload, /api/query, /api/status, /api/documents, and /docs for the React/Vercel frontend
+app = gr.mount_gradio_app(fastapi_app, demo, path="/")
+
 if __name__ == "__main__":
-    try:
-        demo.launch(server_name="0.0.0.0", server_port=7860, css=custom_css)
-    except TypeError:
-        demo.launch(server_name="0.0.0.0", server_port=7860)
+    uvicorn.run(app, host="0.0.0.0", port=7860)

@@ -98,13 +98,14 @@ class QueryResponse(BaseModel):
     is_fallback: Optional[bool] = False
 
 
-@app.get("/", response_class=HTMLResponse)
-def read_root():
-    if FRONTEND_INDEX.exists():
+if FRONTEND_INDEX.exists():
+    @app.get("/", response_class=HTMLResponse)
+    def read_root():
         return FileResponse(FRONTEND_INDEX)
-    if STATIC_INDEX.exists():
+elif STATIC_INDEX.exists():
+    @app.get("/", response_class=HTMLResponse)
+    def read_root():
         return FileResponse(STATIC_INDEX)
-    return HTMLResponse("<h1>Viora Research Workspace</h1>")
 
 
 @app.get("/api/status")
