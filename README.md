@@ -1,10 +1,10 @@
 ---
 title: Viora Assistance
-emoji: 🧠
-colorFrom: indigo
-colorTo: blue
-sdk: docker
-app_port: 7860
+emoji: 📚
+colorFrom: green
+colorTo: emerald
+sdk: gradio
+app_file: app.py
 pinned: false
 ---
 
